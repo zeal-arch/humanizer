@@ -1,0 +1,7 @@
+# Exclude the heavy model weights and wheel files from Vercel
+models/
+*.whl
+temp/
+__pycache__/
+docs/
+test_output.docx

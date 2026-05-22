@@ -1,8 +1,2 @@
 flask
-python-docx
-transformers>=4.51.0
-torch
-accelerate
-sentencepiece
-nltk
-scipy
+requests

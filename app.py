@@ -3,72 +3,91 @@
 
 import os
 import sys
-
-# Force all AI models and dictionaries to download locally into the project folder
-# so the project is 100% portable
-# On local dev: store everything inside the project's models/ folder (portable).
-# On Hugging Face Spaces: use the default system cache dirs (set by HF infra).
-MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models')
-
-if not os.environ.get('HF_HOME'):
-    os.environ['HF_HOME'] = os.path.join(MODELS_DIR, 'huggingface')
-    os.makedirs(os.environ['HF_HOME'], exist_ok=True)
-
-if not os.environ.get('NLTK_DATA'):
-    os.environ['NLTK_DATA'] = os.path.join(MODELS_DIR, 'nltk_data')
-    os.makedirs(os.environ['NLTK_DATA'], exist_ok=True)
-
-
 import uuid
 import json
 import time
 import traceback
 import threading
 from flask import Flask, request, jsonify, send_file, render_template, Response
-from humanizer.pipeline import humanize_docx, preload_model
-from humanizer.detector import score_docx
 
-import nltk
+# Check if running in Vercel Proxy Mode or Local/HuggingFace Native Mode
+HF_SPACE_URL = os.environ.get('HF_SPACE_URL')
+HF_API_TOKEN = os.environ.get('HF_API_TOKEN')
 
-def init_nltk():
-    import os
-    # Download directly to the default NLTK data dir to ensure pipeline.py can find it
-    corpora = [
-        ('corpora/wordnet', 'wordnet'),
-        ('corpora/omw-1.4', 'omw-1.4'),
-        ('corpora/words', 'words'),
-        ('tokenizers/punkt', 'punkt'),
-        ('tokenizers/punkt_tab', 'punkt_tab'),
-        ('taggers/averaged_perceptron_tagger', 'averaged_perceptron_tagger'),
-        ('taggers/averaged_perceptron_tagger_eng', 'averaged_perceptron_tagger_eng'),
-    ]
-    for path, package in corpora:
-        try:
-            nltk.data.find(path)
-        except LookupError:
-            print(f"Downloading NLTK {package}...")
-            nltk.download(package, download_dir=os.environ['NLTK_DATA'], quiet=True)
+if HF_SPACE_URL:
+    print(f"[Proxy Mode] Routing requests to private Hugging Face Space: {HF_SPACE_URL}")
+    import requests
+else:
+    # Force all AI models and dictionaries to download locally into the project folder
+    # so the project is 100% portable
+    MODELS_DIR = os.path.join(os.path.dirname(__file__), 'models')
 
-def init_model():
-    """Pre-load the AI model in a background thread so first request is instant."""
-    # Local dev server runs with debug=True, which spawns a parent watchdog and child worker.
-    # We should only load the model in the child worker (where WERKZEUG_RUN_MAIN == 'true')
-    # to avoid loading the model twice and thrashing GPU VRAM.
-    # In production (e.g. Gunicorn/Docker), __name__ != '__main__', so we always preload.
-    if __name__ == '__main__':
-        if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
-            print("[Model] Reloader watchdog process detected. Skipping model preload.")
-            return
+    if not os.environ.get('HF_HOME'):
+        os.environ['HF_HOME'] = os.path.join(MODELS_DIR, 'huggingface')
+        os.makedirs(os.environ['HF_HOME'], exist_ok=True)
 
-    t = threading.Thread(target=preload_model, daemon=True)
-    t.start()
+    if not os.environ.get('NLTK_DATA'):
+        os.environ['NLTK_DATA'] = os.path.join(MODELS_DIR, 'nltk_data')
+        os.makedirs(os.environ['NLTK_DATA'], exist_ok=True)
 
+    from humanizer.pipeline import humanize_docx, preload_model
+    from humanizer.detector import score_docx
+    import nltk
 
+    def init_nltk():
+        import os
+        corpora = [
+            ('corpora/wordnet', 'wordnet'),
+            ('corpora/omw-1.4', 'omw-1.4'),
+            ('corpora/words', 'words'),
+            ('tokenizers/punkt', 'punkt'),
+            ('tokenizers/punkt_tab', 'punkt_tab'),
+            ('taggers/averaged_perceptron_tagger', 'averaged_perceptron_tagger'),
+            ('taggers/averaged_perceptron_tagger_eng', 'averaged_perceptron_tagger_eng'),
+        ]
+        for path, package in corpora:
+            try:
+                nltk.data.find(path)
+            except LookupError:
+                print(f"Downloading NLTK {package}...")
+                nltk.download(package, download_dir=os.environ['NLTK_DATA'], quiet=True)
 
-init_nltk()
-init_model()
+    def init_model():
+        """Pre-load the AI model in a background thread so first request is instant."""
+        if __name__ == '__main__':
+            if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+                print("[Model] Reloader watchdog process detected. Skipping model preload.")
+                return
+
+        t = threading.Thread(target=preload_model, daemon=True)
+        t.start()
+
+    init_nltk()
+    init_model()
 
 app = Flask(__name__)
+
+# Helper to forward requests to the Hugging Face Space
+def forward_request(path, method='GET', json_data=None, files=None, params=None, stream=False):
+    url = f"{HF_SPACE_URL.rstrip('/')}/{path}"
+    headers = {}
+    if HF_API_TOKEN:
+        headers['Authorization'] = f"Bearer {HF_API_TOKEN}"
+    try:
+        response = requests.request(
+            method=method,
+            url=url,
+            headers=headers,
+            json=json_data,
+            files=files,
+            params=params,
+            stream=stream,
+            timeout=180
+        )
+        return response
+    except Exception as e:
+        print(f"Proxy error to {url}: {e}")
+        raise e
 
 # Temp folder for uploads and outputs
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'temp')
@@ -89,6 +108,14 @@ def index():
 @app.route('/scan', methods=['POST'])
 def scan():
     """Score a .docx file for AI likelihood without modifying it."""
+    if HF_SPACE_URL:
+        files = {k: (v.filename, v.read(), v.mimetype) for k, v in request.files.items()}
+        try:
+            res = forward_request('scan', 'POST', files=files)
+            return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
+        except Exception as e:
+            return jsonify({'error': f'Proxy error: {str(e)}'}), 500
+
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided.'}), 400
 
@@ -117,6 +144,26 @@ ACTIVE_TASKS = {}
 
 @app.route('/stream/<task_id>')
 def stream(task_id):
+    if HF_SPACE_URL:
+        def generate():
+            try:
+                url = f"{HF_SPACE_URL.rstrip('/')}/stream/{task_id}"
+                headers = {}
+                if HF_API_TOKEN:
+                    headers['Authorization'] = f"Bearer {HF_API_TOKEN}"
+                res = requests.request(
+                    method='GET',
+                    url=url,
+                    headers=headers,
+                    stream=True,
+                    timeout=300
+                )
+                for line in res.iter_lines():
+                    yield line + b'\n'
+            except Exception as e:
+                yield f"data: {json.dumps({'status': 'error', 'error': f'Proxy stream error: {str(e)}'})}\n\n".encode('utf-8')
+        return Response(generate(), mimetype="text/event-stream")
+
     def generate():
         last_progress = -1
         last_msg = ""
@@ -138,6 +185,14 @@ def stream(task_id):
 
 @app.route('/start_task_doc', methods=['POST'])
 def start_task_doc():
+    if HF_SPACE_URL:
+        files = {k: (v.filename, v.read(), v.mimetype) for k, v in request.files.items()}
+        try:
+            res = forward_request('start_task_doc', 'POST', files=files)
+            return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
+        except Exception as e:
+            return jsonify({'error': f'Proxy error: {str(e)}'}), 500
+
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided.'}), 400
 
@@ -236,6 +291,21 @@ def start_task_doc():
 
 @app.route('/download_doc/<task_id>', methods=['GET'])
 def download_doc(task_id):
+    if HF_SPACE_URL:
+        try:
+            res = forward_request(f'download_doc/{task_id}', 'GET')
+            headers = [
+                ('Content-Type', res.headers.get('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')),
+                ('Content-Disposition', res.headers.get('Content-Disposition', f'attachment; filename=humanized_{task_id}.docx'))
+            ]
+            if 'X-Stats' in res.headers:
+                headers.append(('X-Stats', res.headers['X-Stats']))
+            if 'Access-Control-Expose-Headers' in res.headers:
+                headers.append(('Access-Control-Expose-Headers', res.headers['Access-Control-Expose-Headers']))
+            return (res.content, res.status_code, headers)
+        except Exception as e:
+            return jsonify({'error': f'Proxy error: {str(e)}'}), 500
+
     if task_id not in ACTIVE_TASKS or ACTIVE_TASKS[task_id]["status"] != "done":
         return "Not found or not finished", 404
         
@@ -272,6 +342,13 @@ def download_doc(task_id):
 @app.route('/scan_text', methods=['POST'])
 def scan_text():
     """Score raw text for AI likelihood."""
+    if HF_SPACE_URL:
+        try:
+            res = forward_request('scan_text', 'POST', json_data=request.get_json())
+            return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
+        except Exception as e:
+            return jsonify({'error': f'Proxy error: {str(e)}'}), 500
+
     data = request.get_json()
     if not data or 'text' not in data:
         return jsonify({'error': 'No text provided.'}), 400
@@ -310,6 +387,13 @@ def scan_text():
 @app.route('/start_task_text', methods=['POST'])
 def start_task_text():
     """Humanize raw text directly asynchronously."""
+    if HF_SPACE_URL:
+        try:
+            res = forward_request('start_task_text', 'POST', json_data=request.get_json())
+            return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
+        except Exception as e:
+            return jsonify({'error': f'Proxy error: {str(e)}'}), 500
+
     data = request.get_json()
     if not data or 'text' not in data:
         return jsonify({'error': 'No text provided.'}), 400
@@ -395,6 +479,13 @@ def start_task_text():
 
 @app.route('/download_text/<task_id>', methods=['GET'])
 def download_text(task_id):
+    if HF_SPACE_URL:
+        try:
+            res = forward_request(f'download_text/{task_id}', 'GET')
+            return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
+        except Exception as e:
+            return jsonify({'error': f'Proxy error: {str(e)}'}), 500
+
     if task_id not in ACTIVE_TASKS or ACTIVE_TASKS[task_id]["status"] != "done":
         return jsonify({"error": "Not found or not finished"}), 404
     res = ACTIVE_TASKS[task_id]["result"]
