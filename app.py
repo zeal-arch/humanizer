@@ -11,10 +11,12 @@ import threading
 from flask import Flask, request, jsonify, send_file, render_template, Response
 
 # Check if running in Vercel Proxy Mode or Local/HuggingFace Native Mode
+# Vercel automatically sets VERCEL="1"
+IS_VERCEL = os.environ.get('VERCEL') == '1'
 HF_SPACE_URL = os.environ.get('HF_SPACE_URL')
 HF_API_TOKEN = os.environ.get('HF_API_TOKEN')
 
-if HF_SPACE_URL:
+if IS_VERCEL or HF_SPACE_URL:
     print(f"[Proxy Mode] Routing requests to private Hugging Face Space: {HF_SPACE_URL}")
     import requests
 else:
@@ -69,6 +71,8 @@ app = Flask(__name__)
 
 # Helper to forward requests to the Hugging Face Space
 def forward_request(path, method='GET', json_data=None, files=None, params=None, stream=False):
+    if not HF_SPACE_URL:
+        raise ValueError("HF_SPACE_URL environment variable is not configured in Vercel settings. Please set it in your Vercel Dashboard -> Settings -> Environment Variables.")
     url = f"{HF_SPACE_URL.rstrip('/')}/{path}"
     headers = {}
     if HF_API_TOKEN:
