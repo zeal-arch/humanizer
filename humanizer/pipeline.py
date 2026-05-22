@@ -559,15 +559,20 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     # ── Prompt: direct instruction, no thinking required ─────────────────────
     # /no_think suffix tells Qwen3 to skip chain-of-thought (faster + no <think> block)
     prompt = (
-        f"Rewrite the following paragraph so it reads like a real human wrote it. "
-        f"Use casual, natural language. Vary sentence length — mix short punchy sentences "
-        f"with longer ones. Keep every fact and meaning from the original. "
-        f"Output ONLY the rewritten paragraph. No explanations, no labels. /no_think\n\n"
-        f"{para}"
+        f"Rewrite the following paragraph to make it look 100% human-written.\n"
+        f"Strict Guidelines:\n"
+        f"1. Tone: Conversational, casual, simple, and informal.\n"
+        f"2. Sentence Variety: Mix very short, punchy sentences (3-8 words) with longer, natural ones. Avoid uniform sentence length.\n"
+        f"3. Vocabulary: Use simple, everyday words. Do NOT use complex academic vocabulary.\n"
+        f"4. Contractions: Use contractions (don't, can't, it's, they're, etc.) naturally wherever possible.\n"
+        f"5. NO AI transitions: Do NOT use formal transition phrases (like 'Furthermore', 'Moreover', 'Consequently', 'Therefore', 'As a consequence', 'In addition', 'Indeed', 'Crucial', 'Importantly', 'Furthermore'). Open sentences simply or use words like 'But', 'And', 'So', 'Plus'.\n"
+        f"6. Content: Keep all original meanings and facts exactly the same. Do not add new information.\n\n"
+        f"Original paragraph:\n{para}\n\n"
+        f"Rewrite (output ONLY the rewritten paragraph, no introductions, no labels, no quotes): /no_think"
     )
 
     messages = [
-        {"role": "system", "content": "You are a writing assistant. Rewrite text to sound natural and human. Never show your thinking. Output only the rewritten text."},
+        {"role": "system", "content": "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."},
         {"role": "user", "content": prompt}
     ]
 
@@ -630,6 +635,12 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
     # Strip any "Rewritten:" / "Output:" label the model might prepend
     generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
+
+    # Standardize quotation marks and curly apostrophes to straight ones for clean encoding and maximum human likeness
+    generated = generated.replace('’', "'").replace('‘', "'").replace('“', '"').replace('”', '"')
+    # Clean up double spaces or spaces before punctuation
+    generated = re.sub(r'\s+', ' ', generated)
+    generated = re.sub(r'\s+([.,!?;:])', r'\1', generated)
 
     words_out = len(generated.split())
     words_in  = len(para.split())
