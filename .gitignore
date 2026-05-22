@@ -1,0 +1,9 @@
+# Git ignore — don't commit local dev-only files
+models/
+__pycache__/
+*.pyc
+*.pyo
+.env
+temp/
+*.whl
+*.log

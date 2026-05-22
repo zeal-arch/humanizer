@@ -1,0 +1,24 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .dockerignore — files NOT uploaded to Hugging Face
+# Keeps the Docker image small. The model is downloaded from HF Hub at runtime.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Local model weights — NOT bundled (downloaded from HF Hub at startup instead)
+models/
+
+# Development/local files
+*.whl
+*.pyc
+__pycache__/
+*.pyo
+.env
+.env.*
+
+# Windows/OS files
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Git
+.git/
+.gitignore

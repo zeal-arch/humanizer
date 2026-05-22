@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HumanizeDoc — AI-Proof Your Documents</title>
+  <meta name="description" content="Transform AI-generated documents into natural human-sounding text. 100% rule-based, no AI APIs, completely free." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- ── BACKGROUND ORBS ─────────────────────────────────────────────────── -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- ── NAVBAR ──────────────────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="nav-icon">✦</span>
+      <span class="nav-title">HumanizeDoc</span>
+    </div>
+    <div class="nav-badge">100% Free · No AI APIs</div>
+  </nav>
+
+  <!-- ── HERO ────────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="hero-eyebrow">7-Pass Rule Engine</div>
+    <h1 class="hero-title">
+      Make Your Docs Sound<br />
+      <span class="gradient-text">Genuinely Human</span>
+    </h1>
+    <p class="hero-subtitle">
+      Upload your <strong>.docx</strong> file and our pipeline rewrites AI-sounding phrases,
+      injects natural rhythm, and varies sentence structure — zero AI APIs, zero cost.
+    </p>
+
+    <!-- Stats row -->
+        <div class="hero-stats">
+          <div class="stat-pill">
+            <span class="stat-num">16</span>
+            <span class="stat-label">Transformation Passes</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-num">500+</span>
+            <span class="stat-label">AI Patterns Blocked</span>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-num">100%</span>
+            <span class="stat-label">Local & Private</span>
+          </div>
+        </div>
+  </section>
+
+  <!-- ── MAIN CARD ────────────────────────────────────────────────────────── -->
+  <main class="main-content">
+    <div class="card" id="main-card">
+
+      <!-- MODE TOGGLE -->
+      <div class="mode-toggle">
+        <button id="mode-doc" class="mode-btn active">Document Upload</button>
+        <button id="mode-text" class="mode-btn">Paste Text</button>
+      </div>
+
+      <!-- STATE 1: Upload -->
+      <div id="state-upload" class="state active">
+        <div
+          id="drop-zone"
+          class="drop-zone"
+          role="button"
+          tabindex="0"
+          aria-label="Upload .docx file"
+        >
+          <div class="drop-icon">
+            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+              <rect width="52" height="52" rx="14" fill="url(#grad1)" opacity="0.15"/>
+              <path d="M26 34V20M26 20L20 26M26 20L32 26" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 38h24" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="grad1" x1="0" y1="0" x2="52" y2="52">
+                  <stop stop-color="#818cf8"/>
+                  <stop offset="1" stop-color="#a78bfa"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <p class="drop-title">Drop your .docx file here</p>
+          <p class="drop-sub">or click to browse</p>
+          <input type="file" id="file-input" accept=".docx" aria-label="Choose .docx file" />
+        </div>
+
+            <div class="file-preview hidden" id="file-preview">
+              <div class="file-icon">📄</div>
+              <div class="file-info">
+                <span class="file-name" id="file-name-display">document.docx</span>
+                <span class="file-size" id="file-size-display">1.2 MB</span>
+              </div>
+              <button class="remove-btn" id="remove-file" aria-label="Remove file">✕</button>
+            </div>
+
+            <!-- SCAN RESULTS -->
+            <div id="scan-results" class="scan-results hidden" style="margin-bottom: 24px; text-align: center;">
+              <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Current AI Score</div>
+              <div style="font-size: 42px; font-weight: 800; color: var(--orange); line-height: 1;" id="scan-pct">--%</div>
+              <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px; margin-bottom: 8px;" id="scan-label">Scanning...</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px; opacity: 0.7;">⚠ Estimate only — verify at <a href="https://gptzero.me" target="_blank" style="color: var(--orange);">gptzero.me</a></div>
+              
+              <button id="toggle-viewer-btn" type="button" class="hidden" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">View AI Highlights</button>
+              
+              <div id="document-viewer" class="hidden" style="margin-top: 16px; text-align: left; max-height: 250px; overflow-y: auto; background: rgba(0, 0, 0, 0.3); padding: 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; line-height: 1.6; color: var(--text-primary);">
+              </div>
+            </div>
+
+            <button class="btn-primary" id="submit-btn" disabled>
+              <span class="btn-text">Humanize Document</span>
+              <span class="btn-icon">→</span>
+            </button>
+
+        <p class="privacy-note">
+          🔒 Files are processed locally and deleted immediately after download.<br>
+          <span style="color: var(--orange); opacity: 0.8;">⚠️ Note: To perform the aggressive 17-pass rewrite, inline bold/italics are removed. Headings and tables are preserved.</span>
+          <br>Nothing is stored or sent to external servers.
+        </p>
+      </div>
+
+      <!-- STATE: Paste Text Input -->
+      <div id="state-text-input" class="state">
+        <textarea id="raw-text-input" class="text-input" placeholder="Paste your AI-generated text here... (Minimum 20 words)" rows="10"></textarea>
+        
+        <div id="scan-results-text" class="scan-results hidden" style="margin-bottom: 24px; text-align: center;">
+          <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Current AI Score</div>
+          <div style="font-size: 42px; font-weight: 800; color: var(--orange); line-height: 1;" id="scan-pct-text">--%</div>
+          <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px; margin-bottom: 16px;" id="scan-label-text">Scanning...</div>
+        </div>
+
+        <button class="btn-primary" id="submit-text-btn" disabled>
+          <span class="btn-text">Humanize Text</span>
+          <span class="btn-icon">→</span>
+        </button>
+      </div>
+
+      <!-- STATE 2: Processing -->
+      <div id="state-processing" class="state">
+        <div class="processing-header">
+          <div class="spinner"></div>
+          <h2 class="processing-title">Humanizing your document…</h2>
+          <p class="processing-sub">Running 7 transformation passes</p>
+        </div>
+
+        <div id="real-time-progress-container" style="margin-top: 24px; max-width: 400px; margin-left: auto; margin-right: auto; text-align: left;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: var(--text-secondary);">
+            <span id="progress-status-msg">Initializing...</span>
+            <span id="progress-pct-label">0%</span>
+          </div>
+          <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
+            <div id="progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 4px; transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+          </div>
+
+      <!-- STATE 3: Done -->
+      <div id="state-done" class="state">
+        <div class="done-icon">✓</div>
+        <h2 class="done-title">Document Humanized!</h2>
+        <p class="done-sub">Your file has been processed and is ready to download.</p>
+
+        <!-- NEW AI SCORE VS OLD AI SCORE -->
+          <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 24px;">
+            <div style="text-align: center; opacity: 0.5;">
+              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Original</div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--orange);" id="final-scan-old">--%</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; color: var(--green);">New AI Score</div>
+              <div style="font-size: 36px; font-weight: 800; color: var(--green); line-height: 1;" id="final-scan-new">--%</div>
+            </div>
+          </div>
+
+          <div class="results-grid">
+            <div class="result-card">
+              <span class="result-num" id="res-paragraphs">0</span>
+              <span class="result-label">Paragraphs</span>
+            </div>
+            <div class="result-card highlight">
+              <span class="result-num" id="res-total">0</span>
+              <span class="result-label">Total Changes</span>
+            </div>
+            <div class="result-card">
+              <span class="result-num" id="res-phrases">0</span>
+              <span class="result-label">AI Phrases</span>
+            </div>
+          </div>
+
+        <div class="pass-breakdown" id="pass-breakdown">
+          <h3 class="breakdown-title">Pass Breakdown</h3>
+          <div class="breakdown-grid" id="breakdown-grid"></div>
+        </div>
+        
+        <!-- Raw Text Output Container (Hidden in docx mode) -->
+        <div id="raw-text-output-container" class="hidden" style="margin-bottom: 24px;">
+          <h3 style="font-size: 14px; margin-bottom: 8px;">Humanized Text:</h3>
+          <textarea id="raw-text-output" class="text-input" rows="8" readonly style="margin-bottom: 12px;"></textarea>
+          <button class="btn-secondary" id="copy-text-btn">Copy to Clipboard</button>
+        </div>
+
+        <div class="done-actions">
+          <a class="btn-primary" id="download-btn" href="#" download>
+            <span class="btn-text">Download Humanized File</span>
+            <span class="btn-icon">↓</span>
+          </a>
+          <button class="btn-secondary" id="restart-btn">Process Another</button>
+        </div>
+      </div>
+
+      <!-- STATE 4: Error -->
+      <div id="state-error" class="state">
+        <div class="error-icon">⚠</div>
+        <h2 class="error-title">Something went wrong</h2>
+        <p class="error-msg" id="error-msg">An unexpected error occurred.</p>
+        <button class="btn-secondary" id="retry-btn">Try Again</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── HOW IT WORKS ─────────────────────────────────────────────────────── -->
+  <section class="how-section">
+    <h2 class="section-title">How It Works</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-num">01</div>
+        <h3>AI Phrase Dictionary</h3>
+        <p>Scans for 300+ phrases that AI models overuse — "ensure that", "leverage", "in order to" — and replaces each with natural human equivalents.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">02</div>
+        <h3>Burstiness Injection</h3>
+        <p>The #1 signal Turnitin checks. AI writes at uniform sentence length. We split long sentences and occasionally merge short ones to create human-like rhythm variation.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">03</div>
+        <h3>Discourse Markers</h3>
+        <p>Inserts natural conversation anchors — "That said,", "In practice,", "Worth noting here —" — to break the mechanical paragraph-to-paragraph progression AI produces.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">04</div>
+        <h3>Voice & Contraction</h3>
+        <p>Converts passive constructions to active voice and injects contractions where they feel natural — both strong signals of genuine human authorship.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>HumanizeDoc — Built for students, powered by rules, not AI.</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
