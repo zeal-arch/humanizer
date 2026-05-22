@@ -16,7 +16,19 @@ IS_VERCEL = os.environ.get('VERCEL') == '1'
 HF_SPACE_URL = os.environ.get('HF_SPACE_URL')
 HF_API_TOKEN = os.environ.get('HF_API_TOKEN')
 
-if IS_VERCEL or HF_SPACE_URL:
+# Try importing ML dependencies. If they are missing, we MUST run in proxy mode.
+try:
+    from humanizer.pipeline import humanize_docx, preload_model
+    from humanizer.detector import score_docx
+    import nltk
+    HAS_LOCAL_DEPS = True
+except (ImportError, ModuleNotFoundError):
+    HAS_LOCAL_DEPS = False
+
+# We force Proxy Mode if explicitly requested or if local ML dependencies are missing
+USE_PROXY = IS_VERCEL or (HF_SPACE_URL is not None) or not HAS_LOCAL_DEPS
+
+if USE_PROXY:
     print(f"[Proxy Mode] Routing requests to private Hugging Face Space: {HF_SPACE_URL}")
     import requests
 else:
@@ -31,10 +43,6 @@ else:
     if not os.environ.get('NLTK_DATA'):
         os.environ['NLTK_DATA'] = os.path.join(MODELS_DIR, 'nltk_data')
         os.makedirs(os.environ['NLTK_DATA'], exist_ok=True)
-
-    from humanizer.pipeline import humanize_docx, preload_model
-    from humanizer.detector import score_docx
-    import nltk
 
     def init_nltk():
         import os
@@ -112,7 +120,7 @@ def index():
 @app.route('/scan', methods=['POST'])
 def scan():
     """Score a .docx file for AI likelihood without modifying it."""
-    if HF_SPACE_URL:
+    if USE_PROXY:
         files = {k: (v.filename, v.read(), v.mimetype) for k, v in request.files.items()}
         try:
             res = forward_request('scan', 'POST', files=files)
@@ -148,7 +156,7 @@ ACTIVE_TASKS = {}
 
 @app.route('/stream/<task_id>')
 def stream(task_id):
-    if HF_SPACE_URL:
+    if USE_PROXY:
         def generate():
             try:
                 url = f"{HF_SPACE_URL.rstrip('/')}/stream/{task_id}"
@@ -189,7 +197,7 @@ def stream(task_id):
 
 @app.route('/start_task_doc', methods=['POST'])
 def start_task_doc():
-    if HF_SPACE_URL:
+    if USE_PROXY:
         files = {k: (v.filename, v.read(), v.mimetype) for k, v in request.files.items()}
         try:
             res = forward_request('start_task_doc', 'POST', files=files)
@@ -295,7 +303,7 @@ def start_task_doc():
 
 @app.route('/download_doc/<task_id>', methods=['GET'])
 def download_doc(task_id):
-    if HF_SPACE_URL:
+    if USE_PROXY:
         try:
             res = forward_request(f'download_doc/{task_id}', 'GET')
             headers = [
@@ -346,7 +354,7 @@ def download_doc(task_id):
 @app.route('/scan_text', methods=['POST'])
 def scan_text():
     """Score raw text for AI likelihood."""
-    if HF_SPACE_URL:
+    if USE_PROXY:
         try:
             res = forward_request('scan_text', 'POST', json_data=request.get_json())
             return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
@@ -391,7 +399,7 @@ def scan_text():
 @app.route('/start_task_text', methods=['POST'])
 def start_task_text():
     """Humanize raw text directly asynchronously."""
-    if HF_SPACE_URL:
+    if USE_PROXY:
         try:
             res = forward_request('start_task_text', 'POST', json_data=request.get_json())
             return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
@@ -483,7 +491,7 @@ def start_task_text():
 
 @app.route('/download_text/<task_id>', methods=['GET'])
 def download_text(task_id):
-    if HF_SPACE_URL:
+    if USE_PROXY:
         try:
             res = forward_request(f'download_text/{task_id}', 'GET')
             return (res.content, res.status_code, [('Content-Type', res.headers.get('Content-Type', 'application/json'))])
