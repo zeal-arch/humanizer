@@ -51,14 +51,18 @@ def init_nltk():
 
 def init_model():
     """Pre-load the AI model in a background thread so first request is instant."""
-    # Flask dev: only load in the real worker, not the reloader watchdog
-    # Gunicorn prod: WERKZEUG_RUN_MAIN is never set, so always load
-    is_flask_reloader_watchdog = (
-        os.environ.get('WERKZEUG_RUN_MAIN') == 'false'
-    )
-    if not is_flask_reloader_watchdog:
-        t = threading.Thread(target=preload_model, daemon=True)
-        t.start()
+    # Local dev server runs with debug=True, which spawns a parent watchdog and child worker.
+    # We should only load the model in the child worker (where WERKZEUG_RUN_MAIN == 'true')
+    # to avoid loading the model twice and thrashing GPU VRAM.
+    # In production (e.g. Gunicorn/Docker), __name__ != '__main__', so we always preload.
+    if __name__ == '__main__':
+        if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
+            print("[Model] Reloader watchdog process detected. Skipping model preload.")
+            return
+
+    t = threading.Thread(target=preload_model, daemon=True)
+    t.start()
+
 
 
 init_nltk()

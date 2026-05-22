@@ -29,6 +29,7 @@ from nltk.corpus import wordnet as wn
 # SAME loaded object (fixes the duplicate-load bug).
 # ─────────────────────────────────────────────────────────────────────────────
 import os as _os
+import threading as _threading
 
 _MODELS_DIR = _os.path.join(_os.path.dirname(__file__), '..', 'models')
 
@@ -38,6 +39,8 @@ T5_DIR      = _os.path.join(_MODELS_DIR, 'T5_Paraphrase_Paws')
 _MODEL_TOKENIZER = None
 _MODEL_OBJ       = None
 _MODEL_TYPE      = None   # 'qwen3' | 't5' | None
+_MODEL_LOCK      = _threading.Lock()
+
 
 def _qwen3_weights_present() -> bool:
     """Check that Qwen3 has its actual weight file, not just config."""
@@ -62,10 +65,24 @@ def preload_model():
         import torch
         from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModelForSeq2SeqLM
 
+        # Optimize dtype: Use bfloat16 or float16 when running on CUDA to minimize VRAM footprint and avoid paging latency,
+        # which is extremely critical for 4GB GPUs like the GTX 1650. Fall back to float32 on CPU.
+        if torch.cuda.is_available():
+            if torch.cuda.is_bf16_supported():
+                dtype = torch.bfloat16
+            else:
+                dtype = torch.float16
+        else:
+            dtype = torch.float32
+
         device_kwargs = {
             'device_map': 'auto' if torch.cuda.is_available() else None,
-            'dtype': torch.float16 if torch.cuda.is_available() else torch.float32,
+            'dtype': dtype,
         }
+
+        # Enable PyTorch SDPA (Scaled Dot Product Attention) for optimized attention kernels when using GPU
+        if torch.cuda.is_available():
+            device_kwargs['attn_implementation'] = 'sdpa'
 
         if _qwen3_weights_present():
             # ── Development: load from local disk ──────────────────────────
@@ -587,18 +604,25 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     input_len = input_ids.shape[-1]
     attention_mask = torch.ones_like(input_ids).to(model.device)
 
-    with torch.no_grad():
-        outputs = model.generate(
-            input_ids,
-            attention_mask=attention_mask,
-            max_new_tokens=min(280, len(para.split()) * 3),
-            do_sample=True,
-            temperature=0.80,
-            top_p=0.90,
-            top_k=40,
-            repetition_penalty=1.15,
-            pad_token_id=tokenizer.eos_token_id,
-        )
+    # Optimize max_new_tokens dynamically to prevent runaway text generation and speed up runtime
+    max_tokens = min(150, int(len(para.split()) * 1.3) + 20)
+
+    # Acquire model lock to guarantee thread-safe autoregressive decoding (prevents text bleed)
+    with _MODEL_LOCK:
+        # Inference mode is faster and uses less VRAM/memory than no_grad
+        with torch.inference_mode():
+            outputs = model.generate(
+                input_ids,
+                attention_mask=attention_mask,
+                max_new_tokens=max_tokens,
+                do_sample=True,
+                temperature=0.70,   # Qwen3 non-thinking mode best practice
+                top_p=0.80,         # Qwen3 non-thinking mode best practice
+                top_k=20,           # Qwen3 non-thinking mode best practice
+                repetition_penalty=1.15,
+                use_cache=True,
+                pad_token_id=tokenizer.eos_token_id,
+            )
 
     generated = tokenizer.decode(outputs[0][input_len:], skip_special_tokens=True).strip()
 
@@ -622,17 +646,21 @@ def _rewrite_with_t5(para: str, tokenizer, model) -> str:
     input_ids = tokenizer.encode(text_input, return_tensors="pt", max_length=256, truncation=True)
     input_ids = input_ids.to(model.device)
 
-    with torch.no_grad():
-        outputs = model.generate(
-            input_ids,
-            max_length=256,
-            do_sample=True,
-            top_k=50,
-            top_p=0.95,
-            temperature=1.2,
-            num_return_sequences=1,
-            no_repeat_ngram_size=2,
-        )
+    # Acquire model lock to guarantee thread-safe autoregressive decoding (prevents text bleed)
+    with _MODEL_LOCK:
+        # Inference mode is faster and uses less VRAM/memory than no_grad
+        with torch.inference_mode():
+            outputs = model.generate(
+                input_ids,
+                max_length=256,
+                do_sample=True,
+                top_k=50,
+                top_p=0.95,
+                temperature=1.2,
+                num_return_sequences=1,
+                no_repeat_ngram_size=2,
+                use_cache=True,
+            )
 
     out_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
     out_text = re.sub(r'\s+([.,!?;:])', r'\1', out_text)
@@ -657,8 +685,9 @@ def pass19_structural_smoothing(text: str, progress_callback=None) -> tuple[str,
     for i, para in enumerate(paragraphs):
         stripped = para.strip()
 
-        # Lower threshold: process paragraphs with ≥5 words (was 10)
-        if not stripped or len(stripped.split()) < 5:
+        # Optimize: skip the expensive neural model for short sentences/paragraphs under 12 words.
+        # Rule-based passes will still humanize them instantly.
+        if not stripped or len(stripped.split()) < 12:
             smoothed_paragraphs.append(para)
             continue
 
