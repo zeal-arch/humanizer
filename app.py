@@ -114,7 +114,16 @@ def allowed_file(filename: str) -> bool:
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    try:
+        return render_template('index.html')
+    except Exception as e:
+        return jsonify({
+            'error': 'Failed to render index.html',
+            'exception': str(e),
+            'traceback': traceback.format_exc(),
+            'cwd': os.getcwd(),
+            'dir_contents': os.listdir('.') if os.path.exists('.') else []
+        }), 500
 
 
 @app.route('/scan', methods=['POST'])
