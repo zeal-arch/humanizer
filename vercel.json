@@ -1,15 +1,11 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "app.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "app.py"
-    }
+  "rewrites": [
+    { "source": "/scan", "destination": "/api/index" },
+    { "source": "/scan_text", "destination": "/api/index" },
+    { "source": "/start_task_doc", "destination": "/api/index" },
+    { "source": "/start_task_text", "destination": "/api/index" },
+    { "source": "/stream/:id", "destination": "/api/index" },
+    { "source": "/download_doc/:id", "destination": "/api/index" },
+    { "source": "/download_text/:id", "destination": "/api/index" }
   ]
 }

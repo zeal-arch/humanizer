@@ -102,8 +102,12 @@ def forward_request(path, method='GET', json_data=None, files=None, params=None,
         raise e
 
 # Temp folder for uploads and outputs
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'temp')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+if IS_VERCEL:
+    # /tmp is the only writable directory on Vercel's Serverless environment
+    UPLOAD_FOLDER = '/tmp'
+else:
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'temp')
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 ALLOWED_EXTENSIONS = {'docx'}
 
