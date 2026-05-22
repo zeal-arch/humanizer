@@ -539,65 +539,78 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     """
     import torch
 
-    # Instruction prompt engineered to maximise perplexity and burstiness
+    # ── Prompt: direct instruction, no thinking required ─────────────────────
+    # /no_think suffix tells Qwen3 to skip chain-of-thought (faster + no <think> block)
     prompt = (
-        f"Rewrite the following text so it sounds like a real person wrote it. "
-        f"Use a natural, conversational tone. Mix short sentences with longer ones. "
-        f"Keep all the original meaning and facts. Do NOT add new information. "
-        f"Only output the rewritten text, nothing else.\n\n"
-        f"Original: {para}\n\n"
-        f"Rewritten:"
+        f"Rewrite the following paragraph so it reads like a real human wrote it. "
+        f"Use casual, natural language. Vary sentence length — mix short punchy sentences "
+        f"with longer ones. Keep every fact and meaning from the original. "
+        f"Output ONLY the rewritten paragraph. No explanations, no labels. /no_think\n\n"
+        f"{para}"
     )
 
-    messages = [{"role": "user", "content": prompt}]
+    messages = [
+        {"role": "system", "content": "You are a writing assistant. Rewrite text to sound natural and human. Never show your thinking. Output only the rewritten text."},
+        {"role": "user", "content": prompt}
+    ]
 
-    # Apply chat template (Qwen3 uses ChatML format)
+    # Apply chat template — enable_thinking=False disables Qwen3's <think> block
+    # This makes generation 3-5x faster and removes the AI-detectable reasoning text
     try:
-        # returns either a Tensor or a BatchEncoding (dict) depending on tokenizer version/config
         encoded = tokenizer.apply_chat_template(
             messages,
             add_generation_prompt=True,
-            return_tensors="pt"
+            return_tensors="pt",
+            enable_thinking=False,   # ← KEY: disables <think> mode entirely
         )
         input_ids = encoded["input_ids"] if hasattr(encoded, "keys") else encoded
+    except TypeError:
+        # Older transformers versions don't support enable_thinking — fallback
+        try:
+            encoded = tokenizer.apply_chat_template(
+                messages,
+                add_generation_prompt=True,
+                return_tensors="pt",
+            )
+            input_ids = encoded["input_ids"] if hasattr(encoded, "keys") else encoded
+        except Exception:
+            encoded = tokenizer.encode(prompt, return_tensors="pt")
+            input_ids = encoded["input_ids"] if hasattr(encoded, "keys") else encoded
     except Exception:
-        # Fallback: plain tokenize if chat template unavailable
         encoded = tokenizer.encode(prompt, return_tensors="pt")
         input_ids = encoded["input_ids"] if hasattr(encoded, "keys") else encoded
 
     if isinstance(input_ids, list):
         input_ids = torch.tensor([input_ids])
-        
-    input_ids = input_ids.to(model.device)
 
+    input_ids = input_ids.to(model.device)
     input_len = input_ids.shape[-1]
-    # Build attention_mask: 1s everywhere (no padding in a single inference call)
     attention_mask = torch.ones_like(input_ids).to(model.device)
 
     with torch.no_grad():
         outputs = model.generate(
             input_ids,
             attention_mask=attention_mask,
-            max_new_tokens=min(300, len(para.split()) * 3),
+            max_new_tokens=min(280, len(para.split()) * 3),
             do_sample=True,
-            temperature=0.85,     # slightly lower = more coherent but still varied
-            top_p=0.92,
+            temperature=0.80,
+            top_p=0.90,
             top_k=40,
             repetition_penalty=1.15,
             pad_token_id=tokenizer.eos_token_id,
         )
 
-    # Decode only the newly generated tokens (not the prompt)
     generated = tokenizer.decode(outputs[0][input_len:], skip_special_tokens=True).strip()
 
-    # Clean up any stray thinking tags Qwen3 might produce
+    # ── Safety: strip any <think> blocks that leaked through ─────────────────
     generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
+    # Strip any "Rewritten:" / "Output:" label the model might prepend
+    generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
 
-    # If Qwen3 produced something reasonable, use it; else return original
     words_out = len(generated.split())
-    words_in = len(para.split())
+    words_in  = len(para.split())
     if words_out < 3 or words_out > words_in * 4:
-        return para  # safety: reject if too short or exploded in length
+        return para  # safety fallback
 
     return generated
 
