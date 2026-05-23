@@ -18,6 +18,7 @@ COPY requirements-prod.txt .
 RUN pip install --no-cache-dir -r requirements-prod.txt
 
 # Pre-download ALL NLTK data so startup is instant (no runtime downloads)
+ENV NLTK_DATA=/app/models/nltk_data
 RUN python -c "import nltk; [nltk.download(p) for p in ['wordnet','omw-1.4','words','punkt','punkt_tab','averaged_perceptron_tagger','averaged_perceptron_tagger_eng']]"
 
 # Copy the rest of the app (model weights in models/ are excluded via .dockerignore)
