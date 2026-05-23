@@ -8,13 +8,27 @@ import json
 import time
 import traceback
 import threading
+
+# Configure PyTorch CPU threads BEFORE any other torch operations.
+# Must happen before transformers/model imports or set_num_interop_threads silently fails.
+try:
+    import torch
+    torch.set_num_threads(2)
+    torch.set_num_interop_threads(2)
+except Exception:
+    pass
 from flask import Flask, request, jsonify, send_file, render_template, Response
 
-# Check if running in Vercel Proxy Mode or Local/HuggingFace Native Mode
-# Vercel automatically sets VERCEL="1"
 IS_VERCEL = os.environ.get('VERCEL') == '1'
 HF_SPACE_URL = os.environ.get('HF_SPACE_URL')
-HF_API_TOKEN = os.environ.get('HF_API_TOKEN') or os.environ.get('HF_TOKEN') or os.environ.get('zeal000')
+HF_API_TOKEN = (
+    os.environ.get('HF_API_TOKEN') or 
+    os.environ.get('HF_TOKEN') or 
+    os.environ.get('humanizeread') or 
+    os.environ.get('zeal000') or 
+    os.environ.get('HF_READ_TOKEN')
+)
+
 
 # Try importing ML dependencies. If they are missing, we MUST run in proxy mode.
 try:
@@ -393,27 +407,7 @@ def scan_text():
     
     try:
         text = data['text']
-        # We need chunking logic to match docx
-        paragraphs = [p.strip() for p in text.split('\n') if len(p.strip().split()) >= 5]
-        if not paragraphs:
-            # Fallback if too short
-            paragraphs = [text.strip()] if text.strip() else []
-            
-        full_text = '\n'.join(paragraphs)
-        word_count = len(full_text.split())
-        result = score_text(full_text)
-        
-        chunks = []
-        for block in paragraphs:
-            block_score = score_text(block)
-            chunks.append({
-                'text': block,
-                'pct': block_score['overall_pct']
-            })
-            
-        result['word_count'] = word_count
-        result['paragraph_count'] = len(paragraphs)
-        result['chunks'] = chunks
+        result = score_text(text, return_chunks=True)
         return jsonify(result)
     except Exception as e:
         print(traceback.format_exc())
@@ -524,9 +518,10 @@ def download_text(task_id):
 
     if task_id not in ACTIVE_TASKS or ACTIVE_TASKS[task_id]["status"] != "done":
         return jsonify({"error": "Not found or not finished"}), 404
-    res = ACTIVE_TASKS[task_id]["result"]
-    del ACTIVE_TASKS[task_id]
-    return jsonify(res)
+    task = ACTIVE_TASKS.pop(task_id, None)
+    if task is None:
+        return jsonify({"error": "Already cleaned up"}), 404
+    return jsonify(task["result"])
 
 if __name__ == '__main__':
     print("\n>>> Humanizer running at http://localhost:5000\n")

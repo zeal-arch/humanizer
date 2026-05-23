@@ -261,11 +261,8 @@ def load_detector():
 
         try:
             import torch
-            # Optimize CPU execution threads matching HF Free Space (2 vCPUs)
-            torch.set_num_threads(2)
-            torch.set_num_interop_threads(2)
         except Exception as e:
-            print(f"[Detector] Failed to set PyTorch CPU threads: {e}")
+            print(f"[Detector] Failed to import torch: {e}")
 
         # Check local folder first
         if os.path.exists(LOCAL_MODEL_DIR) and os.path.exists(os.path.join(LOCAL_MODEL_DIR, 'model.safetensors')):
@@ -288,14 +285,9 @@ def load_detector():
     return _DETECTOR_TOKENIZER, _DETECTOR_MODEL
 
 
-def _predict_with_deberta(text: str, tokenizer, model) -> float:
-    """Run paragraph-by-paragraph text classification using DeBERTa."""
+def _predict_paragraphs_with_deberta(paragraphs: list[str], tokenizer, model) -> tuple[float, list[float]]:
+    """Run paragraph-by-paragraph text classification using DeBERTa, returning (overall_prob, paragraph_probs)."""
     import torch
-    # Split text into paragraphs
-    paragraphs = [p.strip() for p in text.split('\n') if len(p.strip().split()) >= 8]
-    if not paragraphs:
-        paragraphs = [text.strip()]
-
     probabilities = []
     for para in paragraphs:
         encoded = tokenizer(
@@ -312,11 +304,12 @@ def _predict_with_deberta(text: str, tokenizer, model) -> float:
             probabilities.append(prob)
 
     if not probabilities:
-        return 0.5
-    return sum(probabilities) / len(probabilities)
+        return 0.5, []
+    overall = sum(probabilities) / len(probabilities)
+    return overall, probabilities
 
 
-def score_text(text: str) -> dict:
+def score_text(text: str, return_chunks: bool = False) -> dict:
     """
     Score a block of text for AI likelihood using fine-tuned DeBERTa model.
     Falls back to the heuristic rule-based scorer if model fails or deps are missing.
@@ -326,7 +319,15 @@ def score_text(text: str) -> dict:
             'overall_pct': 0,
             'label': 'Insufficient text',
             'signals': {},
+            'word_count': 0,
+            'paragraph_count': 0,
+            'chunks': [] if return_chunks else None
         }
+
+    # Split text into paragraphs (minimum 8 words to filter out headers/junk in scoring)
+    paragraphs = [p.strip() for p in text.split('\n') if len(p.strip().split()) >= 8]
+    if not paragraphs:
+        paragraphs = [text.strip()]
 
     tokenizer = None
     model = None
@@ -337,8 +338,8 @@ def score_text(text: str) -> dict:
 
     if tokenizer is not None and model is not None:
         try:
-            prob = _predict_with_deberta(text, tokenizer, model)
-            pct = round(prob * 100)
+            overall_prob, para_probs = _predict_paragraphs_with_deberta(paragraphs, tokenizer, model)
+            pct = round(overall_prob * 100)
 
             # Heuristic signals are computed for UI display
             signals = {
@@ -361,15 +362,40 @@ def score_text(text: str) -> dict:
             else:
                 label = 'Reads as human-written'
 
-            return {
+            res = {
                 'overall_pct': pct,
                 'label': label,
                 'signals': signals,
+                'word_count': len(text.split()),
+                'paragraph_count': len(paragraphs),
             }
+            if return_chunks:
+                res['chunks'] = [
+                    {'text': p, 'pct': round(prob * 100)}
+                    for p, prob in zip(paragraphs, para_probs)
+                ]
+            return res
         except Exception as e:
             print(f"[Detector] Error running DeBERTa model: {e}. Using rule-based fallback.")
 
     # Rule-Based Heuristic Scorer Fallback
+    # Score each paragraph with rules to get overall and chunk scores
+    para_probs = []
+    for para in paragraphs:
+        para_signals = {
+            'ai_phrases':        _ai_phrase_density(para),
+            'burstiness':        _burstiness_score(para),
+            'opener_uniformity': _opener_uniformity(para),
+            'avg_sent_length':   _avg_sentence_length_score(para),
+            'filler_density':    _filler_density(para),
+            'transitions':       _transition_overuse(para),
+        }
+        para_weighted = sum(para_signals[k] * WEIGHTS[k] for k in para_signals)
+        para_probs.append(para_weighted)
+
+    overall_prob = sum(para_probs) / len(para_probs) if para_probs else 0.5
+    pct = round(overall_prob * 100)
+
     signals = {
         'ai_phrases':        _ai_phrase_density(text),
         'burstiness':        _burstiness_score(text),
@@ -378,9 +404,6 @@ def score_text(text: str) -> dict:
         'filler_density':    _filler_density(text),
         'transitions':       _transition_overuse(text),
     }
-
-    weighted = sum(signals[k] * WEIGHTS[k] for k in signals)
-    pct = round(weighted * 100)
 
     if pct >= 75:
         label = 'Very likely AI-generated'
@@ -393,11 +416,19 @@ def score_text(text: str) -> dict:
     else:
         label = 'Reads as human-written'
 
-    return {
+    res = {
         'overall_pct': pct,
         'label': label,
         'signals': {k: round(v * 100) for k, v in signals.items()},
+        'word_count': len(text.split()),
+        'paragraph_count': len(paragraphs),
     }
+    if return_chunks:
+        res['chunks'] = [
+            {'text': p, 'pct': round(prob * 100)}
+            for p, prob in zip(paragraphs, para_probs)
+        ]
+    return res
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -428,19 +459,4 @@ def score_docx(path: str) -> dict:
                         prose_blocks.append(t)
 
     full_text = '\n'.join(prose_blocks)
-    word_count = len(full_text.split())
-    result = score_text(full_text)
-    
-    # Score chunks individually
-    chunks = []
-    for block in prose_blocks:
-        block_score = score_text(block)
-        chunks.append({
-            'text': block,
-            'pct': block_score['overall_pct']
-        })
-        
-    result['word_count'] = word_count
-    result['paragraph_count'] = len(prose_blocks)
-    result['chunks'] = chunks
-    return result
+    return score_text(full_text, return_chunks=True)

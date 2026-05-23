@@ -62,7 +62,13 @@ def preload_model():
         return  # already loaded
 
     # ── 1. Check if Hugging Face token is present for Serverless Inference API ──
-    token = _os.environ.get('HF_API_TOKEN') or _os.environ.get('HF_TOKEN') or _os.environ.get('zeal000')
+    token = (
+        _os.environ.get('HF_API_TOKEN') or 
+        _os.environ.get('HF_TOKEN') or 
+        _os.environ.get('humanizeread') or 
+        _os.environ.get('zeal000') or 
+        _os.environ.get('HF_READ_TOKEN')
+    )
     if token:
         api_model = _os.environ.get('HF_API_MODEL_ID', 'Qwen/Qwen2.5-72B-Instruct')
         print(f"[Model] Hugging Face Access Token detected. Initializing Serverless Inference client for {api_model}...")
@@ -74,6 +80,7 @@ def preload_model():
             return
         except Exception as e:
             print(f"[Model] Failed to load Hugging Face InferenceClient: {e}. Falling back to local/hub load.")
+
 
     # ── 2. Standard Transformers loading ──
     try:
