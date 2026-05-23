@@ -63,13 +63,24 @@ else:
                 nltk.download(package, download_dir=os.environ['NLTK_DATA'], quiet=True)
 
     def init_model():
-        """Pre-load the AI model in a background thread so first request is instant."""
+        """Pre-load the AI models in a background thread so first requests are instant."""
         if __name__ == '__main__':
             if os.environ.get('WERKZEUG_RUN_MAIN') != 'true':
                 print("[Model] Reloader watchdog process detected. Skipping model preload.")
                 return
 
-        t = threading.Thread(target=preload_model, daemon=True)
+        def _preload_all():
+            try:
+                preload_model()
+            except Exception as e:
+                print(f"[Model] Preloading humanizer model failed: {e}")
+            try:
+                from humanizer.detector import load_detector
+                load_detector()
+            except Exception as e:
+                print(f"[Model] Preloading detector model failed: {e}")
+
+        t = threading.Thread(target=_preload_all, daemon=True)
         t.start()
 
     init_nltk()

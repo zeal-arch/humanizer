@@ -1,10 +1,54 @@
 # humanizer/detector.py
-# Rule-based AI probability scorer — mirrors the signals Turnitin measures
-# Zero AI API calls — purely statistical/heuristic
+# Rule-based and Transformer-based AI probability scorer
+# Uses DeBERTa-v3 fine-tuned model for deep classification and fallbacks to heuristics
 
 import re
 import math
+import os
+import threading
 from .phrases import AI_PHRASES, INTENSIFIERS
+
+try:
+    from transformers import PreTrainedModel, AutoConfig, AutoModel, AutoTokenizer
+    import torch
+    import torch.nn as nn
+    HAS_TORCH_DEPS = True
+except ImportError:
+    PreTrainedModel = object  # dummy base class for syntax validation
+    nn = object
+    HAS_TORCH_DEPS = False
+
+if HAS_TORCH_DEPS:
+    class DesklibAIDetectionModel(PreTrainedModel):
+        config_class = AutoConfig
+
+        def __init__(self, config):
+            super().__init__(config)
+            self.model = AutoModel.from_config(config)
+            self.classifier = nn.Linear(config.hidden_size, 1)
+            self.init_weights()
+
+        def forward(self, input_ids, attention_mask=None, labels=None):
+            outputs = self.model(input_ids, attention_mask=attention_mask)
+            last_hidden_state = outputs[0]
+            input_mask_expanded = attention_mask.unsqueeze(-1).expand(last_hidden_state.size()).float()
+            sum_embeddings = torch.sum(last_hidden_state * input_mask_expanded, dim=1)
+            sum_mask = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+            pooled_output = sum_embeddings / sum_mask
+
+            logits = self.classifier(pooled_output)
+            loss = None
+            if labels is not None:
+                loss_fct = nn.BCEWithLogitsLoss()
+                loss = loss_fct(logits.view(-1), labels.float())
+
+            output = {"logits": logits}
+            if loss is not None:
+                output["loss"] = loss
+            return output
+else:
+    class DesklibAIDetectionModel:
+        pass
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -195,18 +239,137 @@ WEIGHTS = {
     'transitions':      0.08,
 }
 
+_DETECTOR_TOKENIZER = None
+_DETECTOR_MODEL = None
+_DETECTOR_LOCK = threading.Lock()
+
+_models_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models'))
+LOCAL_MODEL_DIR = os.path.join(_models_dir, 'desklib-ai-text-detector-v1.01')
+
+def load_detector():
+    """Load the DeBERTa detector model into memory (singleton)."""
+    global _DETECTOR_TOKENIZER, _DETECTOR_MODEL
+    if not HAS_TORCH_DEPS:
+        return None, None
+
+    if _DETECTOR_MODEL is not None:
+        return _DETECTOR_TOKENIZER, _DETECTOR_MODEL
+
+    with _DETECTOR_LOCK:
+        if _DETECTOR_MODEL is not None:
+            return _DETECTOR_TOKENIZER, _DETECTOR_MODEL
+
+        try:
+            import torch
+            # Optimize CPU execution threads matching HF Free Space (2 vCPUs)
+            torch.set_num_threads(2)
+            torch.set_num_interop_threads(2)
+        except Exception as e:
+            print(f"[Detector] Failed to set PyTorch CPU threads: {e}")
+
+        # Check local folder first
+        if os.path.exists(LOCAL_MODEL_DIR) and os.path.exists(os.path.join(LOCAL_MODEL_DIR, 'model.safetensors')):
+            model_path = LOCAL_MODEL_DIR
+            print(f"[Detector] Loading desklib model from local folder ({LOCAL_MODEL_DIR})...")
+        else:
+            model_path = "desklib/ai-text-detector-v1.01"
+            print(f"[Detector] Local model not found. Downloading {model_path} from HF Hub...")
+
+        try:
+            _DETECTOR_TOKENIZER = AutoTokenizer.from_pretrained(model_path)
+            _DETECTOR_MODEL = DesklibAIDetectionModel.from_pretrained(model_path)
+            _DETECTOR_MODEL.eval()
+            print("[Detector] desklib model loaded successfully.")
+        except Exception as e:
+            import traceback
+            print(f"[Detector] Failed to load DeBERTa detector: {e}")
+            traceback.print_exc()
+
+    return _DETECTOR_TOKENIZER, _DETECTOR_MODEL
+
+
+def _predict_with_deberta(text: str, tokenizer, model) -> float:
+    """Run paragraph-by-paragraph text classification using DeBERTa."""
+    import torch
+    # Split text into paragraphs
+    paragraphs = [p.strip() for p in text.split('\n') if len(p.strip().split()) >= 8]
+    if not paragraphs:
+        paragraphs = [text.strip()]
+
+    probabilities = []
+    for para in paragraphs:
+        encoded = tokenizer(
+            para,
+            padding='max_length',
+            truncation=True,
+            max_length=512,
+            return_tensors='pt'
+        )
+        with torch.inference_mode():
+            outputs = model(input_ids=encoded['input_ids'], attention_mask=encoded['attention_mask'])
+            logits = outputs["logits"]
+            prob = torch.sigmoid(logits).item()
+            probabilities.append(prob)
+
+    if not probabilities:
+        return 0.5
+    return sum(probabilities) / len(probabilities)
+
+
 def score_text(text: str) -> dict:
     """
-    Score a block of text for AI likelihood.
-    Returns dict with individual signal scores and overall percentage.
+    Score a block of text for AI likelihood using fine-tuned DeBERTa model.
+    Falls back to the heuristic rule-based scorer if model fails or deps are missing.
     """
-    if not text or len(text.split()) < 20:
+    if not text or len(text.split()) < 15:
         return {
             'overall_pct': 0,
             'label': 'Insufficient text',
             'signals': {},
         }
 
+    tokenizer = None
+    model = None
+    try:
+        tokenizer, model = load_detector()
+    except Exception as e:
+        print(f"[Detector] Failed to load detector: {e}. Using rule-based fallback.")
+
+    if tokenizer is not None and model is not None:
+        try:
+            prob = _predict_with_deberta(text, tokenizer, model)
+            pct = round(prob * 100)
+
+            # Heuristic signals are computed for UI display
+            signals = {
+                'ai_phrases':        round(_ai_phrase_density(text) * 100),
+                'burstiness':        round(_burstiness_score(text) * 100),
+                'opener_uniformity': round(_opener_uniformity(text) * 100),
+                'avg_sent_length':   round(_avg_sentence_length_score(text) * 100),
+                'filler_density':    round(_filler_density(text) * 100),
+                'transitions':       round(_transition_overuse(text) * 100),
+            }
+
+            if pct >= 75:
+                label = 'Very likely AI-generated'
+            elif pct >= 50:
+                label = 'Likely AI-generated'
+            elif pct >= 30:
+                label = 'Possibly AI-assisted'
+            elif pct >= 15:
+                label = 'Mostly human-sounding'
+            else:
+                label = 'Reads as human-written'
+
+            return {
+                'overall_pct': pct,
+                'label': label,
+                'signals': signals,
+            }
+        except Exception as e:
+            print(f"[Detector] Error running DeBERTa model: {e}. Using rule-based fallback.")
+
+    # Rule-Based Heuristic Scorer Fallback
     signals = {
         'ai_phrases':        _ai_phrase_density(text),
         'burstiness':        _burstiness_score(text),
