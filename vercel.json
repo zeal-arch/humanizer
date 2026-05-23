@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/diagnose", "destination": "/api/index" },
     { "source": "/scan", "destination": "/api/index" },
     { "source": "/scan_text", "destination": "/api/index" },
     { "source": "/start_task_doc", "destination": "/api/index" },

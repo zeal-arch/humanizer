@@ -171,7 +171,7 @@ def _split_long_sentence(sentence: str, max_words: int = 24) -> list[str]:
         return [sentence]
 
     split_words = [
-        " which ", " that ", " and ", " but ", " while ",
+        " and ", " but ", " while ",
         " although ", " because ", " since ", " where ", " when ",
         " whereas ", " however ", " so ", " yet ", " unless ",
         " until ", " after ", " before ", " once ", " if ",
@@ -197,11 +197,8 @@ def _split_long_sentence(sentence: str, max_words: int = 24) -> list[str]:
 
     first = sentence[:best_pos].strip().rstrip(',')
     second = sentence[best_pos + len(best_sw):].strip()
-    if second:
-        second = second[0].upper() + second[1:]
 
     connector_map = {
-        " which ": ". This ", " that ": ". This ",
         " and ": ". Also, ", " but ": ". However, ",
         " while ": ". Meanwhile, ", " although ": ". That said, ",
         " because ": ". The reason is that ", " since ": ". Since ",
@@ -213,6 +210,15 @@ def _split_long_sentence(sentence: str, max_words: int = 24) -> list[str]:
         " once ": ". Once ", " if ": ". If ",
     }
     prefix = connector_map.get(best_sw, ". ")
+
+    # Lowercase the first letter of second since it will come after prefix words (which are capitalized)
+    if second:
+        second = second[0].lower() + second[1:]
+
+    # If the prefix is a simple period (starts a new sentence directly), we MUST capitalize second
+    if prefix == ". " and second:
+        second = second[0].upper() + second[1:]
+
     if prefix.startswith(". "):
         pfx_text = prefix[2:].strip()
         second = pfx_text + " " + second if pfx_text else second
@@ -221,7 +227,7 @@ def _split_long_sentence(sentence: str, max_words: int = 24) -> list[str]:
 
 
 def _merge_short_sentences(sentences: list[str], min_words: int = 7) -> list[str]:
-    """Merge consecutive very short sentences with an em-dash."""
+    """Merge consecutive very short sentences with a semicolon."""
     result = []
     i = 0
     while i < len(sentences):
@@ -233,7 +239,7 @@ def _merge_short_sentences(sentences: list[str], min_words: int = 7) -> list[str
             and random.random() < 0.65
         ):
             next_s = sentences[i + 1].rstrip('.!?')
-            merged = s.rstrip('.!?') + " — " + next_s[0].lower() + next_s[1:]
+            merged = s.rstrip('.!?') + "; " + next_s[0].lower() + next_s[1:]
             ending_char = sentences[i + 1][-1]
             if ending_char not in '.!?':
                 ending_char = '.'
@@ -559,16 +565,16 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     # ── Prompt: direct instruction, no thinking required ─────────────────────
     # /no_think suffix tells Qwen3 to skip chain-of-thought (faster + no <think> block)
     prompt = (
-        f"Rewrite the following paragraph to make it look 100% human-written.\n"
-        f"Strict Guidelines:\n"
-        f"1. Tone: Conversational, casual, simple, and informal.\n"
-        f"2. Sentence Variety: Mix very short, punchy sentences (3-8 words) with longer, natural ones. Avoid uniform sentence length.\n"
-        f"3. Vocabulary: Use simple, everyday words. Do NOT use complex academic vocabulary.\n"
-        f"4. Contractions: Use contractions (don't, can't, it's, they're, etc.) naturally wherever possible.\n"
-        f"5. NO AI transitions: Do NOT use formal transition phrases (like 'Furthermore', 'Moreover', 'Consequently', 'Therefore', 'As a consequence', 'In addition', 'Indeed', 'Crucial', 'Importantly', 'Furthermore'). Open sentences simply or use words like 'But', 'And', 'So', 'Plus'.\n"
-        f"6. Content: Keep all original meanings and facts exactly the same. Do not add new information.\n\n"
+        f"You are a human writing a casual email or message. Rewrite the following text to make it sound completely human, organic, and natural.\n"
+        f"Follow these human writing rules:\n"
+        f"1. Make the writing style highly conversational, casual, and simple. Use everyday vocabulary.\n"
+        f"2. Write with high sentence length variance: mix brief, punchy sentences (2 to 7 words) with longer, flowing ones. Avoid uniform, robotic sentence structure.\n"
+        f"3. Use contractions (don't, can't, it's, we're, you'd) naturally and frequently.\n"
+        f"4. Eliminate all formal AI-like transition words (e.g., 'Furthermore', 'In addition', 'Consequently', 'Indeed', 'Moreover', 'Therefore'). Instead, start sentences directly, or use informal connectors like 'Actually', 'But', 'And', 'So', 'Plus', 'Honestly'.\n"
+        f"5. Do not write in an overly polished academic way. Add natural, human phrasing and occasional conversational touches (e.g., 'pretty much', 'kind of', 'to be honest').\n"
+        f"6. Keep the exact core meaning, facts, and info from the original paragraph. Do not add random extra facts.\n\n"
         f"Original paragraph:\n{para}\n\n"
-        f"Rewrite (output ONLY the rewritten paragraph, no introductions, no labels, no quotes): /no_think"
+        f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
     )
 
     messages = [
@@ -609,8 +615,8 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     input_len = input_ids.shape[-1]
     attention_mask = torch.ones_like(input_ids).to(model.device)
 
-    # Optimize max_new_tokens dynamically to prevent runaway text generation and speed up runtime
-    max_tokens = min(150, int(len(para.split()) * 1.3) + 20)
+    # Prevent truncation of longer paragraphs by increasing token cap (Qwen3 tokenizer uses subwords)
+    max_tokens = min(350, int(len(para.split()) * 2.0) + 50)
 
     # Acquire model lock to guarantee thread-safe autoregressive decoding (prevents text bleed)
     with _MODEL_LOCK:
@@ -621,9 +627,9 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
                 attention_mask=attention_mask,
                 max_new_tokens=max_tokens,
                 do_sample=True,
-                temperature=0.70,   # Qwen3 non-thinking mode best practice
-                top_p=0.80,         # Qwen3 non-thinking mode best practice
-                top_k=20,           # Qwen3 non-thinking mode best practice
+                temperature=0.90,   # Raised from 0.70 to introduce more creativity and perplexity
+                top_p=0.90,         # Raised from 0.80 for more diverse token selection
+                top_k=40,           # Raised from 20 for more variety
                 repetition_penalty=1.15,
                 use_cache=True,
                 pad_token_id=tokenizer.eos_token_id,
@@ -798,8 +804,13 @@ def humanize_text(text: str, progress_callback=None) -> dict:
         progress_callback(85, 100, "Adjusting sentence rhythm...")
 
     # ── PASS 6: Burstiness — vary sentence lengths AFTER T5 ──────────────────
-    # GPTZero's #1 signal is uniform sentence length. This fixes it post-T5.
-    text, n = pass3_burstiness(text);        stats['pass3_burstiness'] = n
+    # Qwen3 already produces excellent natural sentence length variation.
+    # We only apply the heuristic burstiness split for T5.
+    _, _, model_type = get_model()
+    if model_type == 't5':
+        text, n = pass3_burstiness(text);    stats['pass3_burstiness'] = n
+    else:
+        stats['pass3_burstiness'] = 0
 
     # ── PASS 7: Ghost character cleanup ──────────────────────────────────────
     text, n = pass17_ghost_characters(text); stats['pass17_ghost_characters'] = n
