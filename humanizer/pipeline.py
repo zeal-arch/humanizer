@@ -193,7 +193,7 @@ def _split_long_sentence(sentence: str, max_words: int = 24) -> list[str]:
         return [sentence]
 
     split_words = [
-        " and ", " but ", " while ",
+        " but ", " while ",
         " although ", " because ", " since ", " where ", " when ",
         " whereas ", " however ", " so ", " yet ", " unless ",
         " until ", " after ", " before ", " once ", " if ",
@@ -202,7 +202,7 @@ def _split_long_sentence(sentence: str, max_words: int = 24) -> list[str]:
     mid = len(sentence) // 2
     best_pos = -1
     best_dist = len(sentence)
-    best_sw = " and "
+    best_sw = " but "
 
     for sw in split_words:
         pos = sentence.find(sw, len(sentence) // 4)
@@ -308,19 +308,32 @@ def pass3_burstiness(text: str) -> tuple[str, int]:
     """
     Inject sentence length variation — the #1 Turnitin signal.
     Splits long sentences and occasionally merges short consecutive ones.
+    Processes paragraphs individually to preserve \n paragraph breaks.
     """
-    sentences = _tokenize_sentences(text)
-    count_before = len(sentences)
+    paragraphs = text.split('\n')
+    total_changes = 0
+    new_paragraphs = []
 
-    new_sentences = []
-    for s in sentences:
-        parts = _split_long_sentence(s, max_words=22)
-        new_sentences.extend(parts)
+    for para in paragraphs:
+        stripped = para.strip()
+        if not stripped or len(stripped.split()) < 8:
+            new_paragraphs.append(para)
+            continue
 
-    new_sentences = _merge_short_sentences(new_sentences, min_words=9)
+        sentences = _tokenize_sentences(stripped)
+        count_before = len(sentences)
 
-    changes = abs(len(new_sentences) - count_before)
-    return " ".join(new_sentences), changes
+        new_sentences = []
+        for s in sentences:
+            parts = _split_long_sentence(s, max_words=22)
+            new_sentences.extend(parts)
+
+        new_sentences = _merge_short_sentences(new_sentences, min_words=9)
+
+        total_changes += abs(len(new_sentences) - count_before)
+        new_paragraphs.append(' '.join(new_sentences))
+
+    return '\n'.join(new_paragraphs), total_changes
 
 
 def pass4_discourse_markers(text: str) -> tuple[str, int]:
@@ -528,13 +541,297 @@ def pass14_syntactic_fronting(text: str) -> tuple[str, int]:
     return text, count + n1 + n2
 
 
-def pass15_synonym_rotation(text: str) -> tuple[str, int]:
+def pass15_perplexity_guided_perturbation(text: str) -> tuple[str, int]:
     """
-    Disabled: NLTK WordNet synonym rotation lacks context and causes grammatical errors
-    like swapping "reasons" for "ground". Vocabulary variation is now handled natively
-    by the T5 paraphrase model in Pass 19 via Nucleus Sampling.
+    Perplexity-guided word perturbation — the core anti-GPTZero pass.
+
+    Uses GPT-2 to score each sentence's perplexity (predictability).
+    Sentences with LOW perplexity (< 35) are "too AI-like" — GPTZero
+    will flag them. We aggressively perturb those sentences with WordNet
+    synonym rotation, filtered through student vocabulary.
+
+    Sentences with HIGH perplexity (> 35) are already "human-enough"
+    and are left untouched to preserve quality.
+
+    This directly attacks what GPTZero measures: the token probability
+    distribution. By replacing predictable tokens with less predictable
+    alternatives, we raise per-sentence perplexity above the detection
+    threshold.
     """
-    return text, 0
+    from .perplexity import sentence_perplexity, PPL_AI_THRESHOLD, find_predictable_tokens, PPL_MAX_ITERATIONS
+    from .student_vocab import STUDENT_VOCABULARY, filter_student_synonyms
+    from nltk.corpus import words as nltk_words
+
+    try:
+        common_words = set(w.lower() for w in nltk_words.words())
+    except Exception:
+        common_words = set()
+
+    # Banned synonyms (WordNet garbage and awkward/informal synonyms)
+    BANNED = {
+        'nidus', 'clobber', 'solemnisation', 'solemnization', 'clip', 'cartridge',
+        'knockout', 'telling', 'tellings', 'animation', 'animations', 'fasting',
+        'eternal', 'perpetual', 'tempt', 'mold', 'mould', 'forge', 'fashion',
+        'plication', 'plica', 'crease', 'crinkle', 'rumple', 'cockle',
+        'piss', 'urinate', 'piddle', 'micturate', 'wee', 'defecate',
+        'crap', 'stool', 'slew', 'slay', 'smite', 'smote',
+        'beget', 'engender', 'sire', 'spawn', 'hump', 'bonk', 'copulate',
+        'fornicate', 'intercourse', 'coitus', 'congress',
+        'snuff', 'croak', 'decease', 'perish', 'conk',
+        'stratum', 'substrate', 'substratum', 'substructure',
+        'bum', 'hobo', 'tramp', 'vagrant', 'mooch', 'panhandle',
+        'incur', 'sustain', 'brook', 'stomach', 'abide', 'endure',
+        'ilk', 'kidney', 'kinsfolk', 'kinfolk', 'kinship',
+        'phallus', 'member', 'penis', 'privy', 'commode', 'throne',
+        'dolt', 'dullard', 'dunce', 'bonehead', 'numskull', 'blockhead',
+        'boob', 'booby', 'nincompoop', 'ninny', 'simpleton',
+        'stub', 'butt', 'rump', 'rear', 'derriere', 'fundament',
+        'bugger', 'blighter', 'chap', 'cuss', 'fellow', 'geezer',
+        'elds', 'agnise', 'agnize', 'cosmos', 'macrocosm',
+
+        # Awkward/informal synonyms that AI or spin-bots introduce
+        'peeps', 'peep', 'confab', 'confabbing', 'confabbed', 'say', 'dismay',
+        'gos', 'decree', 'enquiry', 'enquiries', 'gathering', 'gatherings',
+        'growing', 'creation', 'creations', 'living', 'citizenry', 'multitude',
+        'arouse', 'companion', 'labor', 'wont', 'drill', 'space', 'peculiarly',
+        'pass', 's', 'patch', 'watershed', 'conflict', 'equilibrium', 'chats',
+        'chat', 'alarm', 'alarms', 'alarmed', 'instruction', 'instructions',
+        'occurred', 'aroused', 'head', 'hand', 'eye', 'heart', 'face', 'body'
+    }
+
+    SKIP_WORDS = {
+        'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
+        'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
+        'should', 'may', 'might', 'shall', 'can', 'must', 'need',
+        'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her',
+        'us', 'them', 'my', 'your', 'his', 'its', 'our', 'their',
+        'this', 'that', 'these', 'those', 'what', 'which', 'who', 'whom',
+        'not', 'no', 'yes', 'so', 'if', 'or', 'and', 'but', 'for', 'nor',
+        'on', 'at', 'to', 'by', 'in', 'of', 'up', 'out', 'off', 'over',
+        'into', 'with', 'from', 'about', 'than', 'then', 'now', 'just',
+        'also', 'very', 'too', 'much', 'more', 'most', 'own', 'same',
+        'other', 'each', 'every', 'both', 'few', 'many', 'some', 'any',
+        'such', 'only', 'even', 'still', 'already', 'always', 'never',
+        'get', 'got', 'go', 'went', 'gone', 'come', 'came', 'make', 'made',
+        'take', 'took', 'give', 'gave', 'say', 'said', 'tell', 'told',
+        'know', 'knew', 'think', 'thought', 'see', 'saw', 'want', 'like',
+        'use', 'used', 'find', 'found', 'put', 'set', 'run', 'let',
+        'really', 'pretty', 'quite', 'kinda', 'stuff', 'things', 'thing',
+        'look', 'looks', 'feel', 'feels', 'seem', 'seems', 'keep', 'keeps',
+        'turn', 'turns', 'show', 'shows', 'call', 'calls', 'help', 'helps',
+        'work', 'works', 'play', 'plays', 'live', 'lives', 'move', 'moves',
+        'long', 'back', 'down', 'well', 'good', 'hard', 'fast', 'kind',
+        'able', 'real', 'sure', 'open', 'full', 'late', 'easy', 'high',
+        'best', 'last', 'next', 'near', 'free', 'left', 'right',
+        'don', 'doesn', 'didn', 'won', 'wouldn', 'couldn', 'shouldn',
+        't', 's', 're', 've', 'll', 'd', 'm',
+    }
+
+    def _double_consonant(word: str) -> str:
+        if len(word) >= 3 and word[-1] in 'bdglmnprt' and word[-2] in 'aeiou' and word[-3] not in 'aeiou':
+            return word + word[-1]
+        return word
+
+    def _get_synonym(word: str, tag: str) -> str | None:
+        """Try to find a student-level synonym for a word, preserving grammar."""
+        trailing = ''
+        core = word
+        while core and core[-1] in '.,;:!?\'")-':
+            trailing = core[-1] + trailing
+            core = core[:-1]
+
+        clean = re.sub(r'[^a-zA-Z]', '', core)
+        wn_pos = get_wordnet_pos(tag)
+
+        if (wn_pos is None or len(clean) < 4 or clean.lower() in SKIP_WORDS
+                or tag in ('NNP', 'NNPS')):
+            return None
+
+        synsets = wn.synsets(clean.lower(), pos=wn_pos)
+        if not synsets:
+            return None
+
+        # Check first 2 synsets for more candidates
+        candidates = set()
+        for syn in synsets[:2]:
+            for lemma in syn.lemmas():
+                name = lemma.name().replace('_', ' ')
+                if (' ' not in name
+                    and name.lower() != clean.lower()
+                    and abs(len(name) - len(clean)) <= 4
+                    and name.lower() not in BANNED
+                    and (not common_words or name.lower() in common_words)):
+                    candidates.add(name)
+
+        if not candidates:
+            return None
+
+        # Prefer student vocabulary synonyms
+        student_filtered = filter_student_synonyms(candidates, clean)
+        if not student_filtered:
+            return None
+
+        synonym = random.choice(student_filtered)
+
+        # Inflection rules
+        # 1. Plural nouns (NNS)
+        if tag == 'NNS' or (tag == 'NN' and clean.endswith('s') and not clean.endswith('ss')):
+            if not synonym.endswith('s'):
+                if synonym.endswith('y') and not any(synonym.endswith(x) for x in ['ay', 'ey', 'oy', 'uy']):
+                    synonym = synonym[:-1] + 'ies'
+                elif any(synonym.endswith(x) for x in ['ch', 'sh', 'x', 's', 'z']):
+                    synonym += 'es'
+                else:
+                    synonym += 's'
+        # 2. Gerunds / present participles (VBG)
+        elif tag == 'VBG':
+            if not synonym.endswith('ing'):
+                synonym = _double_consonant(synonym)
+                if synonym.endswith('e') and not any(synonym.endswith(x) for x in ['ee', 'oe', 'ye']):
+                    synonym = synonym[:-1] + 'ing'
+                elif synonym.endswith('ie'):
+                    synonym = synonym[:-2] + 'ying'
+                else:
+                    synonym += 'ing'
+        # 3. Past tense / past participles (VBD, VBN)
+        elif tag in ('VBD', 'VBN'):
+            IRREGULAR_PAST = {
+                'understand': 'understood', 'build': 'built', 'spend': 'spent',
+                'keep': 'kept', 'meet': 'met', 'leave': 'left', 'lose': 'lost',
+                'sell': 'sold', 'tell': 'told', 'make': 'made', 'hold': 'held',
+                'bring': 'brought', 'think': 'thought', 'feel': 'felt',
+                'choose': 'chosen', 'see': 'seen', 'know': 'known', 'write': 'written',
+                'take': 'taken', 'give': 'given', 'do': 'done', 'run': 'run',
+                'grow': 'grown', 'find': 'found', 'get': 'got', 'go': 'went',
+                'say': 'said', 'hear': 'heard', 'rise': 'risen', 'speak': 'spoken',
+                'fall': 'fallen', 'become': 'became', 'break': 'broken', 'bend': 'bent',
+                'catch': 'caught', 'draw': 'drawn', 'drink': 'drunk', 'drive': 'driven',
+                'eat': 'eaten', 'forget': 'forgotten', 'forgive': 'forgiven', 'hide': 'hidden',
+                'ride': 'ridden', 'ring': 'rung', 'run': 'run', 'shake': 'shaken',
+                'sing': 'sung', 'sink': 'sunk', 'steal': 'stolen', 'strike': 'struck',
+                'swear': 'sworn', 'swim': 'swum', 'tear': 'torn', 'throw': 'thrown',
+                'wear': 'worn', 'win': 'won'
+            }
+            if synonym in IRREGULAR_PAST:
+                synonym = IRREGULAR_PAST[synonym]
+            elif not synonym.endswith('ed'):
+                synonym = _double_consonant(synonym)
+                if synonym.endswith('e'):
+                    synonym += 'd'
+                elif synonym.endswith('y') and not any(synonym.endswith(x) for x in ['ay', 'ey', 'oy', 'uy']):
+                    synonym = synonym[:-1] + 'ied'
+                else:
+                    synonym += 'ed'
+        # 4. 3rd person singular present verbs (VBZ)
+        elif tag == 'VBZ':
+            if not synonym.endswith('s'):
+                if synonym.endswith('y') and not any(synonym.endswith(x) for x in ['ay', 'ey', 'oy', 'uy']):
+                    synonym = synonym[:-1] + 'ies'
+                elif any(synonym.endswith(x) for x in ['ch', 'sh', 'x', 's', 'z']):
+                    synonym += 'es'
+                else:
+                    synonym += 's'
+        # 5. Adverbs ending in ly
+        elif tag == 'RB' and clean.endswith('ly'):
+            if not synonym.endswith('ly'):
+                if synonym.endswith('y'):
+                    synonym = synonym[:-1] + 'ily'
+                else:
+                    synonym += 'ly'
+
+        # Preserve capitalization
+        if core and core[0].isupper():
+            synonym = synonym[0].upper() + synonym[1:]
+
+        return synonym + trailing
+
+    # Process paragraph-by-paragraph to PRESERVE paragraph breaks
+    paragraphs = text.split('\n')
+    total_changes = 0
+    new_paragraphs = []
+
+    for para in paragraphs:
+        stripped = para.strip()
+        if not stripped or len(stripped.split()) < 8:
+            new_paragraphs.append(para)
+            continue
+
+        # Split paragraph into sentences
+        sentences = _tokenize_sentences(stripped)
+        new_sentences = []
+
+        for sent in sentences:
+            words = sent.split()
+            if len(words) < 5:
+                new_sentences.append(sent)
+                continue
+
+            # Score this sentence's perplexity
+            ppl = sentence_perplexity(sent)
+
+            if ppl >= PPL_AI_THRESHOLD:
+                # Already "human enough" — don't touch it
+                new_sentences.append(sent)
+                continue
+
+            # This sentence is "too AI" — try up to 3 rounds of targeted perturbation
+            current_sent = sent
+            current_ppl = ppl
+            round_changes = 0
+
+            for attempt in range(PPL_MAX_ITERATIONS):
+                if current_ppl >= PPL_AI_THRESHOLD:
+                    break
+
+                # Find the most predictable tokens in the current sentence
+                predictable = find_predictable_tokens(current_sent, top_n=5)
+                if not predictable:
+                    break
+
+                predictable_words = set(tok.strip().lower() for tok, prob, pos in predictable)
+
+                current_words = current_sent.split()
+                try:
+                    tagged = nltk.pos_tag(current_words)
+                except Exception:
+                    break
+
+                new_words = []
+                attempt_changes = 0
+                for word, tag in tagged:
+                    clean_w = re.sub(r'[^a-zA-Z]', '', word).lower()
+                    
+                    # Target only if the word matches or contains a predictable token
+                    is_predictable = clean_w in predictable_words or any(tok in clean_w for tok in predictable_words if len(tok) >= 3)
+                    
+                    # Give a small random chance (15%) to perturb other content words for sentence-level variety
+                    if is_predictable or (random.random() < 0.15 and len(clean_w) >= 4 and clean_w not in SKIP_WORDS):
+                        replacement = _get_synonym(word, tag)
+                        if replacement:
+                            new_words.append(replacement)
+                            attempt_changes += 1
+                            round_changes += 1
+                            total_changes += 1
+                        else:
+                            new_words.append(word)
+                    else:
+                        new_words.append(word)
+
+                if attempt_changes == 0:
+                    break  # No more words to swap
+
+                current_sent = ' '.join(new_words)
+                current_ppl = sentence_perplexity(current_sent)
+
+            new_sentences.append(current_sent)
+
+            if round_changes > 0:
+                print(f"  [pass15] PPL {ppl:.0f} -> {current_ppl:.0f} "
+                      f"({round_changes} swaps) | {sent[:50]}...")
+
+        new_paragraphs.append(' '.join(new_sentences))
+
+    return '\n'.join(new_paragraphs), total_changes
 
 
 def pass16_imperfect_discourse(text: str) -> tuple[str, int]:
@@ -831,74 +1128,97 @@ def pass18_perplexity_tension(text: str) -> tuple[str, int]:
 def humanize_text(text: str, progress_callback=None) -> dict:
     """
     Run the humanization pipeline.
-    
-    Strategy to defeat GPTZero Model 4.6b:
-    1. T5 Nucleus Sampling runs FIRST on the clean original — this is the core.
-       It generates structurally varied, context-aware rewrites with high perplexity.
-    2. Light rule-based passes are applied AFTER to polish:
-       - Remove known AI phrases  
-       - Inject contractions (invisible human signal)
-       - Hedging (sounds less certain/AI)
-       - Burstiness (vary sentence lengths post-T5)
-    3. Heavy pattern passes (parentheticals, idiomatic injections, self-corrections)
-       are DISABLED because GPTZero is trained to recognise humanizer tool fingerprints.
+
+    Strategy to defeat GPTZero Model 4.6b and neural AI classifiers:
+    1. Neural rewrite runs FIRST on clean text (72B API or local Qwen3/T5).
+       This produces fluent rewrites but the statistical token distribution
+       is still detectable by neural classifiers like DeBERTa and GPTZero.
+    2. Structural perturbation passes run AFTER the neural rewrite to break
+       the token-level probability patterns that classifiers detect:
+       - Burstiness: split/merge sentences to vary rhythm
+       - Punctuation: em-dashes/semicolons change token boundaries
+       - Syntactic fronting: move clauses to break SVO patterns
+       - Passive-to-active: structural transformation
+       - Imperfect discourse: conjunction openers (human-only signal)
+    3. Light cleanup passes polish the output:
+       - AI phrase removal, contractions, hedging, intensifier softening
+    4. Heavy fingerprint passes (parentheticals, self-corrections) stay
+       DISABLED to avoid the humanizer-tool detection heuristic.
     """
     stats = {}
 
     if progress_callback:
-        progress_callback(2, 100, "Starting AI rewrite (Qwen3)...")
+        progress_callback(2, 100, "Starting AI rewrite...")
 
-
-    # ── PASS 1: Qwen3 Neural Rewrite (runs FIRST on clean text) ─────────────
+    # ── STAGE 1: Neural Rewrite (core) ───────────────────────────────────────
     def _pass19_cb(curr, tot, msg):
         if progress_callback:
-            pct = 5 + int(70 * (curr / max(tot, 1)))
+            pct = 5 + int(60 * (curr / max(tot, 1)))
             progress_callback(pct, 100, msg)
 
     text, n = pass19_structural_smoothing(text, progress_callback=_pass19_cb)
     stats['pass19_structural_smoothing'] = n
 
     if progress_callback:
-        progress_callback(76, 100, "Removing AI fingerprints...")
+        progress_callback(66, 100, "Removing AI fingerprints...")
 
-    # ── PASS 2: Remove known AI phrases (invisible, safe) ────────────────────
+    # ── STAGE 2: Light cleanup (invisible, safe) ─────────────────────────────
     text, n = pass1_ai_phrases(text);        stats['pass1_ai_phrases'] = n
-
-    # ── PASS 3: Contractions — most invisible human signal ───────────────────
     text, n = pass5_contractions(text);      stats['pass5_contractions'] = n
-
-    # ── PASS 4: Hedging — remove overconfident assertions ────────────────────
     text, n = pass8_hedging(text);           stats['pass8_hedging'] = n
-
-    # ── PASS 5: Soften intensifiers ──────────────────────────────────────────
     text, n = pass2_intensifiers(text);      stats['pass2_intensifiers'] = n
 
     if progress_callback:
-        progress_callback(85, 100, "Adjusting sentence rhythm...")
+        progress_callback(74, 100, "Breaking statistical patterns...")
 
-    # ── PASS 6: Burstiness — vary sentence lengths AFTER T5 ──────────────────
-    # Qwen3 already produces excellent natural sentence length variation.
-    # We only apply the heuristic burstiness split for T5.
-    _, _, model_type = get_model()
-    if model_type == 't5':
-        text, n = pass3_burstiness(text);    stats['pass3_burstiness'] = n
-    else:
-        stats['pass3_burstiness'] = 0
+    # ── STAGE 3: Structural perturbation (defeats neural classifiers) ────────
+    # These passes change the token-level patterns that GPTZero/DeBERTa detect.
+    # They run for ALL model types — the neural rewrite alone is NOT enough.
 
-    # ── PASS 7: Ghost character cleanup ──────────────────────────────────────
-    text, n = pass17_ghost_characters(text); stats['pass17_ghost_characters'] = n
+    # Burstiness: split long sentences, merge short ones → rhythm variation
+    text, n = pass3_burstiness(text);        stats['pass3_burstiness'] = n
 
-    # Zeroed-out passes (kept for stats keys, disabled to avoid fingerprinting)
-    for key in [
-        'pass4_discourse_markers', 'pass6_passive_voice', 'pass7_opener_diversity',
-        'pass9_parentheticals', 'pass10_self_corrections', 'pass11_personal_voice',
-        'pass12_qualifiers', 'pass13_punctuation', 'pass14_syntactic_fronting',
-        'pass15_synonym_rotation', 'pass16_imperfect_discourse', 'pass18_perplexity_tension'
-    ]:
-        stats[key] = 0
+    # Perplexity-guided perturbation: use GPT-2 to find sentences that are
+    # "too predictable" (low perplexity = AI-like) and aggressively swap words
+    # in those sentences using student-level WordNet synonyms.
+    # This is the KEY pass — it directly attacks what GPTZero measures.
+    text, n = pass15_perplexity_guided_perturbation(text)
+    stats['pass15_synonym_rotation'] = n
+
+    # Passive → active voice: structural transformation
+    text, n = pass6_passive_to_active(text); stats['pass6_passive_voice'] = n
+
+    # Punctuation humanization: em-dashes, semicolons disrupt token boundaries
+    text, n = pass13_punctuation(text);      stats['pass13_punctuation'] = n
+
+    # Syntactic fronting: move clauses around to break SVO patterns
+    text, n = pass14_syntactic_fronting(text); stats['pass14_syntactic_fronting'] = n
 
     if progress_callback:
-        progress_callback(98, 100, "Finalizing output...")
+        progress_callback(85, 100, "Adding human signals...")
+
+    # Imperfect discourse: conjunction openers (And, But, Yet) — human-only
+    text, n = pass16_imperfect_discourse(text); stats['pass16_imperfect_discourse'] = n
+
+    # Opener diversity: prevent same paragraph opener repeating
+    text, n = pass7_opener_diversity(text);  stats['pass7_opener_diversity'] = n
+
+    # Perplexity tension: inject organic idioms to shatter predictability
+    text, n = pass18_perplexity_tension(text); stats['pass18_perplexity_tension'] = n
+
+    # Ghost character cleanup
+    text, n = pass17_ghost_characters(text); stats['pass17_ghost_characters'] = n
+
+    if progress_callback:
+        progress_callback(95, 100, "Finalizing output...")
+
+    # Zeroed-out passes (still too fingerprint-prone for GPTZero)
+    for key in [
+        'pass4_discourse_markers', 'pass9_parentheticals',
+        'pass10_self_corrections', 'pass11_personal_voice',
+        'pass12_qualifiers',
+    ]:
+        stats[key] = 0
 
     stats['total_changes'] = sum(stats.values())
     return {'text': text.strip(), 'stats': stats}

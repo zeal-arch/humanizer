@@ -18,8 +18,18 @@ COPY requirements-prod.txt .
 RUN pip install --no-cache-dir -r requirements-prod.txt
 
 # Pre-download ALL NLTK data so startup is instant (no runtime downloads)
+# download_dir must match NLTK_DATA so the runtime finds them without re-downloading
 ENV NLTK_DATA=/app/models/nltk_data
-RUN python -c "import nltk; [nltk.download(p) for p in ['wordnet','omw-1.4','words','punkt','punkt_tab','averaged_perceptron_tagger','averaged_perceptron_tagger_eng']]"
+RUN mkdir -p /app/models/nltk_data && python -c "import nltk; [nltk.download(p, download_dir='/app/models/nltk_data') for p in ['wordnet','omw-1.4','words','punkt','punkt_tab','averaged_perceptron_tagger','averaged_perceptron_tagger_eng']]"
+
+# Pre-download GPT-2 Small (~500MB) for perplexity scoring (anti-GPTZero)
+RUN python -c "\
+from transformers import GPT2LMHeadModel, GPT2TokenizerFast; \
+t = GPT2TokenizerFast.from_pretrained('gpt2'); \
+m = GPT2LMHeadModel.from_pretrained('gpt2'); \
+t.save_pretrained('/app/models/gpt2-small'); \
+m.save_pretrained('/app/models/gpt2-small'); \
+print('[Docker] GPT-2 Small saved to /app/models/gpt2-small')"
 
 # Copy the rest of the app (model weights in models/ are excluded via .dockerignore)
 COPY . .
