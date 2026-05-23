@@ -95,13 +95,13 @@ def preload_model():
 
         else:
             # ── Production: download from Hugging Face Hub ─────────────────
-            HF_MODEL_ID = _os.environ.get('HF_MODEL_ID', 'Qwen/Qwen3-0.6B')
+            HF_MODEL_ID = _os.environ.get('HF_MODEL_ID', 'Qwen/Qwen2.5-3B-Instruct')
             print(f"[Model] No local weights found. Downloading {HF_MODEL_ID} from HF Hub ...")
             _MODEL_TOKENIZER = AutoTokenizer.from_pretrained(HF_MODEL_ID)
             _MODEL_OBJ = AutoModelForCausalLM.from_pretrained(HF_MODEL_ID, **device_kwargs)
             _MODEL_OBJ.eval()
             _MODEL_TYPE = 'qwen3'
-            print(f"[Model] Qwen3-0.6B ready on {'GPU' if torch.cuda.is_available() else 'CPU'} (HF Hub).")
+            print(f"[Model] {HF_MODEL_ID} ready on {'GPU' if torch.cuda.is_available() else 'CPU'} (HF Hub).")
 
     except Exception as e:
         import traceback
