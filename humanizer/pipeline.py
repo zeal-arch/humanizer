@@ -625,6 +625,7 @@ def pass15_perplexity_guided_perturbation(text: str) -> tuple[str, int]:
         'best', 'last', 'next', 'near', 'free', 'left', 'right',
         'don', 'doesn', 'didn', 'won', 'wouldn', 'couldn', 'shouldn',
         't', 's', 're', 've', 'll', 'd', 'm',
+        'track', 'course', 'lead', 'step', 'steps', 'life', 'lives'
     }
 
     def _double_consonant(word: str) -> str:
@@ -733,7 +734,15 @@ def pass15_perplexity_guided_perturbation(text: str) -> tuple[str, int]:
                     synonym += 's'
         # 5. Adverbs ending in ly
         elif tag == 'RB' and clean.endswith('ly'):
-            if not synonym.endswith('ly'):
+            NON_LY_ADVERBS = {
+                'always', 'never', 'often', 'sometimes', 'soon', 'fast', 'here', 'there',
+                'now', 'then', 'where', 'why', 'how', 'far', 'hard', 'late', 'well',
+                'already', 'still', 'also', 'seldom', 'rather', 'quite', 'too', 'very',
+                'even', 'almost', 'maybe', 'perhaps', 'instead', 'otherwise', 'therefore',
+                'however', 'together', 'apart', 'alone', 'yet', 'more', 'most', 'less', 'least',
+                'much', 'little'
+            }
+            if synonym.lower() not in NON_LY_ADVERBS and not synonym.endswith('ly'):
                 if synonym.endswith('y'):
                     synonym = synonym[:-1] + 'ily'
                 else:
