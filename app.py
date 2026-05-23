@@ -130,6 +130,58 @@ def index():
         }), 500
 
 
+@app.route('/diagnose')
+def diagnose():
+    try:
+        space_url = os.environ.get('HF_SPACE_URL')
+        api_token = os.environ.get('HF_API_TOKEN')
+        
+        token_preview = "Not Set"
+        if api_token:
+            token_preview = f"{api_token[:4]}...{api_token[-4:]}" if len(api_token) > 8 else "Set (too short)"
+            
+        env_keys = [k for k in os.environ.keys() if any(x in k.upper() for x in ['HF', 'SPACE', 'URL', 'TOKEN', 'ZEAL'])]
+        
+        diagnostics = {
+            "HF_SPACE_URL": space_url,
+            "HF_API_TOKEN_status": token_preview,
+            "IS_VERCEL": IS_VERCEL,
+            "USE_PROXY": USE_PROXY,
+            "HAS_LOCAL_DEPS": HAS_LOCAL_DEPS,
+            "detected_env_keys": env_keys
+        }
+        
+        if space_url:
+            try:
+                import requests
+                headers = {}
+                if api_token:
+                    headers['Authorization'] = f"Bearer {api_token}"
+                ping_url = f"{space_url.rstrip('/')}/scan_text"
+                ping_res = requests.request(
+                    method='POST',
+                    url=ping_url,
+                    headers=headers,
+                    json={'text': 'ping'},
+                    timeout=5
+                )
+                diagnostics["ping_status_code"] = ping_res.status_code
+                diagnostics["ping_response_preview"] = ping_res.text[:200]
+            except Exception as ping_err:
+                diagnostics["ping_error"] = str(ping_err)
+        else:
+            diagnostics["ping_status"] = "Skipped (no HF_SPACE_URL)"
+            
+        return jsonify(diagnostics)
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }), 500
+
+
+
 @app.route('/scan', methods=['POST'])
 def scan():
     """Score a .docx file for AI likelihood without modifying it."""
