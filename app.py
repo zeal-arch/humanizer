@@ -14,7 +14,7 @@ from flask import Flask, request, jsonify, send_file, render_template, Response
 # Vercel automatically sets VERCEL="1"
 IS_VERCEL = os.environ.get('VERCEL') == '1'
 HF_SPACE_URL = os.environ.get('HF_SPACE_URL')
-HF_API_TOKEN = os.environ.get('HF_API_TOKEN')
+HF_API_TOKEN = os.environ.get('HF_API_TOKEN') or os.environ.get('HF_TOKEN') or os.environ.get('zeal000')
 
 # Try importing ML dependencies. If they are missing, we MUST run in proxy mode.
 try:

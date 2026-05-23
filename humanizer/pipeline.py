@@ -55,15 +55,30 @@ def preload_model():
     """
     Load the best available model into the global singleton.
     Called once at startup by app.py — pipeline.py reuses the same object.
-    Priority: Qwen3-0.6B local (dev) > HF Hub download (prod) > T5 local (fallback).
+    Priority: Qwen3-0.6B local (dev) > HF Serverless Inference API > HF Hub download (prod) > T5 local (fallback).
     """
     global _MODEL_TOKENIZER, _MODEL_OBJ, _MODEL_TYPE
-    if _MODEL_OBJ is not None:
+    if _MODEL_OBJ is not None or _MODEL_TYPE == 'api':
         return  # already loaded
 
+    # ── 1. Check if Hugging Face token is present for Serverless Inference API ──
+    token = _os.environ.get('HF_API_TOKEN') or _os.environ.get('HF_TOKEN') or _os.environ.get('zeal000')
+    if token:
+        api_model = _os.environ.get('HF_API_MODEL_ID', 'Qwen/Qwen2.5-72B-Instruct')
+        print(f"[Model] Hugging Face Access Token detected. Initializing Serverless Inference client for {api_model}...")
+        try:
+            from huggingface_hub import InferenceClient
+            _MODEL_OBJ = InferenceClient(model=api_model, token=token)
+            _MODEL_TYPE = 'api'
+            print(f"[Model] Hugging Face Serverless Inference client for {api_model} ready.")
+            return
+        except Exception as e:
+            print(f"[Model] Failed to load Hugging Face InferenceClient: {e}. Falling back to local/hub load.")
+
+    # ── 2. Standard Transformers loading ──
     try:
         import torch
-        from transformers import AutoTokenizer, AutoModelForCausalLM, AutoModelForSeq2SeqLM
+        from transformers import AutoTokenizer, AutoModelForCausalLM
 
         # Optimize dtype: Use bfloat16 or float16 when running on CUDA to minimize VRAM footprint and avoid paging latency,
         # which is extremely critical for 4GB GPUs like the GTX 1650. Fall back to float32 on CPU.
@@ -112,7 +127,7 @@ def preload_model():
 def get_model():
     """Return (tokenizer, model, model_type). Lazy-loads if not already loaded."""
     global _MODEL_TOKENIZER, _MODEL_OBJ, _MODEL_TYPE
-    if _MODEL_OBJ is None:
+    if _MODEL_OBJ is None and _MODEL_TYPE != 'api':
         preload_model()
     return _MODEL_TOKENIZER, _MODEL_OBJ, _MODEL_TYPE
 
@@ -554,6 +569,52 @@ def pass16_imperfect_discourse(text: str) -> tuple[str, int]:
     return '\n'.join(result), count
 
 
+def _rewrite_with_inference_api(para: str, client) -> str:
+    """
+    Use Hugging Face Serverless Inference API (InferenceClient) with a 72B model.
+    """
+    prompt = (
+        f"You are a human writing a casual email or message. Rewrite the following text to make it sound completely human, organic, and natural.\n"
+        f"Follow these human writing rules:\n"
+        f"1. Make the writing style highly conversational, casual, and simple. Use everyday vocabulary.\n"
+        f"2. Write with high sentence length variance: mix brief, punchy sentences (2 to 7 words) with longer, flowing ones. Avoid uniform, robotic sentence structure.\n"
+        f"3. Use contractions (don't, can't, it's, we're, you'd) naturally and frequently.\n"
+        f"4. Eliminate all formal AI-like transition words (e.g., 'Furthermore', 'In addition', 'Consequently', 'Indeed', 'Moreover', 'Therefore'). Instead, start sentences directly, or use informal connectors like 'Actually', 'But', 'And', 'So', 'Plus', 'Honestly'.\n"
+        f"5. Do not write in an overly polished academic way. Add natural, human phrasing and occasional conversational touches (e.g., 'pretty much', 'kind of', 'to be honest').\n"
+        f"6. Keep the exact core meaning, facts, and info from the original paragraph. Do not add random extra facts.\n\n"
+        f"Original paragraph:\n{para}\n\n"
+        f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
+    )
+
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."},
+        {"role": "user", "content": prompt}
+    ]
+
+    with _MODEL_LOCK:
+        response = client.chat_completion(
+            messages=messages,
+            max_tokens=min(450, int(len(para.split()) * 2.5) + 60),
+            temperature=0.90,  # High temperature is key to defeating perplexity checks!
+            top_p=0.90,
+        )
+    
+    generated = response.choices[0].message.content.strip()
+
+    generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
+    generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
+    generated = generated.replace('’', "'").replace('‘', "'").replace('“', '"').replace('”', '"')
+    generated = re.sub(r'\s+', ' ', generated)
+    generated = re.sub(r'\s+([.,!?;:])', r'\1', generated)
+
+    words_out = len(generated.split())
+    words_in  = len(para.split())
+    if words_out < 3 or words_out > words_in * 4:
+        return para  # safety fallback
+
+    return generated
+
+
 def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     """
     Use Qwen3-0.6B with a human-writing instruction prompt.
@@ -686,12 +747,15 @@ def _rewrite_with_t5(para: str, tokenizer, model) -> str:
 
 def pass19_structural_smoothing(text: str, progress_callback=None) -> tuple[str, int]:
     """
-    Neural rewrite pass — uses the best available local model.
-    Qwen3-0.6B (preferred): instruction-tuned, produces genuinely varied human text.
+    Neural rewrite pass — uses the best available model (Serverless API or local).
+    HF Serverless API (preferred): state-of-the-art 72B model.
+    Qwen3-0.6B / 3B (local/Hub): instruction-tuned causal LM.
     T5_Paraphrase_Paws (fallback): nucleus sampling paraphrase.
     """
     tokenizer, model, model_type = get_model()
-    if tokenizer is None or model is None:
+    if model is None:
+        return text, 0
+    if model_type != 'api' and tokenizer is None:
         return text, 0
 
     paragraphs = text.split('\n')
@@ -709,11 +773,13 @@ def pass19_structural_smoothing(text: str, progress_callback=None) -> tuple[str,
             continue
 
         if progress_callback:
-            model_label = "Qwen3" if model_type == 'qwen3' else "T5"
+            model_label = "HF API 72B" if model_type == 'api' else ("Qwen3" if model_type == 'qwen3' else "T5")
             progress_callback(i, total, f"[{model_label}] Rewriting paragraph {i+1} of {total}...")
 
         try:
-            if model_type == 'qwen3':
+            if model_type == 'api':
+                out_text = _rewrite_with_inference_api(stripped, model)
+            elif model_type == 'qwen3':
                 out_text = _rewrite_with_qwen3(stripped, tokenizer, model)
             else:
                 out_text = _rewrite_with_t5(stripped, tokenizer, model)
