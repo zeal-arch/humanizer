@@ -28,10 +28,6 @@ if HAS_TORCH_DEPS:
             self.classifier = nn.Linear(config.hidden_size, 1)
             self.post_init()
 
-        @property
-        def all_tied_weights_keys(self):
-            return {}
-
         def forward(self, input_ids, attention_mask=None, labels=None):
             outputs = self.model(input_ids, attention_mask=attention_mask)
             last_hidden_state = outputs[0]
