@@ -300,7 +300,9 @@ def _predict_paragraphs_with_deberta(paragraphs: list[str], tokenizer, model) ->
         with torch.inference_mode():
             outputs = model(input_ids=encoded['input_ids'], attention_mask=encoded['attention_mask'])
             logits = outputs["logits"]
-            prob = torch.sigmoid(logits).item()
+            logit = logits.item()
+            # Calibrate logits: map logit=5.0 to 50%, with a temperature scaling of 1.6
+            prob = 1.0 / (1.0 + math.exp(-(logit - 5.0) / 1.6))
             probabilities.append(prob)
 
     if not probabilities:
