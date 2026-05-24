@@ -625,7 +625,7 @@ def pass15_perplexity_guided_perturbation(text: str) -> tuple[str, int]:
         'best', 'last', 'next', 'near', 'free', 'left', 'right',
         'don', 'doesn', 'didn', 'won', 'wouldn', 'couldn', 'shouldn',
         't', 's', 're', 've', 'll', 'd', 'm',
-        'track', 'course', 'lead', 'step', 'steps', 'life', 'lives'
+        'track', 'course', 'lead', 'step', 'steps', 'life', 'lives', 'spot'
     }
 
     def _double_consonant(word: str) -> str:
@@ -887,14 +887,14 @@ def _rewrite_with_inference_api(para: str, client) -> str:
     Use Hugging Face Serverless Inference API (InferenceClient) with a 72B model.
     """
     prompt = (
-        f"You are a human writing a casual email or message. Rewrite the following text to make it sound completely human, organic, and natural.\n"
-        f"Follow these human writing rules:\n"
-        f"1. Make the writing style highly conversational, casual, and simple. Use everyday vocabulary.\n"
-        f"2. Write with high sentence length variance: mix brief, punchy sentences (2 to 7 words) with longer, flowing ones. Avoid uniform, robotic sentence structure.\n"
-        f"3. Use contractions (don't, can't, it's, we're, you'd) naturally and frequently.\n"
-        f"4. Eliminate all formal AI-like transition words (e.g., 'Furthermore', 'In addition', 'Consequently', 'Indeed', 'Moreover', 'Therefore'). Instead, start sentences directly, or use informal connectors like 'Actually', 'But', 'And', 'So', 'Plus', 'Honestly'.\n"
-        f"5. Do not write in an overly polished academic way. Add natural, human phrasing and occasional conversational touches (e.g., 'pretty much', 'kind of', 'to be honest').\n"
-        f"6. Keep the exact core meaning, facts, and info from the original paragraph. Do not add random extra facts.\n\n"
+        f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
+        f"Follow these strict human writing rules:\n"
+        f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
+        f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
+        f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
+        f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
+        f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
+        f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
         f"Original paragraph:\n{para}\n\n"
         f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
     )
@@ -939,14 +939,14 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
     # ── Prompt: direct instruction, no thinking required ─────────────────────
     # /no_think suffix tells Qwen3 to skip chain-of-thought (faster + no <think> block)
     prompt = (
-        f"You are a human writing a casual email or message. Rewrite the following text to make it sound completely human, organic, and natural.\n"
-        f"Follow these human writing rules:\n"
-        f"1. Make the writing style highly conversational, casual, and simple. Use everyday vocabulary.\n"
-        f"2. Write with high sentence length variance: mix brief, punchy sentences (2 to 7 words) with longer, flowing ones. Avoid uniform, robotic sentence structure.\n"
-        f"3. Use contractions (don't, can't, it's, we're, you'd) naturally and frequently.\n"
-        f"4. Eliminate all formal AI-like transition words (e.g., 'Furthermore', 'In addition', 'Consequently', 'Indeed', 'Moreover', 'Therefore'). Instead, start sentences directly, or use informal connectors like 'Actually', 'But', 'And', 'So', 'Plus', 'Honestly'.\n"
-        f"5. Do not write in an overly polished academic way. Add natural, human phrasing and occasional conversational touches (e.g., 'pretty much', 'kind of', 'to be honest').\n"
-        f"6. Keep the exact core meaning, facts, and info from the original paragraph. Do not add random extra facts.\n\n"
+        f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
+        f"Follow these strict human writing rules:\n"
+        f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
+        f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
+        f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
+        f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
+        f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
+        f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
         f"Original paragraph:\n{para}\n\n"
         f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
     )
