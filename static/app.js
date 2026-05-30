@@ -39,7 +39,7 @@ let selectedFile = null;
 let downloadUrl  = null;
 
 // Mode
-let currentMode = 'doc'; // 'doc' or 'text'
+let currentMode = 'text'; // 'doc' or 'text'
 const modeDocBtn     = document.getElementById('mode-doc');
 const modeTextBtn    = document.getElementById('mode-text');
 const rawTextInput   = document.getElementById('raw-text-input');

@@ -3,257 +3,304 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HumanizeDoc — AI-Proof Your Documents</title>
-  <meta name="description" content="Transform AI-generated documents into natural human-sounding text. 100% rule-based, no AI APIs, completely free." />
+  <title>HumanizeDoc — Private AI Slop Detector & Remover</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
 
-  <!-- ── BACKGROUND ORBS ─────────────────────────────────────────────────── -->
-  <div class="bg-orb orb-1"></div>
-  <div class="bg-orb orb-2"></div>
-  <div class="bg-orb orb-3"></div>
+  <!-- Blurred Blue Orb Background -->
+  <div class="bg-orb-container">
+    <div class="bg-orb"></div>
+  </div>
 
-  <!-- ── NAVBAR ──────────────────────────────────────────────────────────── -->
   <nav class="navbar">
     <div class="nav-brand">
-      <span class="nav-icon">✦</span>
-      <span class="nav-title">HumanizeDoc</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+      Humanize<span>Doc</span>
     </div>
-    <div class="nav-badge">100% Free · No AI APIs</div>
+    <div class="nav-links">
+      <a href="#" class="nav-link">Home</a>
+      <a href="#" class="nav-link">API</a>
+      <a href="#" class="nav-link">CLI</a>
+    </div>
   </nav>
 
-  <!-- ── HERO ────────────────────────────────────────────────────────────── -->
-  <section class="hero">
-    <div class="hero-eyebrow">7-Pass Rule Engine</div>
-    <h1 class="hero-title">
-      Make Your Docs Sound<br />
-      <span class="gradient-text">Genuinely Human</span>
-    </h1>
-    <p class="hero-subtitle">
-      Upload your <strong>.docx</strong> file and our pipeline rewrites AI-sounding phrases,
-      injects natural rhythm, and varies sentence structure — zero AI APIs, zero cost.
-    </p>
+  <main class="main-container">
+    
+    <section class="hero">
+      <div class="hero-logo-script">Humanize It</div>
+      <h1>Private AI Slop Remover for Text and Documents</h1>
+      <p>Strip out AI slop, inject natural rhythm, and eliminate AI tells entirely on your local machine. No data leaves your browser.</p>
+    </section>
 
-    <!-- Stats row -->
-        <div class="hero-stats">
-          <div class="stat-pill">
-            <span class="stat-num">16</span>
-            <span class="stat-label">Transformation Passes</span>
+    <!-- THE PRODUCT SECTION -->
+    <section class="app-section">
+      <div class="app-container">
+        
+        <!-- MODE TOGGLE -->
+        <div class="mode-toggle">
+          <button id="mode-text" class="mode-btn active">Paste Text</button>
+          <button id="mode-doc" class="mode-btn">Upload Document</button>
+        </div>
+
+        <!-- STATE: Paste Text Input -->
+        <div id="state-text-input" class="state active">
+          <textarea id="raw-text-input" class="text-input" placeholder="Paste your AI-generated text here..." spellcheck="false"></textarea>
+          
+          <div id="scan-results-text" class="scan-results hidden">
+            <div class="scan-label">AI Detection Estimate</div>
+            <div class="scan-pct" id="scan-pct-text">--%</div>
+            <div style="font-size: 0.9375rem; font-weight: 600; color: var(--text-secondary); margin-top: 0.5rem;" id="scan-label-text">Scanning...</div>
           </div>
-          <div class="stat-pill">
-            <span class="stat-num">500+</span>
-            <span class="stat-label">AI Patterns Blocked</span>
-          </div>
-          <div class="stat-pill">
-            <span class="stat-num">100%</span>
-            <span class="stat-label">Local & Private</span>
+
+          <div class="action-row">
+            <button class="btn-primary" id="submit-text-btn" disabled>
+              Humanize Text
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 0.5rem;"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+            </button>
           </div>
         </div>
-  </section>
 
-  <!-- ── MAIN CARD ────────────────────────────────────────────────────────── -->
-  <main class="main-content">
-    <div class="card" id="main-card">
+        <!-- STATE 1: Upload -->
+        <div id="state-upload" class="state">
+          <div id="drop-zone" class="drop-zone" role="button" tabindex="0">
+            <div class="drop-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="drop-icon-svg">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="drop-text-wrapper">
+              <div class="drop-title-row">
+                <span class="drop-link">Click to upload</span>
+                <span class="drop-text-normal">or drag and drop</span>
+              </div>
+              <p class="drop-sub">Word documents (.docx) only (max. 10MB)</p>
+            </div>
+            <input type="file" id="file-input" accept=".docx" />
+          </div>
 
-      <!-- MODE TOGGLE -->
-      <div class="mode-toggle">
-        <button id="mode-doc" class="mode-btn active">Document Upload</button>
-        <button id="mode-text" class="mode-btn">Paste Text</button>
-      </div>
+          <div class="file-preview hidden" id="file-preview">
+            <div class="file-icon-box">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-blue);">
+                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                <polyline points="13 2 13 9 20 9"></polyline>
+              </svg>
+            </div>
+            <div class="file-info">
+              <span class="file-name" id="file-name-display">document.docx</span>
+              <div class="file-meta">
+                <span class="file-size" id="file-size-display">1.2 MB</span>
+                <span class="file-divider"></span>
+                <span class="file-status">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--text-muted);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Ready
+                </span>
+              </div>
+            </div>
+            <button class="remove-btn" id="remove-file">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
 
-      <!-- STATE 1: Upload -->
-      <div id="state-upload" class="state active">
-        <div
-          id="drop-zone"
-          class="drop-zone"
-          role="button"
-          tabindex="0"
-          aria-label="Upload .docx file"
-        >
-          <div class="drop-icon">
-            <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-              <rect width="52" height="52" rx="14" fill="url(#grad1)" opacity="0.15"/>
-              <path d="M26 34V20M26 20L20 26M26 20L32 26" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M14 38h24" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round"/>
-              <defs>
-                <linearGradient id="grad1" x1="0" y1="0" x2="52" y2="52">
-                  <stop stop-color="#818cf8"/>
-                  <stop offset="1" stop-color="#a78bfa"/>
-                </linearGradient>
-              </defs>
+          <!-- SCAN RESULTS -->
+          <div id="scan-results" class="scan-results hidden">
+            <div class="scan-label">AI Detection Estimate</div>
+            <div class="scan-pct" id="scan-pct">--%</div>
+            <div style="font-size: 0.9375rem; font-weight: 600; color: var(--text-secondary); margin-top: 0.5rem;" id="scan-label">Scanning...</div>
+            
+            <button id="toggle-viewer-btn" type="button" class="btn-secondary hidden" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.875rem;">View Highlights</button>
+            
+            <div id="document-viewer" class="hidden" style="margin-top: 1rem; text-align: left; max-height: 250px; overflow-y: auto; background: var(--bg-page); padding: 1.25rem; border-radius: 12px; border: 1px solid var(--border-color); font-size: 0.9375rem; color: var(--text-main);">
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn-primary" id="submit-btn" disabled>
+              Humanize Document
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 0.5rem;"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- STATE 2: Processing -->
+        <div id="state-processing" class="state">
+          <div class="processing-header">
+            <div class="spinner"></div>
+            <h2 class="processing-title">Processing</h2>
+            <p class="processing-sub" style="color: var(--text-secondary); font-weight: 500;">Running transformation passes...</p>
+          </div>
+
+          <div id="real-time-progress-container" style="max-width: 100%; text-align: left;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.9375rem; font-weight: 700; color: var(--text-secondary);">
+              <span id="progress-status-msg">Initializing...</span>
+              <span id="progress-pct-label">0%</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 99px; overflow: hidden;">
+              <div id="progress-bar-fill" style="width: 0%; height: 100%; background: var(--text-main); transition: width 0.3s ease;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATE 3: Done -->
+        <div id="state-done" class="state">
+          <div class="results-header">
+            <h2>Cleaned.</h2>
+          </div>
+
+          <div class="score-comparison">
+            <div class="score-box">
+              <div class="score-box-label">Original Score</div>
+              <div class="score-box-val old" id="final-scan-old">--%</div>
+            </div>
+            <div class="score-box">
+              <div class="score-box-label">New Score</div>
+              <div class="score-box-val new" id="final-scan-new">--%</div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="num" id="res-paragraphs">0</div>
+              <div class="label">Paragraphs</div>
+            </div>
+            <div class="stat-card" style="border: 2px solid var(--text-main); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+              <div class="num" id="res-total">0</div>
+              <div class="label" style="font-weight: 700;">Total Edits</div>
+            </div>
+            <div class="stat-card">
+              <div class="num" id="res-phrases">0</div>
+              <div class="label">AI Phrases</div>
+            </div>
+          </div>
+
+          <div class="pass-breakdown" id="pass-breakdown">
+            <h3 class="breakdown-title">Engine Breakdown</h3>
+            <div class="breakdown-grid" id="breakdown-grid"></div>
+          </div>
+          
+          <div id="raw-text-output-container" class="hidden" style="margin-bottom: 2rem;">
+            <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 0.75rem; color: var(--text-main);">Result</h3>
+            <textarea id="raw-text-output" class="text-input" readonly style="margin-bottom: 1rem;"></textarea>
+            <div class="action-row" style="margin-top: 0;">
+              <button class="btn-secondary" id="copy-text-btn">Copy Text</button>
+            </div>
+          </div>
+
+          <div class="done-actions">
+            <button class="btn-secondary" id="restart-btn">Process Another</button>
+            <a class="btn-primary" id="download-btn" href="#" download>
+              Download Document
+            </a>
+          </div>
+        </div>
+
+        <!-- STATE 4: Error -->
+        <div id="state-error" class="state">
+          <div class="error-icon">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
             </svg>
           </div>
-          <p class="drop-title">Drop your .docx file here</p>
-          <p class="drop-sub">or click to browse</p>
-          <input type="file" id="file-input" accept=".docx" aria-label="Choose .docx file" />
+          <h2 class="error-title">Error</h2>
+          <p class="error-msg" id="error-msg">Something went wrong.</p>
+          <div class="action-row" style="justify-content: center;">
+            <button class="btn-secondary" id="retry-btn">Try Again</button>
+          </div>
         </div>
 
-            <div class="file-preview hidden" id="file-preview">
-              <div class="file-icon">📄</div>
-              <div class="file-info">
-                <span class="file-name" id="file-name-display">document.docx</span>
-                <span class="file-size" id="file-size-display">1.2 MB</span>
-              </div>
-              <button class="remove-btn" id="remove-file" aria-label="Remove file">✕</button>
-            </div>
-
-            <!-- SCAN RESULTS -->
-            <div id="scan-results" class="scan-results hidden" style="margin-bottom: 24px; text-align: center;">
-              <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Current AI Score</div>
-              <div style="font-size: 42px; font-weight: 800; color: var(--orange); line-height: 1;" id="scan-pct">--%</div>
-              <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px; margin-bottom: 8px;" id="scan-label">Scanning...</div>
-              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 16px; opacity: 0.7;">⚠ Estimate only — verify at <a href="https://gptzero.me" target="_blank" style="color: var(--orange);">gptzero.me</a></div>
-              
-              <button id="toggle-viewer-btn" type="button" class="hidden" style="background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">View AI Highlights</button>
-              
-              <div id="document-viewer" class="hidden" style="margin-top: 16px; text-align: left; max-height: 250px; overflow-y: auto; background: rgba(0, 0, 0, 0.3); padding: 16px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; line-height: 1.6; color: var(--text-primary);">
-              </div>
-            </div>
-
-            <button class="btn-primary" id="submit-btn" disabled>
-              <span class="btn-text">Humanize Document</span>
-              <span class="btn-icon">→</span>
-            </button>
-
-        <p class="privacy-note">
-          🔒 Files are processed locally and deleted immediately after download.<br>
-          <span style="color: var(--orange); opacity: 0.8;">⚠️ Note: To perform the aggressive 17-pass rewrite, inline bold/italics are removed. Headings and tables are preserved.</span>
-          <br>Nothing is stored or sent to external servers.
-        </p>
       </div>
+    </section>
 
-      <!-- STATE: Paste Text Input -->
-      <div id="state-text-input" class="state">
-        <textarea id="raw-text-input" class="text-input" placeholder="Paste your AI-generated text here... (Minimum 20 words)" rows="10"></textarea>
-        
-        <div id="scan-results-text" class="scan-results hidden" style="margin-bottom: 24px; text-align: center;">
-          <div style="font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Current AI Score</div>
-          <div style="font-size: 42px; font-weight: 800; color: var(--orange); line-height: 1;" id="scan-pct-text">--%</div>
-          <div style="font-size: 14px; color: var(--text-secondary); margin-top: 4px; margin-bottom: 16px;" id="scan-label-text">Scanning...</div>
+    <!-- INSTRUCTIONS -->
+    <section class="instructions-section">
+      <h2 class="inst-title">How to use HumanizeDoc</h2>
+      <div class="inst-steps">
+        <div class="inst-step">
+          <div class="inst-num">1</div>
+          <div>
+            <h4>Choose your mode</h4>
+            <p>Paste raw text or upload a complete .docx document.</p>
+          </div>
         </div>
+        <div class="inst-step">
+          <div class="inst-num">2</div>
+          <div>
+            <h4>Humanize</h4>
+            <p>Our 20-pass rule engine strips out AI tells and injects human burstiness.</p>
+          </div>
+        </div>
+        <div class="inst-step">
+          <div class="inst-num">3</div>
+          <div>
+            <h4>Review & Export</h4>
+            <p>See your new detection score, copy the text, or download the cleaned file.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-        <button class="btn-primary" id="submit-text-btn" disabled>
-          <span class="btn-text">Humanize Text</span>
-          <span class="btn-icon">→</span>
+    <!-- HOW IT WORKS GRID -->
+    <section class="features-section">
+      <h2>How the AI Remover Works</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon-box icon-blue">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path></svg>
+          </div>
+          <h3>Phrase Dictionary</h3>
+          <p>Scans for 500+ phrases that AI models overuse and replaces them with natural human equivalents.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box icon-green">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          </div>
+          <h3>Burstiness Injection</h3>
+          <p>Splits long sentences and merges short ones to create human-like rhythm variation (the #1 AI detector signal).</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box icon-purple">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          </div>
+          <h3>Discourse Markers</h3>
+          <p>Inserts natural conversation anchors to break the mechanical progression AI often produces.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-box icon-orange">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          </div>
+          <h3>Voice & Contraction</h3>
+          <p>Converts passive constructions to active voice and injects natural contractions.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BOTTOM BANNER -->
+    <section class="bottom-banner">
+      <h2>Download the Free CLI for Phone and Mac</h2>
+      <p>Clean your text and check your scores directly from your terminal or any MCP-compatible agent.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center;">
+        <button class="btn-primary" style="padding: 0.875rem 2.5rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 0.5rem;"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path><polyline points="7 11 12 16 17 11"></polyline><line x1="12" y1="4" x2="12" y2="16"></line></svg>
+          Download CLI
         </button>
       </div>
+    </section>
 
-      <!-- STATE 2: Processing -->
-      <div id="state-processing" class="state">
-        <div class="processing-header">
-          <div class="spinner"></div>
-          <h2 class="processing-title">Humanizing your document…</h2>
-          <p class="processing-sub">Running 7 transformation passes</p>
-        </div>
-
-        <div id="real-time-progress-container" style="margin-top: 24px; max-width: 400px; margin-left: auto; margin-right: auto; text-align: left;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; color: var(--text-secondary);">
-            <span id="progress-status-msg">Initializing...</span>
-            <span id="progress-pct-label">0%</span>
-          </div>
-          <div style="width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden;">
-            <div id="progress-bar-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 4px; transition: width 0.3s ease;"></div>
-          </div>
-        </div>
-          </div>
-
-      <!-- STATE 3: Done -->
-      <div id="state-done" class="state">
-        <div class="done-icon">✓</div>
-        <h2 class="done-title">Document Humanized!</h2>
-        <p class="done-sub">Your file has been processed and is ready to download.</p>
-
-        <!-- NEW AI SCORE VS OLD AI SCORE -->
-          <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 24px;">
-            <div style="text-align: center; opacity: 0.5;">
-              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Original</div>
-              <div style="font-size: 24px; font-weight: 700; color: var(--orange);" id="final-scan-old">--%</div>
-            </div>
-            <div style="text-align: center;">
-              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; color: var(--green);">New AI Score</div>
-              <div style="font-size: 36px; font-weight: 800; color: var(--green); line-height: 1;" id="final-scan-new">--%</div>
-            </div>
-          </div>
-
-          <div class="results-grid">
-            <div class="result-card">
-              <span class="result-num" id="res-paragraphs">0</span>
-              <span class="result-label">Paragraphs</span>
-            </div>
-            <div class="result-card highlight">
-              <span class="result-num" id="res-total">0</span>
-              <span class="result-label">Total Changes</span>
-            </div>
-            <div class="result-card">
-              <span class="result-num" id="res-phrases">0</span>
-              <span class="result-label">AI Phrases</span>
-            </div>
-          </div>
-
-        <div class="pass-breakdown" id="pass-breakdown">
-          <h3 class="breakdown-title">Pass Breakdown</h3>
-          <div class="breakdown-grid" id="breakdown-grid"></div>
-        </div>
-        
-        <!-- Raw Text Output Container (Hidden in docx mode) -->
-        <div id="raw-text-output-container" class="hidden" style="margin-bottom: 24px;">
-          <h3 style="font-size: 14px; margin-bottom: 8px;">Humanized Text:</h3>
-          <textarea id="raw-text-output" class="text-input" rows="8" readonly style="margin-bottom: 12px;"></textarea>
-          <button class="btn-secondary" id="copy-text-btn">Copy to Clipboard</button>
-        </div>
-
-        <div class="done-actions">
-          <a class="btn-primary" id="download-btn" href="#" download>
-            <span class="btn-text">Download Humanized File</span>
-            <span class="btn-icon">↓</span>
-          </a>
-          <button class="btn-secondary" id="restart-btn">Process Another</button>
-        </div>
-      </div>
-
-      <!-- STATE 4: Error -->
-      <div id="state-error" class="state">
-        <div class="error-icon">⚠</div>
-        <h2 class="error-title">Something went wrong</h2>
-        <p class="error-msg" id="error-msg">An unexpected error occurred.</p>
-        <button class="btn-secondary" id="retry-btn">Try Again</button>
-      </div>
-
-    </div>
   </main>
 
-  <!-- ── HOW IT WORKS ─────────────────────────────────────────────────────── -->
-  <section class="how-section">
-    <h2 class="section-title">How It Works</h2>
-    <div class="how-grid">
-      <div class="how-card">
-        <div class="how-num">01</div>
-        <h3>AI Phrase Dictionary</h3>
-        <p>Scans for 300+ phrases that AI models overuse — "ensure that", "leverage", "in order to" — and replaces each with natural human equivalents.</p>
-      </div>
-      <div class="how-card">
-        <div class="how-num">02</div>
-        <h3>Burstiness Injection</h3>
-        <p>The #1 signal Turnitin checks. AI writes at uniform sentence length. We split long sentences and occasionally merge short ones to create human-like rhythm variation.</p>
-      </div>
-      <div class="how-card">
-        <div class="how-num">03</div>
-        <h3>Discourse Markers</h3>
-        <p>Inserts natural conversation anchors — "That said,", "In practice,", "Worth noting here —" — to break the mechanical paragraph-to-paragraph progression AI produces.</p>
-      </div>
-      <div class="how-card">
-        <div class="how-num">04</div>
-        <h3>Voice & Contraction</h3>
-        <p>Converts passive constructions to active voice and injects contractions where they feel natural — both strong signals of genuine human authorship.</p>
-      </div>
-    </div>
-  </section>
-
   <footer class="footer">
-    <p>HumanizeDoc — Built for students, powered by rules, not AI.</p>
+    <div class="footer-links">
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-text" style="margin-top: 1.5rem;">
+      HumanizeDoc — Built for students, powered by rules, not AI.
+    </div>
   </footer>
 
   <script src="/static/app.js"></script>
