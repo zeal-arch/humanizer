@@ -15,6 +15,8 @@ from .phrases import (
     PERSONAL_VOICE,
     QUALIFIERS,
     PUNCTUATION_HUMANIZE,
+    EM_DASH_REVERSAL,
+    PUNCTUATION_HUMANIZE_PROFESSIONAL,
     FRONTING_PATTERNS,
     SYNTACTIC_FRONTING,
     CONJUNCTION_OPENERS,
@@ -510,13 +512,15 @@ def pass12_qualifiers(text: str) -> tuple[str, int]:
     return _replace_dict(text, QUALIFIERS)
 
 
-def pass13_punctuation(text: str) -> tuple[str, int]:
+def pass13_punctuation(text: str, register: str = 'casual') -> tuple[str, int]:
     """
     Humanize punctuation patterns: replace bland conjunctions with
     em-dashes, semicolons, and varied connectors.
     """
     if text.count('`') > 2 or text.count('{') > 2:
         return text, 0
+    if register == 'professional':
+        return _replace_dict(text, PUNCTUATION_HUMANIZE_PROFESSIONAL, case_sensitive=True)
     return _replace_dict(text, PUNCTUATION_HUMANIZE, case_sensitive=True)
 
 
@@ -882,25 +886,42 @@ def pass16_imperfect_discourse(text: str) -> tuple[str, int]:
     return '\n'.join(result), count
 
 
-def _rewrite_with_inference_api(para: str, client) -> str:
+def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> str:
     """
     Use Hugging Face Serverless Inference API (InferenceClient) with a 72B model.
     """
-    prompt = (
-        f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
-        f"Follow these strict human writing rules:\n"
-        f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
-        f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
-        f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
-        f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
-        f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
-        f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
-        f"Original paragraph:\n{para}\n\n"
-        f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
-    )
+    if register == 'professional':
+        prompt = (
+            f"You are a professional technical editor. Rewrite the following paragraph from a software project documentation to look completely human-written while maintaining a professional, objective, and academic tone.\n"
+            f"Follow these strict writing rules:\n"
+            f"1. DECONSTRUCT & REBUILD: Extract the raw facts and rebuild the paragraph in a clear, direct, and professional style. Avoid the linear AI logical scaffolding.\n"
+            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use first-person ('I', 'we', 'our' unless absolutely natural for team actions) and NEVER use conversational filler or emotional hooks (such as 'to be honest', 'let's be real', 'honestly', 'which reminds me', 'anyway'). Keep the tone formal, objective, and neutral.\n"
+            f"3. AVOID AI BUZZWORDS: Do NOT use AI vocabulary or promotional words (e.g., 'delve', 'leverage', 'utilize', 'harness', 'foster', 'empower', 'seamless', 'robust', 'tapestry', 'realm', 'testament', 'pivotal', 'crucial', 'evolving landscape', 'underscores'). Use plain, clear verbs (e.g., 'use', 'help', 'improve', 'support', 'show').\n"
+            f"4. COPULA DIRECTNESS: Use simple 'is', 'are', 'has', or 'have' instead of copula-avoidance phrases like 'serves as', 'stands as', 'represents', or 'boasts'.\n"
+            f"5. NO NEGATIVE PARALLELISM: Do NOT use 'not only X, but Y' or 'it is not just about X, it is about Y' structures.\n"
+            f"6. NO EM DASHES OR BOLDING: Do not use em dashes (—) or bold key terms. Use normal punctuation (commas, colons, parentheses, or periods).\n"
+            f"7. SENTENCE SHAPE VARIETY: Vary sentence lengths naturally. Mix shorter sentences with longer ones, but make sure they connect logically using coordination ('and', 'but', 'so') or subordination ('because', 'since', 'although') rather than choppy, artificial fragments.\n\n"
+            f"Original paragraph:\n{para}\n\n"
+            f"Professional rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
+        )
+        system_content = "You are a professional technical editor. Rewrite the text to be completely objective, neutral, and academic. Do not show your thinking or write explanations. Output only the rewritten text."
+    else:
+        prompt = (
+            f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
+            f"Follow these strict human writing rules:\n"
+            f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
+            f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
+            f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
+            f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
+            f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
+            f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
+            f"Original paragraph:\n{para}\n\n"
+            f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
+        )
+        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
 
     messages = [
-        {"role": "system", "content": "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."},
+        {"role": "system", "content": system_content},
         {"role": "user", "content": prompt}
     ]
 
@@ -928,7 +949,7 @@ def _rewrite_with_inference_api(para: str, client) -> str:
     return generated
 
 
-def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
+def _rewrite_with_qwen3(para: str, tokenizer, model, register: str = 'casual') -> str:
     """
     Use Qwen3-0.6B with a human-writing instruction prompt.
     This produces genuinely varied output because Qwen3 understands context
@@ -938,21 +959,38 @@ def _rewrite_with_qwen3(para: str, tokenizer, model) -> str:
 
     # ── Prompt: direct instruction, no thinking required ─────────────────────
     # /no_think suffix tells Qwen3 to skip chain-of-thought (faster + no <think> block)
-    prompt = (
-        f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
-        f"Follow these strict human writing rules:\n"
-        f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
-        f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
-        f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
-        f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
-        f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
-        f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
-        f"Original paragraph:\n{para}\n\n"
-        f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
-    )
+    if register == 'professional':
+        prompt = (
+            f"You are a professional technical editor. Rewrite the following paragraph from a software project documentation to look completely human-written while maintaining a professional, objective, and academic tone.\n"
+            f"Follow these strict writing rules:\n"
+            f"1. DECONSTRUCT & REBUILD: Extract the raw facts and rebuild the paragraph in a clear, direct, and professional style. Avoid the linear AI logical scaffolding.\n"
+            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use first-person ('I', 'we', 'our' unless absolutely natural for team actions) and NEVER use conversational filler or emotional hooks (such as 'to be honest', 'let's be real', 'honestly', 'which reminds me', 'anyway'). Keep the tone formal, objective, and neutral.\n"
+            f"3. AVOID AI BUZZWORDS: Do NOT use AI vocabulary or promotional words (e.g., 'delve', 'leverage', 'utilize', 'harness', 'foster', 'empower', 'seamless', 'robust', 'tapestry', 'realm', 'testament', 'pivotal', 'crucial', 'evolving landscape', 'underscores'). Use plain, clear verbs (e.g., 'use', 'help', 'improve', 'support', 'show').\n"
+            f"4. COPULA DIRECTNESS: Use simple 'is', 'are', 'has', or 'have' instead of copula-avoidance phrases like 'serves as', 'stands as', 'represents', or 'boasts'.\n"
+            f"5. NO NEGATIVE PARALLELISM: Do NOT use 'not only X, but Y' or 'it is not just about X, it is about Y' structures.\n"
+            f"6. NO EM DASHES OR BOLDING: Do not use em dashes (—) or bold key terms. Use normal punctuation (commas, colons, parentheses, or periods).\n"
+            f"7. SENTENCE SHAPE VARIETY: Vary sentence lengths naturally. Mix shorter sentences with longer ones, but make sure they connect logically using coordination ('and', 'but', 'so') or subordination ('because', 'since', 'although') rather than choppy, artificial fragments.\n\n"
+            f"Original paragraph:\n{para}\n\n"
+            f"Professional rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
+        )
+        system_content = "You are a professional technical editor. Rewrite the text to be completely objective, neutral, and academic. Do not show your thinking or write explanations. Output only the rewritten text."
+    else:
+        prompt = (
+            f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
+            f"Follow these strict human writing rules:\n"
+            f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
+            f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
+            f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
+            f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
+            f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
+            f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
+            f"Original paragraph:\n{para}\n\n"
+            f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
+        )
+        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
 
     messages = [
-        {"role": "system", "content": "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."},
+        {"role": "system", "content": system_content},
         {"role": "user", "content": prompt}
     ]
 
@@ -1058,7 +1096,7 @@ def _rewrite_with_t5(para: str, tokenizer, model) -> str:
     return out_text
 
 
-def pass19_structural_smoothing(text: str, progress_callback=None) -> tuple[str, int]:
+def pass19_structural_smoothing(text: str, progress_callback=None, register: str = 'casual') -> tuple[str, int]:
     """
     Neural rewrite pass — uses the best available model (Serverless API or local).
     HF Serverless API (preferred): state-of-the-art 72B model.
@@ -1091,9 +1129,9 @@ def pass19_structural_smoothing(text: str, progress_callback=None) -> tuple[str,
 
         try:
             if model_type == 'api':
-                out_text = _rewrite_with_inference_api(stripped, model)
+                out_text = _rewrite_with_inference_api(stripped, model, register=register)
             elif model_type == 'qwen3':
-                out_text = _rewrite_with_qwen3(stripped, tokenizer, model)
+                out_text = _rewrite_with_qwen3(stripped, tokenizer, model, register=register)
             else:
                 out_text = _rewrite_with_t5(stripped, tokenizer, model)
 
@@ -1119,11 +1157,29 @@ def pass17_ghost_characters(text: str) -> tuple[str, int]:
             text = text.replace(gc, '')
     return text, count
 
-def pass18_perplexity_tension(text: str) -> tuple[str, int]:
+
+def pass20_em_dash_reversal(text: str) -> tuple[str, int]:
+    """
+    Strip AI-introduced em-dashes (—) from the neural rewrite output.
+
+    Em-dash overuse is one of the most reliable AI-writing signals:
+    - Wikipedia:Signs of AI writing #4.4: "Overuse of em dashes"
+    - SKILL.md #14: AI uses em dashes ~10x more than humans
+    - Ghostwriter: listed as a top mechanical tell
+
+    This pass runs AFTER the neural rewrite (pass19) because that's where
+    most em-dashes get introduced. It replaces 'X — Y' patterns with
+    simpler commas, which is what human writers naturally use.
+    """
+    return _replace_dict(text, EM_DASH_REVERSAL, case_sensitive=True)
+
+def pass18_perplexity_tension(text: str, register: str = 'casual') -> tuple[str, int]:
     """
     Target AIW-2 model by shattering next-word predictability (perplexity).
     Randomly injects organic idioms and relies on NLTK for the rest.
     """
+    if register == 'professional':
+        return text, 0
     text, changes_idioms = _replace_dict(text, {k: random.choice(v) for k, v in IDIOMATIC_INJECTIONS.items()})
     
     # Rare synonym injection is now handled universally by NLTK in Pass 15
@@ -1134,7 +1190,7 @@ def pass18_perplexity_tension(text: str) -> tuple[str, int]:
 # MAIN PIPELINE ORCHESTRATOR
 # ─────────────────────────────────────────────────────────────────────────────
 
-def humanize_text(text: str, progress_callback=None) -> dict:
+def humanize_text(text: str, progress_callback=None, register: str = 'casual') -> dict:
     """
     Run the humanization pipeline.
 
@@ -1165,7 +1221,7 @@ def humanize_text(text: str, progress_callback=None) -> dict:
             pct = 5 + int(60 * (curr / max(tot, 1)))
             progress_callback(pct, 100, msg)
 
-    text, n = pass19_structural_smoothing(text, progress_callback=_pass19_cb)
+    text, n = pass19_structural_smoothing(text, progress_callback=_pass19_cb, register=register)
     stats['pass19_structural_smoothing'] = n
 
     if progress_callback:
@@ -1173,6 +1229,7 @@ def humanize_text(text: str, progress_callback=None) -> dict:
 
     # ── STAGE 2: Light cleanup (invisible, safe) ─────────────────────────────
     text, n = pass1_ai_phrases(text);        stats['pass1_ai_phrases'] = n
+    text, n = pass20_em_dash_reversal(text); stats['pass20_em_dash_reversal'] = n
     text, n = pass5_contractions(text);      stats['pass5_contractions'] = n
     text, n = pass8_hedging(text);           stats['pass8_hedging'] = n
     text, n = pass2_intensifiers(text);      stats['pass2_intensifiers'] = n
@@ -1198,7 +1255,7 @@ def humanize_text(text: str, progress_callback=None) -> dict:
     text, n = pass6_passive_to_active(text); stats['pass6_passive_voice'] = n
 
     # Punctuation humanization: em-dashes, semicolons disrupt token boundaries
-    text, n = pass13_punctuation(text);      stats['pass13_punctuation'] = n
+    text, n = pass13_punctuation(text, register=register);      stats['pass13_punctuation'] = n
 
     # Syntactic fronting: move clauses around to break SVO patterns
     text, n = pass14_syntactic_fronting(text); stats['pass14_syntactic_fronting'] = n
@@ -1213,7 +1270,7 @@ def humanize_text(text: str, progress_callback=None) -> dict:
     text, n = pass7_opener_diversity(text);  stats['pass7_opener_diversity'] = n
 
     # Perplexity tension: inject organic idioms to shatter predictability
-    text, n = pass18_perplexity_tension(text); stats['pass18_perplexity_tension'] = n
+    text, n = pass18_perplexity_tension(text, register=register); stats['pass18_perplexity_tension'] = n
 
     # Ghost character cleanup
     text, n = pass17_ghost_characters(text); stats['pass17_ghost_characters'] = n
@@ -1276,6 +1333,7 @@ def humanize_docx(input_path: str, output_path: str, progress_callback=None) -> 
         'pass17_ghost_characters': 0,
         'pass18_perplexity_tension': 0,
         'pass19_structural_smoothing': 0,
+        'pass20_em_dash_reversal': 0,
         'total_changes': 0,
         'paragraphs_processed': 0,
         'paragraphs_skipped': 0,

@@ -61,7 +61,9 @@ AI_PHRASES = {
     "delves into": "explores",
     "a rich tapestry": "a complex mix",
     "the tapestry of": "the mix of",
+    "tapestry": "mix",
     "a testament to": "proof of",
+    "testament to": "evidence of",
     "at the intersection of": "where these meet",
     "a myriad of": "many",
     "myriad": "many",
@@ -92,11 +94,16 @@ AI_PHRASES = {
     "revolutionizes": "transforms",
     "revolutionizing": "transforming",
     "underscore the importance": "highlight the need",
+    "underscore": "emphasize",
+    "underscores": "shows",
+    "underscoring": "stressing",
+    "underscored": "highlighted",
     "unlocking the potential": "using the potential",
     "beacon of": "symbol of",
     "a profound impact": "a big impact",
     "sheds light on": "explains",
     "meticulously": "carefully",
+    "meticulous": "careful",
     "democratize access": "open access",
     "democratize": "open up",
     "democratizes": "opens up",
@@ -129,6 +136,123 @@ AI_PHRASES = {
     "harmonious": "balanced",
     "inextricably linked": "closely tied",
     "ever-evolving": "changing",
+    "ever-changing": "changing",
+    "ever-growing": "growing",
+
+    # Wikipedia 2024-2025 AI vocabulary (confirmed most flagged words)
+    # Source: Wikipedia:Signs of AI writing (revision 1356901522)
+    "actually,": "in fact,",
+    "additionally,": "also,",
+    "aligning with": "matching",
+    "aligned with": "matched",
+    "align with": "match",
+    "aligns with": "matches",
+    "garnering": "getting",
+    "garnered": "got",
+    "garners": "gets",
+    "garner": "get",
+    "interplay": "interaction",
+    "intricacies": "complexities",
+    "intricacy": "complexity",
+    "intricate": "complex",
+    "enduring": "lasting",
+    "vibrant community": "active community",
+    "vibrant": "lively",
+    "showcasing": "showing",
+    "showcased": "showed",
+    "showcases": "shows",
+    "showcase": "show",
+    "landscape": "field",
+    "the landscape of": "the field of",
+    "digital landscape": "digital world",
+    "technological landscape": "tech world",
+
+    # Copula avoidance — AI substitutes elaborate phrases for simple 'is/are/has'
+    # Wikipedia #8: "Avoidance of basic copulatives"
+    "serves as": "is",
+    "stand as": "is",
+    "stands as": "is",
+    "acted as": "was",
+    "acts as": "works as",
+    "functions as": "works as",
+    "function as": "work as",
+    "boasts": "has",
+    "boast": "have",
+    "features": "has",
+    "feature": "have",
+
+    # Sycophantic chatbot artifacts (Wikipedia #20, #22)
+    "Great question!": "",
+    "Great question.": "",
+    "Certainly!": "",
+    "Certainly,": "",
+    "Of course!": "",
+    "Of course,": "",
+    "Absolutely!": "",
+    "Absolutely,": "",
+    "You're absolutely right": "That's right",
+    "You are absolutely right": "That is right",
+    "I hope this helps": "",
+    "I hope this helps!": "",
+    "Let me know if you": "Feel free to",
+    "Feel free to reach out": "",
+    "Here is an overview": "Here's an overview",
+    "Here is a": "Here's a",
+
+    # Knowledge-cutoff disclaimers (Wikipedia #21)
+    "as of my last update": "currently",
+    "as of my knowledge cutoff": "currently",
+    "up to my last training": "currently",
+    "based on available information": "based on what's known",
+    "while specific details are limited": "though details are scarce",
+    "while specific details are scarce": "though details are limited",
+
+    # Signposting announcements (SKILL.md #28 — AI announces instead of doing)
+    "let's dive into": "",
+    "let's dive in": "",
+    "let's explore": "here's a look at",
+    "let's break this down": "",
+    "here's what you need to know": "",
+    "without further ado": "",
+    "now let's look at": "looking at",
+    "let's take a look at": "looking at",
+
+    # Promotional / travel-brochure adjectives (Wikipedia #4)
+    "nestled": "located",
+    "breathtaking": "impressive",
+    "stunning": "notable",
+    "renowned": "well-known",
+    "must-visit": "popular",
+    "natural beauty": "scenery",
+    "nestled within": "located in",
+    "nestled in the heart of": "located in",
+    "in the heart of": "in",
+
+    # Negative parallelisms (Wikipedia #3.3, SKILL.md #9)
+    "not just about": "about",
+    "not only about": "about",
+    "it's not just": "it's",
+    "it is not just": "it is",
+    "not only does": "does",
+    "not merely": "not just",
+
+    # Persuasive authority tropes (SKILL.md #27)
+    "the real question is": "the question is",
+    "at its core": "essentially",
+    "in reality": "actually",
+    "what really matters": "what matters",
+    "the deeper issue": "the issue",
+    "the heart of the matter": "the core issue",
+    "fundamentally": "basically",
+
+    # Formulaic challenge/future sections (Wikipedia #6)
+    "despite its challenges": "despite these issues",
+    "despite these challenges": "despite these issues",
+    "challenges and opportunities": "challenges and possibilities",
+    "future outlook": "looking ahead",
+    "future prospects": "future possibilities",
+    "in conclusion,": "overall,",
+    "in conclusion": "overall",
 
     # Verb stuffing
     "ensure that": "make sure",
@@ -812,18 +936,18 @@ QUALIFIERS = {
 }
 
 # ── PASS 13: Punctuation humanization patterns ────────────────────────────────
-# Replace bland conjunctions with richer punctuation
+# NOTE: We deliberately do NOT add em-dashes (—) here.
+# Em-dash overuse is a confirmed AI tell (Wikipedia #4.4, SKILL.md #14, Ghostwriter).
+# AI uses ~10x more em-dashes than humans. Pass 13 now only replaces stiff formal
+# sentence connectors with more natural alternatives — no em-dash injection.
 PUNCTUATION_HUMANIZE = {
-    ", and this ": " — and this ",
-    ", and it ": " — and it ",
-    ", and we ": " — and we ",
     ", and the ": "; the ",
     ". However, ": ". That said, ",
     ". Furthermore, ": ". Also, ",
     ". Moreover, ": ". What's more, ",
     ". Additionally, ": ". On top of that, ",
     ". In addition, ": ". Beyond that, ",
-    ". As a result, ": ". So ",
+    ". As a result, ": ". So, ",
     ". Therefore, ": ". So ",
     ". Thus, ": ". As a result, ",
     ". Subsequently, ": ". After that, ",
@@ -835,8 +959,36 @@ PUNCTUATION_HUMANIZE = {
     ". On the contrary, ": ". In contrast, ",
     ". In comparison, ": ". Compared to that, ",
     ". Specifically, ": ". In particular, ",
-    ". Notably, ": ". Worth noting — ",
+    ". Notably, ": ". Worth noting: ",
     ". Importantly, ": ". Critically, ",
+}
+
+# ── PASS 13b: Em-dash REVERSAL — strip AI em-dashes added by neural model ─────
+# After the neural rewrite pass, em-dashes that the LLM introduced get replaced.
+# These are the most common patterns: "X — Y" where a comma/colon is better.
+EM_DASH_REVERSAL = {
+    " — and ": ", and ",
+    " — but ": ", but ",
+    " — which ": ", which ",
+    " — it ": ", it ",
+    " — this ": ", this ",
+    " — the ": ", the ",
+    " — a ": ", a ",
+    " — an ": ", an ",
+    " — that ": ", that ",
+    " — these ": ", these ",
+    " — they ": ", they ",
+    " — we ": ", we ",
+    " — you ": ", you ",
+    " — or ": ", or ",
+    " — as ": ", as ",
+    " — in ": ", in ",
+    "—and ": ", and ",
+    "—but ": ", but ",
+    "—which ": ", which ",
+    "—it ": ", it ",
+    "—this ": ", this ",
+    "—the ": ", the ",
 }
 
 # ── PASS 14: Syntactic fronting patterns (Signal 5 — Syntactic Patterns) ──────
@@ -963,4 +1115,27 @@ IDIOMATIC_INJECTIONS = {
     "therefore": ["because of this", "so, naturally,"],
     "additionally": ["not to mention,", "as a bonus,"],
     "in summary": ["long story short,", "the bottom line is"]
+}
+
+PUNCTUATION_HUMANIZE_PROFESSIONAL = {
+    ", and this ": ", which ",
+    ", and it ": ", which ",
+    ", and we ": ", and we ",
+    ", and the ": "; the ",
+    ". However, ": ". Nonetheless, ",
+    ". Furthermore, ": ". In addition, ",
+    ". Moreover, ": ". Furthermore, ",
+    ". Additionally, ": ". Additionally, ",
+    ". In addition, ": ". Furthermore, ",
+    ". As a result, ": ". Consequently, ",
+    ". Therefore, ": ". Thus, ",
+    ". Thus, ": ". Therefore, ",
+    ". Subsequently, ": ". Following this, ",
+    ". Consequently, ": ". Consequently, ",
+    ". Nevertheless, ": ". Nevertheless, ",
+    ". Nonetheless, ": ". Nonetheless, ",
+    ". In contrast, ": ". In contrast, ",
+    ". Specifically, ": ". Specifically, ",
+    ". Notably, ": ". Notably, ",
+    ". Importantly, ": ". Critically, ",
 }

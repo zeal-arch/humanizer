@@ -83,7 +83,7 @@ function selectFile(file) {
   fileNameEl.textContent = file.name;
   fileSizeEl.textContent = formatBytes(file.size);
   filePreview.classList.remove('hidden');
-  submitBtn.disabled = true; // Disabled until scan finishes
+  submitBtn.disabled = false; // Enabled immediately so the user can process without waiting for scan
   scanFile(file);
 }
 
@@ -159,14 +159,14 @@ async function scanFile(file) {
 }
 
 // Viewer toggle
-document.getElementById('toggle-viewer-btn').addEventListener('click', (e) => {
+document.getElementById('toggle-viewer-btn').addEventListener('click', function() {
   const viewer = document.getElementById('document-viewer');
   if (viewer.classList.contains('hidden')) {
     viewer.classList.remove('hidden');
-    e.target.textContent = 'Hide AI Highlights';
+    this.textContent = 'Hide AI Highlights';
   } else {
     viewer.classList.add('hidden');
-    e.target.textContent = 'View AI Highlights';
+    this.textContent = 'View AI Highlights';
   }
 });
 
@@ -175,6 +175,18 @@ function clearFile() {
   fileInput.value = '';
   filePreview.classList.add('hidden');
   submitBtn.disabled = true;
+  // Also hide and reset scan results
+  const scanResults = document.getElementById('scan-results');
+  const scanPct = document.getElementById('scan-pct');
+  const scanLabel = document.getElementById('scan-label');
+  const viewerBtn = document.getElementById('toggle-viewer-btn');
+  const viewer = document.getElementById('document-viewer');
+  scanResults.classList.add('hidden');
+  scanPct.textContent = '--%';
+  scanLabel.textContent = 'Scanning...';
+  viewerBtn.classList.add('hidden');
+  viewer.classList.add('hidden');
+  viewer.innerHTML = '';
 }
 
 // ── DRAG AND DROP ─────────────────────────────────────────────────────────────
