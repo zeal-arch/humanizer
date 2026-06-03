@@ -600,7 +600,8 @@ def pass15_perplexity_guided_perturbation(text: str) -> tuple[str, int]:
         'arouse', 'companion', 'labor', 'wont', 'drill', 'space', 'peculiarly',
         'pass', 's', 'patch', 'watershed', 'conflict', 'equilibrium', 'chats',
         'chat', 'alarm', 'alarms', 'alarmed', 'instruction', 'instructions',
-        'occurred', 'aroused', 'head', 'hand', 'eye', 'heart', 'face', 'body'
+        'occurred', 'aroused', 'head', 'hand', 'eye', 'heart', 'face', 'body',
+        'office', 'turn', 'turns', 'step', 'steps', 'part', 'parts', 'course', 'courses'
     }
 
     SKIP_WORDS = {
@@ -629,7 +630,16 @@ def pass15_perplexity_guided_perturbation(text: str) -> tuple[str, int]:
         'best', 'last', 'next', 'near', 'free', 'left', 'right',
         'don', 'doesn', 'didn', 'won', 'wouldn', 'couldn', 'shouldn',
         't', 's', 're', 've', 'll', 'd', 'm',
-        'track', 'course', 'lead', 'step', 'steps', 'life', 'lives', 'spot'
+        'track', 'course', 'lead', 'step', 'steps', 'life', 'lives', 'spot',
+        'role', 'roles', 'routine', 'routines', 'system', 'systems', 'process',
+        'processes', 'method', 'methods', 'development', 'developments', 'progress',
+        'consistency', 'motivation', 'productivity', 'behavior', 'behaviors', 'pattern',
+        'patterns', 'habit', 'habits', 'action', 'actions', 'outcome', 'outcomes',
+        'result', 'results', 'change', 'changes', 'experience', 'experiences',
+        'memory', 'memories', 'city', 'cities', 'neighborhood', 'neighborhoods',
+        'structure', 'structures', 'space', 'spaces', 'street', 'streets',
+        'landmark', 'landmarks', 'preservation', 'progress', 'decision', 'decisions',
+        'practice', 'practices', 'discipline', 'disciplines', 'growth', 'grow'
     }
 
     def _double_consonant(word: str) -> str:
@@ -648,7 +658,7 @@ def pass15_perplexity_guided_perturbation(text: str) -> tuple[str, int]:
         clean = re.sub(r'[^a-zA-Z]', '', core)
         wn_pos = get_wordnet_pos(tag)
 
-        if (wn_pos is None or len(clean) < 4 or clean.lower() in SKIP_WORDS
+        if (wn_pos is None or wn_pos == wn.NOUN or len(clean) < 4 or clean.lower() in SKIP_WORDS
                 or tag in ('NNP', 'NNPS')):
             return None
 
@@ -1231,7 +1241,6 @@ def humanize_text(text: str, progress_callback=None, register: str = 'casual') -
 
     # ── STAGE 2: Light cleanup (invisible, safe) ─────────────────────────────
     text, n = pass1_ai_phrases(text);        stats['pass1_ai_phrases'] = n
-    text, n = pass20_em_dash_reversal(text); stats['pass20_em_dash_reversal'] = n
     text, n = pass5_contractions(text);      stats['pass5_contractions'] = n
     text, n = pass8_hedging(text);           stats['pass8_hedging'] = n
     text, n = pass2_intensifiers(text);      stats['pass2_intensifiers'] = n
@@ -1276,6 +1285,9 @@ def humanize_text(text: str, progress_callback=None, register: str = 'casual') -
 
     # Ghost character cleanup
     text, n = pass17_ghost_characters(text); stats['pass17_ghost_characters'] = n
+
+    # Final cleanup: revert any em-dashes introduced during Stage 3 or neural rewrite
+    text, n = pass20_em_dash_reversal(text); stats['pass20_em_dash_reversal'] = n
 
     if progress_callback:
         progress_callback(95, 100, "Finalizing output...")
