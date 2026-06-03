@@ -515,7 +515,7 @@ def pass12_qualifiers(text: str) -> tuple[str, int]:
 def pass13_punctuation(text: str, register: str = 'casual') -> tuple[str, int]:
     """
     Humanize punctuation patterns: replace bland conjunctions with
-    em-dashes, semicolons, and varied connectors.
+    semicolons and varied connectors (explicitly avoiding em-dashes).
     """
     if text.count('`') > 2 or text.count('{') > 2:
         return text, 0
@@ -907,18 +907,19 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
         system_content = "You are a professional technical editor. Rewrite the text to be completely objective, neutral, and academic. Do not show your thinking or write explanations. Output only the rewritten text."
     else:
         prompt = (
-            f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
-            f"Follow these strict human writing rules:\n"
-            f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
-            f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
-            f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
-            f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
-            f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
-            f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
+            f"You are an expert human writer rewriting this text to pass AI detectors by removing AI's logical scaffolding.\n"
+            f"Follow these strict human writing rules derived from Wikipedia's 'Signs of AI writing':\n"
+            f"1. DIRECTNESS: Extract the raw facts. Use basic copulatives ('is', 'are', 'was') instead of flowery verbs ('serves as', 'represents', 'boasts').\n"
+            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use conversational filler, sycophancy, or emotional hooks (e.g. never use 'to be honest', 'let's be real', 'honestly', 'anyway', 'plus', 'which reminds me'). Keep it direct and factual.\n"
+            f"3. REPETITION OVER VARIATION: Humans naturally repeat core nouns (e.g. saying 'tech' multiple times). Do NOT use 'elegant variation' or fancy synonyms to avoid repetition.\n"
+            f"4. NO NEGATIVE PARALLELISM: Do NOT use structures like 'not only X, but also Y' or 'it is not just about X, it is about Y'.\n"
+            f"5. NO AI BUZZWORDS: Do NOT use words like 'delve', 'leverage', 'robust', 'seamless', 'crucial', 'tapestry', 'testament'.\n"
+            f"6. HUMAN IMPERFECTION: Intentionally introduce 1 or 2 minor but realistic human grammatical imperfections (like ending a sentence with a preposition, slightly informal syntax, or a missing comma) to disrupt AI perplexity scoring.\n"
+            f"7. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
             f"Original paragraph:\n{para}\n\n"
             f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
         )
-        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
+        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
 
     messages = [
         {"role": "system", "content": system_content},
@@ -976,18 +977,19 @@ def _rewrite_with_qwen3(para: str, tokenizer, model, register: str = 'casual') -
         system_content = "You are a professional technical editor. Rewrite the text to be completely objective, neutral, and academic. Do not show your thinking or write explanations. Output only the rewritten text."
     else:
         prompt = (
-            f"You are an expert human writer rewriting this text to pass AI detectors (like GPTZero and Turnitin) by breaking the AI's logical scaffolding.\n"
-            f"Follow these strict human writing rules:\n"
-            f"1. DECONSTRUCT: Extract the raw facts from the paragraph below.\n"
-            f"2. SCRAMBLE: Re-order the points. Start with a casual, opinionated, or personal hook (never open with 'In today's' or any temporal variant).\n"
-            f"3. AFFECTIVE FRICTION: Use a subjective human emotional register. Express opinion, doubt, or mild skepticism if natural (e.g., using 'to be honest', 'let's be real', 'honestly').\n"
-            f"4. LEXICAL REPETITION: Repeat core topic nouns (e.g., keep saying 'tech', 'work', or 'routines') naturally. Do NOT search for fancy synonyms (avoid spin-bot signatures like 'whirlwind' or 'turns').\n"
-            f"5. ASSOCIATIVE TRANSITIONS: Link thoughts using casual connectors ('Anyway', 'Plus', 'Honestly', 'Which reminds me') rather than logical ones.\n"
-            f"6. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
+            f"You are an expert human writer rewriting this text to pass AI detectors by removing AI's logical scaffolding.\n"
+            f"Follow these strict human writing rules derived from Wikipedia's 'Signs of AI writing':\n"
+            f"1. DIRECTNESS: Extract the raw facts. Use basic copulatives ('is', 'are', 'was') instead of flowery verbs ('serves as', 'represents', 'boasts').\n"
+            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use conversational filler, sycophancy, or emotional hooks (e.g. never use 'to be honest', 'let's be real', 'honestly', 'anyway', 'plus', 'which reminds me'). Keep it direct and factual.\n"
+            f"3. REPETITION OVER VARIATION: Humans naturally repeat core nouns (e.g. saying 'tech' multiple times). Do NOT use 'elegant variation' or fancy synonyms to avoid repetition.\n"
+            f"4. NO NEGATIVE PARALLELISM: Do NOT use structures like 'not only X, but also Y' or 'it is not just about X, it is about Y'.\n"
+            f"5. NO AI BUZZWORDS: Do NOT use words like 'delve', 'leverage', 'robust', 'seamless', 'crucial', 'tapestry', 'testament'.\n"
+            f"6. HUMAN IMPERFECTION: Intentionally introduce 1 or 2 minor but realistic human grammatical imperfections (like ending a sentence with a preposition, slightly informal syntax, or a missing comma) to disrupt AI perplexity scoring.\n"
+            f"7. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
             f"Original paragraph:\n{para}\n\n"
             f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
         )
-        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural, conversational language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
+        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
 
     messages = [
         {"role": "system", "content": system_content},
