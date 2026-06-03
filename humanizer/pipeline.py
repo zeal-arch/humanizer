@@ -916,56 +916,57 @@ def pass16_imperfect_discourse(text: str) -> tuple[str, int]:
 def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> str:
     """
     Use Hugging Face Serverless Inference API (InferenceClient) with a 72B model.
-    This is the PRIMARY rewrite engine — produces human-quality output.
+    This is the PRIMARY rewrite engine -- produces human-quality output.
     """
     if register == 'professional':
         prompt = (
-            f"Rewrite this paragraph to sound like a real person wrote it for a professional document. "
-            f"Keep the exact same facts and meaning. Use clear, direct language. "
-            f"Do NOT use AI words like 'delve', 'leverage', 'robust', 'crucial', 'furthermore'. "
-            f"Do NOT use em dashes. Mix sentence lengths naturally. "
-            f"Output ONLY the rewritten paragraph.\n\n"
-            f"{para}"
+            "Rewrite this paragraph to sound like a real person wrote it for a professional document. "
+            "Keep the exact same facts and meaning. Use clear, direct language. "
+            "Do NOT use AI words like 'delve', 'leverage', 'robust', 'crucial', 'furthermore'. "
+            "Do NOT use em dashes. Mix sentence lengths naturally. "
+            "Output ONLY the rewritten paragraph.\n\n"
+            + para
         )
         system_content = "You rewrite text to sound naturally human. Output only the rewritten text, nothing else."
     else:
         prompt = (
-            f"Rewrite this paragraph so it sounds like a real person casually wrote it. "
-            f"Keep ALL the same events, details, and meaning. Don't add new information. "
-            f"Don't remove any key details. "
-            f"Use contractions (I'm, didn't, it's, wasn't). Use simple everyday words. "
-            f"Vary sentence length, some short, some longer. "
-            f"Do NOT use fancy vocabulary or AI-sounding words. "
-            f"Output ONLY the rewritten paragraph, nothing else.\n\n"
-            f"{para}"
+            "Rewrite this paragraph to defeat AI detectors like ZeroGPT and GPTZero. "
+            "Keep ALL the same events and meaning. Do not add or remove any story details.\n\n"
+            "Use these specific tactics:\n"
+            "1. MIX SENTENCE LENGTHS DRASTICALLY: Write 2-3 very short sentences (3-6 words). Write 1 long run-on. Don't make them all medium length.\n"
+            "2. USE ULTRA-CASUAL WORDS: 'ended up', 'kinda', 'turns out', 'for whatever reason', 'not like I minded', 'honestly', 'at some point', 'stay put', 'bug me'\n"
+            "3. REORDER INFO: Don't present facts in the same order. Start some sentences mid-action or with 'And', 'But', 'So'.\n"
+            "4. ADD ONE BRIEF PERSONAL ASIDE: One short thought like 'not that it mattered' or 'which was fine by me' tucked inside a sentence.\n"
+            "5. SPLIT LONG SENTENCES: If the original has a long sentence, split it into two short ones.\n"
+            "6. AVOID SMOOTH AI TRANSITIONS: Don't use 'however', 'therefore', 'furthermore' etc. Let ideas jump naturally.\n\n"
+            "Output ONLY the rewritten paragraph, nothing else.\n\n"
+            + para
         )
-        system_content = "You rewrite text to sound naturally human and casual. Output only the rewritten text, nothing else. Never explain what you did."
+        system_content = "You rewrite text to sound like a real person typed it quickly. Use casual everyday English. Never explain or introduce your output."
 
     messages = [
         {"role": "system", "content": system_content},
         {"role": "user", "content": prompt}
     ]
 
-    # Cap output length to ~1.5x input to prevent rambling
-    max_tokens = min(400, int(len(para.split()) * 2.0) + 40)
+    # Cap output length
+    max_tokens = min(420, int(len(para.split()) * 2.2) + 50)
 
     try:
         response = client.chat_completion(
             messages=messages,
             max_tokens=max_tokens,
-            temperature=0.85,
-            top_p=0.90,
+            temperature=0.95,   # higher = more unpredictable tokens = harder to detect
+            top_p=0.92,
         )
     except Exception as e:
-        print(f"[API] Inference API error: {e}")
-        return para  # return original on API failure
+        print("[API] Inference API error: {}".format(e))
+        return para
 
     generated = response.choices[0].message.content.strip()
 
-    # Clean up model artifacts
     generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
     generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result|Sure)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
-    # Strip wrapping quotes if the model quoted the whole output
     if len(generated) > 2 and generated[0] == '"' and generated[-1] == '"':
         generated = generated[1:-1].strip()
     generated = generated.replace('\u2018', "'").replace('\u2019', "'").replace('\u201c', '"').replace('\u201d', '"')
@@ -975,7 +976,7 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
     words_out = len(generated.split())
     words_in  = len(para.split())
     if words_out < 3 or words_out > words_in * 2.5:
-        return para  # safety fallback — reject if output is way too long/short
+        return para
 
     return generated
 
