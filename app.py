@@ -22,15 +22,19 @@ from flask import Flask, request, jsonify, send_file, render_template, Response
 IS_VERCEL = os.environ.get('VERCEL') == '1'
 HF_SPACE_URL = os.environ.get('HF_SPACE_URL')
 HF_API_TOKEN = (
-    os.environ.get('HF_API_TOKEN') or 
-    os.environ.get('HF_TOKEN') or 
-    os.environ.get('humanizeread') or 
-    os.environ.get('zeal000') or 
+    os.environ.get('HF_API_TOKEN') or
+    os.environ.get('HF_TOKEN') or
+    os.environ.get('humanizeread') or
+    os.environ.get('zeal000') or
     os.environ.get('HF_READ_TOKEN')
 )
 
+# Detect whether we are running INSIDE the HF Space itself.
+# The Space always sets SPACE_ID (e.g. "Zeal000/humanizerDoc").
+# When SPACE_ID is present, this process IS the backend — never proxy.
+IS_HF_SPACE = bool(os.environ.get('SPACE_ID') or os.environ.get('SPACE_HOST'))
 
-# Try importing ML dependencies. If they are missing, we MUST run in proxy mode.
+# Try importing ML dependencies. If missing, force proxy mode.
 try:
     from humanizer.pipeline import humanize_docx, preload_model
     from humanizer.detector import score_docx
@@ -39,8 +43,15 @@ try:
 except (ImportError, ModuleNotFoundError):
     HAS_LOCAL_DEPS = False
 
-# We force Proxy Mode if explicitly requested or if local ML dependencies are missing
-USE_PROXY = IS_VERCEL or (HF_SPACE_URL is not None) or not HAS_LOCAL_DEPS
+# Proxy mode: only when running on Vercel (IS_VERCEL) or when ML deps
+# aren't installed AND we're not inside the HF Space itself.
+# The HF Space IS the backend — it must never route to itself.
+USE_PROXY = IS_VERCEL or (not IS_HF_SPACE and HF_SPACE_URL is not None and not HAS_LOCAL_DEPS)
+
+if IS_HF_SPACE:
+    print(f"[Startup] Running inside HF Space ({os.environ.get('SPACE_ID')}). Proxy mode disabled.")
+elif USE_PROXY:
+    print(f"[Startup] Proxy mode active. Backend: {HF_SPACE_URL}")
 
 if USE_PROXY:
     print(f"[Proxy Mode] Routing requests to private Hugging Face Space: {HF_SPACE_URL}")
