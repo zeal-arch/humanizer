@@ -1,0 +1,24 @@
+import os, sys
+sys.path.insert(0, '.')
+from humanizer.perplexity import load_perplexity_model, score_text_perplexity
+import json
+
+load_perplexity_model()
+
+original_text = """Because routines rarely feel important while they are happening, citizenry much underestimate how much ordinary routines shape their living. This finding suggests, without question, most days are made up of activity. Seem minor and repetitive: arouse up at a companion clip, travelling the same route, public speaking with the same citizenry, or completing labor that appear insignificant on their own. In light of this, naturally, they can turn most invisible,, you know,. These actions repeat so oftentimes. Sometimes, multitude unremarkably pay attention to large events such as achievements, you know, celebrations, or unexpected changes, while overlooking the wont that occupy most of their clip. When individuals reflect on their lives after various years, they often realize that many meaningful outcomes were built gradually rather than appearing abruptly, Yet. No uncertainty, skills are developed through repeated drill, relationships are strengthened through regular interaction, and personal growth ofttimes occurs through minor adjustments that accumulate over long periods. This finding suggests, frequently, major transformation oftentimes look dramatic only when viewed from a space,. The individual steps that create them seemed ordinary at the time. The evidence indicates, technology has also changed the way people experience ordinary life, peculiarly in how they pass and consume info. These results, no uncertainty, in previous contemporaries, obtaining info ofttimes required deliberate attempt, such as visiting libraries, indication newspapers. Too, speaking directly with knowledgeable individuals. What we 're seeing is: nowadays, info is available almost instantly,. People can move from one topic to another within s. Without question, patch this availability has created many advantages, it has too introduced new challenges. The constant flow of notifications, updates,. Digital content can watershed attending and make sustained focus more difficult. Many individual have noticed that they switch between applications, messages,. Project without realizing how frequently these interruptions occur. As a result, discussions approximately engineering increasingly focus not only on what devices can do. Also on how they work habits, attention, and daily behavior. Building upon this, surprisingly, the question is no longer simply whether technology improves life, but as well how citizenry can use it in a way that supports concentration, equilibrium, and meaningful conflict with the world around them."""
+
+colloquial_text = """To be honest, routines pretty much run our lives, even if we don't realize it. Most days are just a repeat of the same small stuff: waking up to an alarm, taking the same route, talking to the same people, and doing mundane tasks. It all just blends into the background after a while. We tend to focus on the big things—like achievements or sudden changes—while ignoring the small habits that fill most of our time. But years later, you realize that the meaningful stuff was built slowly, not overnight. Skills take practice, relationships take regular effort, and growth happens in tiny steps. The big shifts only look dramatic when you're looking back; at the time, every single step felt completely routine.
+
+Actually, technology has also changed how we experience daily life, especially with how we access information. Back in the day, finding info meant visiting the library, reading newspapers, or talking to experts. Now, it's instant. We hop from topic to topic in seconds. This easy access has its benefits, but it also brings new challenges. Constant notifications and digital updates end up fragmenting our attention, making it really hard to focus. We constantly switch between apps and messages without even realizing how often it's happening.
+
+So, the conversation around tech now isn't just about what gadgets can do, but how they shape our habits and daily routines. The real question is how we can use technology to support concentration, balance, and meaningful engagement with the world around us."""
+
+print("\n--- PERPLEXITY: ORIGINAL SPUN TEXT ---")
+res_orig = score_text_perplexity(original_text)
+print(f"Avg PPL: {res_orig['avg_perplexity']} | Hot sentences: {res_orig['hot_sentence_count']}/{res_orig['total_sentences']}")
+
+print("\n--- PERPLEXITY: COLLOQUIAL STUDENT TEXT ---")
+res_coll = score_text_perplexity(colloquial_text)
+print(f"Avg PPL: {res_coll['avg_perplexity']} | Hot sentences: {res_coll['hot_sentence_count']}/{res_coll['total_sentences']}")
+for sent, ppl in res_coll['sentences']:
+    print(f"  PPL={ppl:.1f} | {sent[:80]}...")

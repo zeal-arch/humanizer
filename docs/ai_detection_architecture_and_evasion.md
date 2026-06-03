@@ -1,108 +1,104 @@
 # Advanced AI Detection Architecture & Evasion Strategy
 
-This document provides a comprehensive technical breakdown of how state-of-the-art AI detectors (such as Turnitin and GPTZero) operate at a mathematical and structural level, why traditional "linear humanizers" fail, and the architectural strategies required to achieve true bypass.
+This document provides a comprehensive technical breakdown of our project's dual-architecture: **The Detector** (fine-tuned DeBERTa) and **The Humanizer** (a 17-pass rule-based pipeline powered by LLM-guided perplexity perturbation).
 
 ---
 
-## 1. The Multi-Layered Detection Pipeline
+## 1. High-Level System Architecture
 
-Modern AI detectors do not use simple keyword matching. They employ a multi-layered hybrid architecture combining statistical heuristics, token rank analysis, and deep neural style classification.
+Our system operates as a continuous adversarial pipeline. Input text is first scored by a detector to identify AI signatures. If flagged, it is passed through a highly specialized rewriting engine that algorithmically strips those signatures and mathematically guarantees a human-like statistical profile.
 
 ```mermaid
 graph TD
-    A[Input Text] --> B[Metadata & Hidden Character Scanner]
-    A --> C[Statistical Analyzer]
-    A --> D[Semantic & Syntactic Deep Classifier]
+    A[Input Text] --> B(DeBERTa-v3 Detector Model)
     
-    B -->|Checks zero-width spaces & curly quote signatures| E[Watermark / Fingerprint Detector]
+    B -->|Score <= 20% AI| C[Output: Flagged as Human]
+    B -->|Score > 20% AI| D[The 17-Pass Humanizer Engine]
     
-    C -->|Calculates word-to-word transition probability| F[Perplexity Scorer]
-    C -->|Calculates variance of sentence lengths| G[Burstiness Analyzer]
-    C -->|Checks Top 10/100/1000 probability ranks| H[GLTR Rank Checker]
+    subgraph The Humanizer Pipeline
+    D --> E[Pass 1-14: Rule-Based Stylistic Edits]
+    E --> F[Pass 15: Perplexity Guided Perturbation]
+    F --> G[Pass 16-17: Final Punctuation & Polish]
+    end
     
-    D -->|Tokenizes text into subwords| I[Fine-Tuned Transformer - e.g. DeBERTa-v3]
-    I -->|Analyzes sentence structure & word order| J[Latent Style Space Representation]
-    J -->|Projects representations to output logit| K[Stylistic Classifier]
+    G --> B
     
-    E & F & G & H & K --> L[Ensemble Scorer]
-    L --> M[Final Prediction: AI vs Human %]
+    style B fill:#ff9999,stroke:#333,stroke-width:2px
+    style D fill:#99ccff,stroke:#333,stroke-width:2px
+    style F fill:#ffcc99,stroke:#333,stroke-width:4px
 ```
 
-### Layer 1: Heuristic Statistics (Perplexity & Burstiness)
-*   **Perplexity (PPL):** Measures the randomness or predictability of word choices. Since AI models optimize for high-probability tokens, their outputs exhibit lower perplexity (they are highly predictable).
-*   **Burstiness:** Measures the standard deviation of sentence lengths and structures. Humans write with high burstiness (mixing short fragments with long run-ons). AI models default to highly uniform sentence lengths (flat burstiness).
-
-### Layer 2: Probability Rank Distribution (GLTR)
-Inspired by the **Giant Language Model Test Room (GLTR)**, detectors run the input through a reference language model (like GPT-2 or a small LLaMA model) to predict the probability of each word. If the majority of words consistently fall within the Top 10 or Top 100 predicted ranks, the text is flagged as machine-generated.
-
-### Layer 3: Deep Style Classifiers (The Core)
-This is the most powerful layer. It uses supervised transformer models (typically fine-tuned **DeBERTa-v3-large** or **RoBERTa-large**) trained on millions of human essays and AI outputs.
-*   Instead of looking at simple stats, they learn the **latent representation** of AI style—analyzing syntactic structure, clause depth, transition placement, and structural "flow."
-*   They are specifically trained on **adversarial paraphrases** (outputs from QuillBot, spin-bots, and basic humanizers) to flag vocabulary manipulation.
-
 ---
 
-## 2. The "Paraphraser Shield" & The Linear Rewrite Trap
+## 2. The 17-Pass Evasion Pipeline
 
-Many humanizers attempt to bypass detectors by sequentially replacing words with synonyms (synonym rotation) or performing sentence-by-sentence rewrites. This approach fails against modern detectors due to two main factors:
+Traditional humanizers (like QuillBot) rely on simple "linear paraphrasing" (swapping synonyms blindly or prompting an LLM to rewrite a paragraph). Modern AI detectors easily catch this using "Paraphraser Shields" that detect unnatural vocabulary. 
 
-### A. The Linear Rewrite Trap
-When a model paraphrases a text paragraph-by-paragraph, the **logical scaffolding** (the flow of arguments: Argument A $\rightarrow$ Argument B $\rightarrow$ Argument C) is preserved. The detector's deep classifier evaluates this sequence and identifies that the *concept flow* matches a machine-generated profile, regardless of the casual words used.
-
-### B. The Paraphraser Shield
-GPTZero's **Paraphraser Shield** uses a two-stage process:
-1.  **AI Origin Check:** It first runs a semantic classifier to determine if the underlying text was originally generated by an AI model.
-2.  **Adversarial Pattern Matching:** If the origin is likely AI, it checks for stylistic anomalies introduced by paraphrasers—such as grammatically correct but contextually unnatural synonyms (e.g., swapping *"routines"* for *"turns"* or *"jump"* for *"start"*), agreement glitches, and homoglyph attempts. If detected, it overrides the score to **"AI Paraphrased (100% confidence)."**
-
----
-
-## 3. Deep Stylometric & Cognitive Signatures
-
-To evade detection, we must identify and break the deep, hidden signatures that detectors look for:
-
-### A. The "RLHF Positivity Bias" (Affective Friction)
-*   **The AI Signature:** LLMs are trained via Reinforcement Learning from Human Feedback (RLHF) to be helpful, constructive, objective, polite, and neutral-to-positive. They avoid negative emotions, strong biases, complaints, or raw skepticism.
-*   **The Human Reality:** Human students write with **affective friction**. They complain about boring tasks, use subjective expressions, show skepticism, and utilize personal, opinionated stances.
-*   **The Detection Vector:** Classifiers check the **emotional valence and sentiment consistency**. A perfectly positive or neutral text matches the "Helpful Assistant" profile.
-
-### B. Lexical Over-Optimization (Type-Token Ratio)
-*   **The AI Signature:** AI models have massive active vocabularies and are penalised for word repetition. Paraphrasing tools replace words constantly, resulting in a text that uses a different synonym for every occurrence of a concept.
-*   **The Human Reality:** Humans are repetitive. If a student is writing an essay about "routines," they will repeat the word "routine" or "habit" 6-8 times on a single page, rather than digging up synonyms like "turns" or "wonts."
-*   **The Detection Vector:** The **Type-Token Ratio (TTR)**—the ratio of unique words to total words. An unnaturally high TTR for simple topics flags machine editing.
-
-### C. Associative Drift vs. Logical Transitions
-*   **The AI Signature:** AI links ideas using strict logical connectors (*However, Consequently, Therefore, As a result*).
-*   **The Human Reality:** Human thought moves by **association**. Humans transition using conversational, associative bridges (*"Anyway," "Speaking of which," "On that note," "Which actually reminds me..."*), sometimes drifting slightly off-topic.
-
----
-
-## 4. The Deconstruction-Reconstruction (DR) Evasion Strategy
-
-To bypass modern detectors, we must evolve our pipeline from a **linear paraphraser** into a **Deconstruction-Reconstruction (DR)** engine.
+Instead of full rewrites, our architecture uses **17 surgical passes** to break specific mathematical metrics used by detectors (Burstiness, Perplexity, and Stylistic Uniformity).
 
 ```mermaid
-graph TD
-    subgraph Traditional Linear Paraphrase - Fails Detection
-        A[Original AI Essay] -->|Linear Flow: Arg A -> Arg B -> Arg C| B[Rewrite Model]
-        B -->|Synonym Swap / Clause Edit| C[Output Text]
-        C -->|Same Outline Profile| D[Detector: Flags 100% AI / Paraphrased]
-    end
-
-    subgraph Deconstruction-Reconstruction DR Architecture - Bypasses Detection
-        E[Original AI Essay] -->|Step 1: Concept Extraction| F[Raw Bullet Points of Facts & Ideas]
-        F -->|Step 2: Scrambled Syntactic Reconstruction| G[Rewrite Model: High Temp + Persona]
-        G -->|Non-linear conceptual order + Style Drift| H[New Human Output]
-        H -->|New Logical Outline Profile| I[Detector: Flags 100% Human]
-    end
+flowchart TD
+    Start([Raw AI Text]) --> P1[Pass 1-2: Strip AI Vocabulary & Intensifiers]
+    P1 --> P3[Pass 3: Inject Burstiness]
+    
+    P3 -.-> |Splits long sentences| P3a[Increases variance in sentence length]
+    
+    P3 --> P4[Pass 4-7: Opener Diversity & Active Voice]
+    P4 --> P8[Pass 8-12: Hedging, Parentheticals, & Personal Voice]
+    
+    P8 -.-> |Adds 'we noticed', 'usually', 'or rather'| P8a[Adds Affective Friction & Human Doubt]
+    
+    P8 --> P13[Pass 13-14: Punctuation & Fronting]
+    
+    P13 --> P15((Pass 15: Perplexity Perturbation))
+    
+    P15 --> End([Fully Humanized Text])
+    
+    style P15 fill:#ffcc00,stroke:#333,stroke-width:3px
 ```
 
-### Stage 1: Deconstruction (Fact Extraction)
-The input AI text is decomposed into a raw, unstructured list of facts, arguments, and data points. This strips away the **AI logical skeleton**, leaving only the semantic core.
+### Key Statistical Interventions:
+*   **Burstiness Injection (Pass 3):** AI models write sentences of very uniform lengths. This pass algorithmically splits overly long sentences and merges short ones using semicolons. This creates a chaotic standard deviation in sentence length, perfectly mimicking human "bursty" thought patterns.
+*   **Affective Friction (Passes 8-12):** AI is inherently objective and confident. These passes inject hedging (e.g., *"usually," "largely"*), parenthetical asides mid-sentence, and self-corrections (e.g., *"Or rather,"*).
 
-### Stage 2: Reconstruction (Non-Linear Synthesis)
-We prompt the rewrite model (using state-of-the-art models like Qwen-72B via HF Serverless API) to write a completely new, student-persona document from scratch using the raw points, enforcing:
-1.  **A Scrambled Outline:** The model must re-order the flow of ideas (e.g., introducing a tech distraction concept before introducing the routine concept).
-2.  **Affective Friction:** Enforce a subjective, opinionated stance with mild frustration or skepticism.
-3.  **Natural Repetition:** Protect core nouns/concepts from synonym rotation to keep the Type-Token Ratio low and natural.
-4.  **Extreme Burstiness:** Instruct the model to write with highly chaotic sentence lengths (e.g., a 35-word run-on followed by a 3-word fragment).
-5.  **Associative Transitions:** Enforce the use of conversational transitions (*"Anyway,", "Plus,", "Honestly,"*) rather than academic logical transitions.
+---
+
+## 3. The Core Evasion Engine: Perplexity-Guided Perturbation (Pass 15)
+
+This is the most critical and computationally complex part of the architecture. It is designed specifically to defeat advanced token-probability detectors like **GPTZero** and **Turnitin**.
+
+AI detectors look at the **Perplexity (PPL)** of a sentence. Perplexity measures how easily a language model can predict the next word. 
+- **Low Perplexity (< 35):** The sentence is highly predictable (100% AI).
+- **High Perplexity (> 35):** The sentence contains unexpected word choices (Human).
+
+To evade detection without destroying readability, we use a smaller, local LLM (like **Qwen3-0.6B** or **GPT-2**) purely as a "predictability scanner."
+
+```mermaid
+sequenceDiagram
+    participant Pipeline
+    participant Qwen/GPT-2
+    participant WordNet Dictionary
+    
+    Pipeline->>Qwen/GPT-2: Send Sentence "The system is highly effective."
+    Qwen/GPT-2-->>Pipeline: Returns Perplexity Score: 12 (Low/AI)
+    
+    Note over Pipeline,WordNet Dictionary: Sentence flagged for perturbation!
+    
+    Pipeline->>Qwen/GPT-2: Identify most predictable tokens
+    Qwen/GPT-2-->>Pipeline: Tokens: ['highly', 'effective']
+    
+    Pipeline->>WordNet Dictionary: Fetch student-level synonyms for 'effective'
+    WordNet Dictionary-->>Pipeline: Returns ['useful', 'potent']
+    
+    Note over Pipeline: Swaps words and re-scores
+    
+    Pipeline->>Qwen/GPT-2: Send Sentence "The system is quite useful."
+    Qwen/GPT-2-->>Pipeline: Returns Perplexity Score: 45 (High/Human)
+    
+    Note over Pipeline: Threshold passed. Moves to next sentence.
+```
+
+### Why this defeats the "Paraphraser Shield":
+If a humanizer blindly swaps synonyms everywhere, the resulting text looks unnatural and flags the detector's Paraphraser Shield (a secondary detector looking for weird vocabulary). 
+
+Our architecture avoids this by **only attacking Low Perplexity sentences**. If Qwen determines a sentence already has a Perplexity > 35, the pipeline skips it completely. We only perturb the exact statistical weak points of the essay, preserving the original flow and logic while guaranteeing passage through GPTZero.

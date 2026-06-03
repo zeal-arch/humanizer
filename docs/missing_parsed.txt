@@ -1,0 +1,1228 @@
+==Style==
+===Title case===
+{{For|non-AI-specific guidance about this|Wikipedia:Manual of Style/Capital letters#Headings, headers, and captions}}
+{{Shortcut|WP:AITITLECASE}}
+
+In section headings, AI chatbots strongly tend to capitalize all main words.<ref name="Russell"/>
+
+'''Examples'''
+{{blockquote|{{fmbox|image=none|text=
+{{fake section|level=2|Impact of Technology and Digitalization}}
+The advent of digital technology and the internet has revolutionized international economic law. [...]
+{{fake section|level=2|Sustainable Development and Environmental Law}}
+The integration of sustainable development goals into international economic law is increasingly important. [...]
+{{fake section|level=2|Human Rights and Economic Law}}
+The relationship between human rights and international economic law is a growing area of focus. [...]
+}}|From [[Special:Diff/1189640895|this December 2023 revision]] to [[International economic law]]}}
+
+===Overuse of boldface===
+{{For|non-AI-specific guidance about this|Wikipedia:Manual of Style/Text formatting#Boldface}}
+{{shortcut|WP:AIBOLD}}
+AI chatbots may display various phrases in [[boldface]] for emphasis in an excessive, mechanical manner. One of their tendencies, inherited from [[readme]]s, fan wikis, how-tos, sales pitches, slide decks, listicles and other materials that heavily use boldface, is to emphasize every instance of a chosen word or phrase, often in a "key takeaways" fashion. Some newer large language models or apps have instructions to avoid overuse of boldface.
+
+'''Examples'''
+{{blockquote|A '''leveraged buyout (LBO)''' is characterized by the extensive use of '''debt financing''' to acquire a company. This financing structure enables '''private equity firms''' and '''financial sponsors''' to control businesses while investing a relatively small portion of their own equity. The acquired company’s '''assets and future cash flows''' serve as collateral for the debt, making lenders more willing to provide financing.|From [[Special:Diff/1274574473|this revision]] to [[Leveraged buyout]]}}
+
+
+{{blockquote|'''50 Scientists and Thinkers in AI Safety with significant''' influence on the field of alignment, containment, and risk mitigation. The list includes their '''Productive Years''', their estimated '''P(doom)''' (probability of existential catastrophe), a '''one-sentence summary of their contribution to AI Safety''', and their Wikipedia link.|From [[Special:Diff/1324781030|this revision]] to [[P(doom)]]}}
+
+{{blockquote|
+{{fmbox|image=none|text=
+I am initiating this '''[[Request for Comments|Request for Comment (RfC)]]''' to seek input from '''experienced editors and administrators''' regarding '''persistent policy compliance issues''' in this article, which covers a '''high-profile proposed acquisition involving [[Warner Bros. Discovery]]'''.
+
+Despite repeated editing and cleanup efforts, the article continues to exhibit '''systemic problems''' that significantly undermine its encyclopedic quality and neutrality.
+
+{{fake section|level=3|Key Issues Requiring Community Review}}
+# '''Undue Weight and Apparent Bias'''  The article places '''disproportionate emphasis on Netflix''', exceeding its relevance to the subject and creating an imbalanced narrative. This raises ongoing concerns under '''[[WP:NPOV]]''' and '''[[WP:UNDUE]]'''.
+# '''News Aggregation and Excessive Detail'''  Large portions of the article read as '''compiled news reporting''', with dense, minimally summarized content that appears to be copied or lightly paraphrased from sources. This conflicts with '''WP:NOTNEWS''' and '''[[WP:SUMMARYSTYLE]]'''.
+# '''Lack of High-Level Overview'''  The article fails to present a clear, concise overview of the proposed acquisition. Instead, readers are confronted with fragmented detail without sufficient contextual framing.
+# '''Misplacement of Content'''  Speculative analysis, reporting detail, and tangential information are frequently placed in '''inappropriate sections''', weakening article structure and reader comprehension.
+
+{{fake section|level=3|Prior Cleanup Efforts}}
+I have personally conducted '''substantial editing''', including:
+
+[...]
+
+However, these efforts have not resolved the underlying issues, suggesting that '''individual edits alone are insufficient''' and that '''broader consensus and oversight are required'''.
+
+{{fake section|level=3|Questions for Comment}}
+I respectfully request community input on the following:
+# Does the article currently give '''undue weight''' to Netflix or other peripheral entities?
+# Is the article failing to meet '''[[WP:NOTNEWS]]''' and '''[[WP:SUMMARYSTYLE]]''' standards due to excessive, real-time reporting?
+# Does the article require '''structural reorganization''' to provide a proper overview and improve section relevance?
+# Would '''administrative measures''' (e.g., guided restructuring, closer monitoring, or temporary page protection) be appropriate given the article’s visibility and edit patterns?
+
+{{fake section|level=3|Closing}}
+Given the prominence of this topic and the likelihood of continued drive-by or promotional editing, this article requires '''careful scrutiny by experienced contributors'''. The goal of this RfC is to establish clear consensus on how the article should be structured, weighted, and maintained in line with Wikipedia’s core content policies.
+}}
+|From [[Special:Diff/1336034644|this revision]] to [[Talk:Proposed acquisition of Warner Bros. Discovery]]; this example also includes [[WP:AILIST|lists]] and uses [[WP:AITITLECASE|title case]] for subheadings}}
+
+===<span class="anchor" id="Lists"></span>Inline-header vertical lists===
+{{shortcut|WP:AILIST}}
+{{For|non-AI-specific guidance about this|Wikipedia:Manual of Style/Lists#Use prose where understood easily}}
+AI chatbots output often includes vertical lists formatted in a specific way: an ordered or unordered list where the list marker (number, bullet, dash, etc.) is followed by an inline boldfaced header, separated with a colon from the remaining descriptive text.
+
+Instead of [[H:LIST|proper wikitext]], a bullet point in an unordered list may appear as a bullet character (•), hyphen (-), en dash (–), [[Wikipedia:Signs_of_AI_writing#Use_of_Markdown|hash]] (#), [[Wikipedia:Signs_of_AI_writing#Emoji_as_formatting|emoji]], or similar character. Ordered lists (i.e. numbered lists) may use explicit numbers (such as {{code|1.}}) instead of standard wikitext. When [[WP:SCOPY|copied as bare text appearing on the screen]], some of the formatting information is lost, and line breaks may be lost as well.
+
+'''Examples'''
+{{blockquote|
+Conflict of Interest (COI)/Autobiography: While I understand the concern regarding my username [...]<br>
+Notability (GNG and NPOLITICIAN): I have revised the article to focus on factual details [...]<br>
+Original Research (WP) and Promotional Tone: I have worked on removing original research [...]<br>
+Article Move to Main Namespace: Moving the draft to the main namespace after the AFC review [...]
+|From [[Special:Diff/1251078728|this October 2024 revision]] to [[Wikipedia:Articles for deletion/Sarwan Kumar Bheel]]}}
+
+{{blockquote|
+1. Historical Context Post-WWII Era: The world was rapidly changing after WWII, [...]
+2. Nuclear Arms Race: Following the U.S. atomic bombings, the Soviet Union detonated its first bomb in 1949, [...]
+3. Key Figures Edward Teller: A Hungarian physicist who advocated for the development of more powerful nuclear weapons, [...]
+4. Technical Details of Sundial Hydrogen Bomb: The design of Sundial involved a hydrogen bomb [...]
+5. Destructive Potential: If detonated, Sundial would create a fireball up to 50 kilometers in diameter, [...]
+6. Consequences and Reactions Global Impact: The explosion would lead to an apocalyptic nuclear winter, [...]
+7. Political Reactions: The U.S. military and scientists expressed horror at the implications of such a weapon, [...]
+8. Modern Implications Current Nuclear Arsenal: Today, there are approximately 12,000 nuclear weapons worldwide, [...]
+9. Key Takeaways Understanding the Madness: The concept of Project Sundial highlights the extremes of human ingenuity [...]
+10. Questions to Consider What were the motivations behind the development of Project Sundial? [...]
+|From [[Special:PermanentLink/1255717748|this November 2024 revision]] to [[Sundial (weapon)]]}}
+
+{{blockquote|{{fmbox|image=none|text=
+AVO consists of three key layers:
+* '''SEO (Search Engine Optimization):''' Traditional methods for improving visibility in search engine results through content, technical, and on-page optimization.
+* '''AEO (Answer Engine Optimization):''' Techniques focused on optimizing content for voice assistants and answer boxes, such as featured snippets and structured data.
+* '''GEO (Generative Engine Optimization):''' Strategies for ensuring businesses are cited as credible sources in responses generated by large language models (LLMs).
+}}|From [[Special:Diff/1316572059|this October 2025 revision]] to [[Draft:AI Visibility Optimization (AVO)]]. Also note the [[WP:AISIGNS#Rule of three|rule of three]].}}
+
+{{blockquote|{{fmbox|image=none|text=
+Key highlights:
+* '''Route Details''': Starts at Medak, passes through Yellareddy, Banswada, Nasrullabad, Varni, Rudrur, Bodhan, Shatapur, Navipet, Fakirabad, Basar, Mudhol, and ends at Bhainsa (via Yencha). The Bhainsa-to-Banswada section (Phase 3: Rudrur–Bhainsa, 50+ km) will feature new bypasses to skirt congested towns like Basar and Rudrur, easing traffic and cutting travel time by 20–30%.
+* '''Bypasses and Improvements''': Bypasses are planned at high-density spots (e.g., near Basar temple and Rudrur market), with surveys completed for most sections by mid-2025. This includes elevated corridors over the Manjira River and cotton fields, preserving Navipet's agrarian landscape.
+* '''Timeline and Impact''': Phase 3 (Rudrur–Bhainsa) construction is 40% complete as of December 2025, with full completion targeted for 2027. Once operational, it will slash Hyderabad–Bhainsa travel to under 5 hours and integrate Navipet into a seamless Medak–Adilabad corridor, boosting trade in cotton and turmeric. Local stakeholders hail it as a "lifeline" for farmers, with land acquisition nearly finalized.
+}}|From [[Special:Diff/1327088410|this December 2025 revision]] to [[Navipet]]}}
+
+{{blockquote|{{fmbox|image=none|text=
+<mark>Mass Content Removal:</mark> The user removed over 20,000 characters of reliably sourced content in a single edit, reducing the number of citations from 34 to 8, without any prior engagement on the Talk page.<mark>Disruptive Tagging:</mark> Despite the article being supported by 34 high-quality international secondary sources (Wall Street Journal, Bloomberg, Financial Times, etc.), the user implemented excessive "citation needed" tags as a form of visual vandalism to discredit the content.<mark>Refusal to engage (WP:BRD):</mark> The user was notified of WP:V and WP:DE policies on their talk page but has failed to justify these massive deletions, suggesting a coordinated attempt at de-legitimizing the subject.<mark>Context:</mark> Given the high-profile nature of the subject in global finance and mining (notably the AstraZeneca/EsoBiotec $1B M&A), the page is currently vulnerable to reputation-based sabotage.
+}}|From [[Special:Diff/1345180164|this March 2026 revision]] to [[Wikipedia:Requests for page protection/Increase]]}}
+
+===Overuse of em dashes===
+{{For|non-AI-specific guidance about the use of dashes|Wikipedia:Manual of Style#Dashes}}
+{{Shortcut|WP:AIDASH}}
+While human editors and writers often use [[em dash]]es (—), LLM output uses them more often than nonprofessional human-written text of the same genre, and uses them in places where humans are more likely to use commas, parentheses, colons, or (misused) hyphens (-) and [[en dash]]es (–). LLMs especially tend to use em dashes in a formulaic, pat way, often mimicking "punched up" sales-like writing by over-emphasizing clauses or parallelisms.<ref name="merrill" /><ref name="Kriss"/>
+
+This sign is most useful when taken in combination with other indicators, not by itself. It is much more common on discussion pages than in article text. Also, because LLMs' use of em-dashes has become somewhat notorious, some AI companies have attempted to make their newer chatbots suppress their use, most notably OpenAI's [[GPT-5.1]].<ref name="edwards">{{cite news |last1=Edwards |first1=Benj |title=Forget AGI—Sam Altman celebrates ChatGPT finally following em dash formatting rules |url=https://arstechnica.com/ai/2025/11/forget-agi-sam-altman-celebrates-chatgpt-finally-following-em-dash-formatting-rules/ |access-date=24 February 2026 |work=Ars Technica |date=14 November 2025}}</ref>
+
+'''Examples'''
+{{"|{{fmbox|image=none|text=
+I referred to Wikipedia's policies in a discussion with another user, using AI to help me organize my thoughts and better explain the policies I was referencing — something that was reported by the user. [...] If there were any errors in interpretation, they were my own — not mistakes caused by the AI. [...]<br>
+[...] Ultimately, one of the admins blocked me — not because of the AI usage itself, which had already been addressed — but because I didn’t respond to their continued questioning.
+}}|From [[Special:Diff/1284418886|this April 2025 revision]] to a user talk page}}
+
+{{"|{{fmbox|image=none|text=
+In practice, many Dutch organizations and businesses use it for '''their own convenience''', even placing it in addresses — e.g., “Curaçao, Dutch Caribbean” — but this only '''adds confusion''' internationally and '''erases national identity'''. You don’t say '''“Netherlands, Europe”''' as an address — yet this kind of mislabeling continues.
+}}|title=From {{diff||1286082047|label=this April 2025 revision}} to [[Talk:Dutch Caribbean]]; the message also [[WP:AIBOLD|overuses boldface]]}}
+
+{{"|{{fmbox|image=none|text=
+you're right about one thing — we do seem to have different interpretations of what policy-based discussion entails. [...]
+
+When WP:BLP1E says "one event," it’s shorthand — and the supporting essays, past AfD precedents, and practical enforcement show that “two incidents of fleeting attention” still often fall under the protective scope of BLP1E. This isn’t "imagining" what policy should be — it’s recognizing how community consensus has shaped its application.
+
+Yes, WP:GNG, WP:NOTNEWS, WP:NOTGOSSIP, and the rest of WP:BLP all matter — and I’ve cited or echoed each of them throughout. [...] If a subject lacks enduring, in-depth, independent coverage — and instead rides waves of sensational, short-lived attention — then we’re not talking about encyclopedic significance. [...]
+
+[...] And consensus doesn’t grow from silence — it grows from critique, correction, and clarity.
+
+If we disagree on that, then yes — we’re speaking different languages.
+}}|From [[Special:Diff/1296093591|this June 2025 revision]] to [[Wikipedia:Articles for deletion/Lilly Contino]]}}
+
+=== <span class="anchor" id="Tables"></span>Unusual use of tables ===
+{{shortcut|WP:AITABLE}}
+In rare cases, some AIs may create unnecessary small tables that could be better represented as prose or an [[WP:INFOBOX|infobox]].
+
+'''Examples'''
+<blockquote>
+{{Fake heading|Market and Statistics}}
+The Indian biobanking market was valued at approximately USD 2,101 million in 2024. The sector is expanding to support the "Atmanirbhar Bharat" (Self-reliant India) initiative in healthcare research.
+{| class="wikitable"
+|+Key Statistics of Indian Biobanking (2024-2025)
+!Metric
+!Figure
+|-
+|Market Valuation (2024)
+|~USD 2.1 billion
+|-
+|Major Accredited Facilities
+|NLDB, CBR Biobank, THSTI, Karkinos
+|-
+|GenomeIndia Diversity
+|99 ethnic groups (32 tribal, 53 non-tribal)
+|}
+</blockquote>
+{{bi|1=—From [[Special:Diff/1323402246|this November 2025 revision]] to [[Draft:Biobanks in India]]}}
+
+<blockquote>
+{{fake heading|level=2|Management}}
+The mall employs approximately 3,167 staff members across all operations. Key management personnel of Pacific Development Corporation Private Limited include:
+{| class="wikitable"
+! Name !! Designation
+|-
+| S. K. Bansal || Chairman
+|-
+| Abhishek Bansal || Managing Director
+|-
+| Saket Bansal || Managing Director
+|-
+| Mehak Khanna || VP Marketing
+|}
+</blockquote>
+{{bi|1=—From [[Special:Diff/1352783863|this May 2026 revision]] to [[Draft:Pacific Mall, Tagore Garden]]}}
+
+===Curly quotation marks and apostrophes===
+{{For|non-AI-specific guidance about this|Wikipedia:Manual of Style#Quotation characters|Wikipedia:Manual of Style#Apostrophes}}
+{{Shortcut|WP:AICURLY}}	
+
+ChatGPT <!-- appears to have risen some time in mid-2025 -->and [[DeepSeek]] typically use curly quotation marks (“...” or ‘...’) instead of straight quotation marks ("..." or '...'). In some cases, AI chatbots inconsistently use pairs of curly and straight quotation marks in the same response. They also tend to use the curly apostrophe (’), the same character as the curly [[right single quotation mark]], instead of the straight apostrophe ('), such as in [[Contraction (grammar)|contractions]] and [[English possessive|possessive forms]]. They may also do this inconsistently. 
+
+Curly quotes alone do not prove LLM use. Directional quotation marks (curly or typographer) are often used in published works written and edited using the [[Chicago Manual of Style]].<ref>{{cite web|url=https://www.chicagomanualofstyle.org/qanda/data/faq/topics/SpecialCharacters/faq0002.html|title=CMOS 18th edition 6.123|website=Chicago Manual of Style}}</ref> [[Microsoft Word]] has a "[[smart quotes]]" feature that converts straight quotes to curly quotes. So does the default system-wide configuration on [[macOS]] and [[iOS]] devices, except on some applications (or if turned off, as may be necessary for [[computer programming|programming]]). Grammar correcting tools such as [[LanguageTool]] may also have such a feature. <!-- NB: LanguageTool is partially powered by neural networks. --> Curly quotation marks and apostrophes are common in professionally typeset works such as major newspapers. Citation tools like [https://citer.toolforge.org/ Citer] may repeat those that appear in the title of a web page: for example, 
+<blockquote>McClelland, Mac (2017-09-27). [https://www.nytimes.com/2017/09/27/magazine/when-not-guilty-is-a-life-sentence.html "When ‘Not Guilty’ Is a Life Sentence"]. {{em|The New York Times}}. Retrieved 2025-08-03.</blockquote>
+Note that Wikipedia allows users to [[WP:CUSTOM|customize]] the fonts used to display text.  Some fonts display matched curly apostrophes as straight, in which case the distinction is invisible to the user. Additionally, [[Gemini (language model)|Gemini]] and [[Claude (language model)|Claude]] models typically do not use curly quotes.
+
+===Skipping heading levels===
+AI chatbots tend to skip level 2 headings (<code><nowiki>==</nowiki></code>) and start sections from the third level (<code><nowiki>===</nowiki></code>).  [[Wikipedia:Manual_of_Style/Accessibility#Headings|Because doing so is against Wikipedia's accessibility and style conventions]], it is therefore very unlikely for a manually-formatted page to have this quirk.<!--
+
+'''Examples'''
+-->
+
+===Thematic breaks before headings===
+AI chatbots sometimes include a thematic break (<code><nowiki>----</nowiki></code>) before each heading in a text (this is common in Markdown output).
+
+'''Examples'''
+
+<syntaxhighlight lang=wikitext highlight=5,11>
+=== Distinction from French “''[[List of English words of French origin|chiffon]]''” ===
+Some claims have suggested that ''Ichafu'' derives from the French word chiffon (“rag” or "light cloth”). However, early lexicographic records do not support this interpretation and later sources differ in their explanations.
+
+[...]
+----
+
+== History ==
+Headwrapping practices among Igbo women are documented in historical and ethnographic sources and are generally understood to predate the colonial period.
+
+[...]
+----
+
+== Form and construction ==
+</syntaxhighlight>
+{{block indent|1=— From [[Special:Diff/1344638960|this revision]] to [[Draft:Ichafu]] and [https://web.archive.org/web/20260323205345/https://en.wikipedia.org/wiki/Ichafu_(headdress) this archived revision] to [[Ichafu (headdress)]]}}
+
+==Communication intended for the user==
+===Collaborative communication===
+{{Shortcut|WP:CERTAINLY|WP:COLLABCOMM}}
+{{tmbox|image=none|text=Words to watch: {{strong|''I hope this helps'', ''Of course!'', ''Certainly!'', ''You're absolutely right!'', ''Would you like...'', ''is there anything else'', ''let me know'', ''more detailed breakdown'', ''here is a''&nbsp;...}} }}
+Editors sometimes paste text from an AI chatbot that was meant as correspondence, prewriting or advice, rather than article content. This may appear in article text or within comments (<nowiki><-- --></nowiki>). Chatbots prompted to produce a Wikipedia article or comment may also explicitly state that the text is meant for Wikipedia, and may mention various [[WP:PG|policies and guidelines]] in the output—often explicitly specifying that they're {{em|Wikipedia}}'s conventions. Often the advice given by an AI chatbot is incorrect, misleading, or in contravention with policies or guidelines.
+
+'''Examples'''
+{{blockquote|text=In this section, we will discuss the background information related to the topic of the report. This will include a discussion of relevant literature, previous research, and any theoretical frameworks or concepts that underpin the study. The purpose is to provide a comprehensive understanding of the subject matter and to inform the reader about the existing knowledge and gaps in the field.
+|title=From {{diff||1172646802|label=this August 2023 revision}} to [[Metaphysics]]
+}}
+
+{{blockquote|If you plan to add this information to the "Animal Cruelty Controversy" section of Foshan's Wikipedia page, ensure that the content is presented in a neutral tone, supported by reliable sources, and adheres to Wikipedia's guidelines on verifiability and neutrality.|From [[Special:Diff/1280200320|this March 2025 revision]] to [[Foshan]]}}
+
+{{blockquote|Here's a template for your wiki user page. You can copy and paste this onto your user page and customize it further.|From [[Special:Diff/1290281175|this May 2025 revision]] to a user page}}
+
+{{blockquote|Including photos of the forge (as above) and its tools would enrich the article’s section on culture or economy, [...] Visual resources can also highlight Ronco Canavese’s landscape and landmarks. For instance, a map [...] could be added to orient readers geographically. The village’s scenery [...] could be illustrated with an image. Several such photographs are available (e.g., on Wikimedia Commons) that show Ronco’s panoramic view, [...] Historical images, if any exist [...] would also add depth to the article. Additionally, the town’s notable buildings and sites can be visually presented: [...] Including an image of the Santuario di San Besso [...] could further engage readers. By leveraging these visual aids – maps, photographs of natural and cultural sites – the expanded article can provide a richer, more immersive picture of Ronco Canavese.|From [[Special:Diff/1291175393|this May 2025 revision]] to [[Ronco Canavese]]}}
+
+{{blockquote|text=<syntaxhighlight lang="wikitext">
+Final important tip: The ~~~~ at the very end is Wikipedia markup that automatically
+</syntaxhighlight>
+|title=From {{diff||1297191187|label=this June 2025 revision}} to [[Talk:Test automation management tools]]; the message also [[#Abrupt cut offs|ends unexpectedly]]
+}}
+
+{{blockquote|text=<syntaxhighlight lang="wikitext">
+<!-- WIKIPEDIA DRAFT — Triple Entry Accounting, version 2 -->
+<!-- Written to Wikipedia Manual of Style. Neutral tone, sourced throughout. -->
+<!-- Author has declared a conflict of interest. Submit via WP:AFC. -->
+<!-- Disclose COI on Talk page and in edit summary before saving. -->
+</syntaxhighlight>
+<syntaxhighlight lang="wikitext">
+<!-- SUBMISSION NOTES -->
+<!-- 1. This article should be created at "Triple Entry Accounting" (not "Triple-entry accounting" — follow Grigg's own capitalisation in the JRFM title). -->
+<!-- 2. The existing article [[Momentum accounting and triple-entry bookkeeping]] needs a hatnote added pointing here. -->
+<!-- 3. Submit via WP:AFC (Articles for Creation), not directly to mainspace. -->
+<!-- 4. Declare COI explicitly: in the AFC submission notes, on the article Talk page, and in the edit summary. -->
+<!-- 5. Post to WP:COIN (Conflict of Interest Noticeboard) after submission. -->
+<!-- 6. The Finanstilsynet citation currently relies on Sunde's paper as intermediary. If a direct sandbox report URL exists on finanstilsynet.no, substitute it. -->
+<!-- 7. The diagram uploaded by the user (showing REA/TEA/Blockchain streams) would be excellent as a figure, but requires CC-BY-SA release by its creator before it can be uploaded to Wikimedia Commons. -->
+</syntaxhighlight>
+|title=From [[User:Gurkubondinn/Draft:Triple Entry Accounting|Draft:Triple Entry Accounting]] in May 2026, incorrectly advising a user with a COI to self-report to COI/N "after submission".
+}}
+
+===Knowledge-cutoff disclaimers and speculation about gaps in sources===
+{{shortcut|WP:AICUTOFF|WP:AIDISCLAIMER}}
+{{tmbox|image=none|text=Words to watch: {{strong|''as of [date]'',{{efn|not unique to AI chatbots; is produced by the {{tl|as of}} template}} ''Up to my last training update'', ''as of my last knowledge update'', ''While specific details are limited/scarce...'', ''not widely available/documented/disclosed'', ''...in the provided/available sources/search results...'', ''based on available information''&nbsp;...}}}}
+A knowledge-cutoff disclaimer is a statement used by an AI chatbot to indicate that the information provided may be incomplete, inaccurate, or outdated.
+
+If an LLM has a fixed [[knowledge cutoff]] (usually the model's last training update), it is unable to provide any information on events or developments past that time. Older LLMs would often remind the user about this by outputting a disclaimer that the information in its response is accurate only up to a certain date, and may explicitly mention the knowledge cutoff in doing so.
+
+Newer chatbots with [[retrieval-augmented generation]] may also fail to find sources on a given topic, or to find information within the sources a user provides. In these cases, they may output a statement, similar to a knowledge-cutoff disclaimer, claiming that the information is not publicly available. They may also pair it with text about what that information "likely" may be and why it is significant. This information is entirely [[WP:OR|speculative]] (including the very claim that it's "not documented") and may be based on loosely related topics or completely fabricated. When that unknown information is about an individual's personal life, this disclaimer often claims that the person "maintains a low profile", "keeps personal details private", etc. This is also speculative.
+
+'''Examples'''
+{{blockquote|text={{highlight|As of my last knowledge update in January 2022}}, I don't have specific information about the current status or developments related to the "Chester Mental Health Center" in today's era.|title=From {{diff||1186779926|label=this November 2023 revision}} to [[Chester Mental Health Center]]}}
+
+{{blockquote|text=Though the details of these resistance efforts {{highlight|aren't widely documented}}, they highlight her bravery...|title=From [[Special:Diff/1261964722|this December 2024 revision]] to [[Throwing Curves: Eva Zeisel]]}}
+
+{{blockquote|text=While specific information about the fauna of Studniční hora {{highlight|is limited in the provided search results}}, the mountain likely supports...|title=From [[Special:Diff/1280231958|this March 2025 revision]] to [[Studniční hora]]}}
+
+{{blockquote|text=While specific details about Kumarapediya's history or economy {{highlight|are not extensively documented in readily available sources}}, ...|title=From [[Special:Diff/1301052898|this July 2025 revision]] to [[Kumarapediya]]}}
+
+{{blockquote|text=Below is a detailed overview {{highlight|based on available information}}:|title=From [[User:SuperPianoMan9167/Knowledge cutoff example 1|Draft:The Good, The Bad, The Dollar Menu 2]] (2025)}}
+
+{{blockquote|text=As an underground release, detailed lyrics are {{highlight|not widely transcribed on major sites like Genius or AZLyrics}}, likely due to the artist's limited mainstream exposure. {{Highlight|My analysis is based on available track titles}}, featured artists, public song snippets from streaming platforms (e.g., Spotify, Apple Music, Deezer), and Honcho's overall discography themes. Where lyrics aren't fully accessible, {{highlight|I've inferred common motifs from similar trap tracks and Honcho's style.}}
+...For deeper insights, listening to tracks on platforms like Spotify or Deezer is recommended, as {{highlight|lyrics and production details aren't fully documented in public sources.}}|title=From [[Draft:Haiti Honcho]] (2026)}}
+
+===Phrasal templates and placeholder text===
+AI chatbots may generate responses with fill-in-the-blank [[phrasal template]]s (as seen in the game ''[[Mad Libs]]'') for the LLM user to replace with words and phrases pertaining to their use case. However, some LLM users forget to fill in those blanks. Note that non-LLM-generated templates exist for drafts and new articles, such as [[Wikipedia:Artist biography article template/Preload]] and pages in [[:Category:Article creation templates]].
+
+'''Examples'''
+{{blockquote|
+I hope this message finds you well. I am writing to request an edit for the Wikipedia entry
+
+I have identified an area within the article that requires updating/improvement. {{highlight|[Describe the specific section or content that needs editing and provide clear reasons why the edit is necessary, including reliable sources if applicable]}}.|From [[Special:Diff/1210511971|this February 2024 revision]] to [[Talk:Spaghetti]]}}
+
+{{blockquote|We remain committed to creating content that aligns with Wikipedia's mission and are open to further guidance. Please find our revised article <mark>[link to the revised article]</mark> and a detailed list of sources <mark>[link to source list]</mark>. We hope to resubmit our work once these changes have been made.
+
+Thank you for your understanding and assistance in this matter.
+
+Best regards, <mark>[Your Name]</mark> and Chloe
+|From [[Special:Diff/1261926945|this December 2024 revision]] to [[Wikipedia:WikiProject Articles for creation/Help desk]]}}
+
+{{blockquote|
+I am writing to express my deep concern about the spread of misinformation on your platform. Specifically, I am referring to the article about {{highlight|[Entertainer's Name]}}, which I believe contains inaccurate and harmful information.
+|From [[Special:Diff/1278589409|this March 2025 revision]] to [[Talk:Kjersti Flaa]]}}
+
+Large language models may also insert placeholder dates like "2025-xx-xx" into citation fields, particularly the access-date parameter and [[Special:PermaLink/1295449767#References|rarely the date parameter as well]], producing errors.
+
+'''Examples'''
+{{blockquote|
+<syntaxhighlight lang="wikitext">
+<ref>{{cite web
+ |title=Canadian Screen Music Awards 2025 Winners and Nominees
+ |url=URL
+ |website=Canadian Screen Music Awards
+ |date=2025
+ |access-date=2025-XX-XX
+}}</ref>
+
+<ref>{{cite web
+ |title=Best Original Score, Dramatic Series or Special – Winner: "Murder on the Inca Trail"
+ |url=URL
+ |website=Canadian Screen Music Awards
+ |date=2025
+ |access-date=2025-XX-XX
+}}</ref>
+</syntaxhighlight>
+|From [[Special:Diff/1324292862|this November 2025 revision]] to [[Michelle Osis]]}}
+
+'''Links to searches'''
+* [https://en.wikipedia.org/w/index.php?search=insource%3A%2F20%5B0-9%5D%5B0-9%5D-%28XX%7Cxx%29-%28XX%7Cxx%29%2F&title=Special%3ASearch&profile=advanced&fulltext=1&ns0=1 <nowiki>insource:/20[0-9][0-9]-(XX|xx)-(XX|xx)/</nowiki>]
+
+In some cases, LLM-generated citations may also contain placeholders in other fields.
+
+'''Examples'''
+{{blockquote|text= 
+<nowiki>{{</nowiki>cite web <br>{{!}}url={{highlight|INSERT_SOURCE_URL_30}} <br>{{!}}title=Deputy Monitoring of Regional Assistance to Mobilized Soldiers <br>{{!}}date={{highlight|2022-11-XX}} <br>{{!}}publisher={{highlight|SOURCE_PUBLISHER}} <br>{{!}}accessdate=2024-07-21<br><nowiki>}}</nowiki>
+|source=From [[Special:Diff/1330090335|this December 2025 revision]] to [[Dmitry Kuznetsov (politician)]]}}
+
+{{blockquote|text= 
+<nowiki><ref></nowiki>{{((}}cite web<br /> {{!}}title{{=}}Ecos de Amor – Spotify<br /> {{!}}url{{=}}{{highlight|PASTE_SPOTIFY_TRACK_URL_HERE}}<br /> {{!}}website{{=}}Spotify<br /> {{!}}access-date{{=}}2026-02-09<br />{{))}}<nowiki></ref></nowiki><br /><nowiki><ref></nowiki>{{((}}cite web<br /> {{!}}title{{=}}Jesse & Joy – Ecos de Amor (Official Music Video)<br /> {{!}}url{{=}}{{highlight|PASTE_YOUTUBE_VIDEO_URL_HERE}}<br /> {{!}}website{{=}}YouTube<br /> {{!}}access-date{{=}}2026-02-09<br />{{))}}<nowiki></ref></nowiki>
+|source=From [[Special:Diff/1337437306|this February 2026 revision]] to [[Nelly Joy]]}}
+
+LLM-generated infobox edits may contain comments stating that text or images should be added if sources are found. Note: Comments in infoboxes, especially older infoboxes, are common—some templates automatically include them—and not an indicator of AI use. Anything but "Add ____", or variations on that specific wording, is actually more likely to indicate human text.
+
+'''Examples'''
+{{blockquote|{{!}} leader_name        {{=}} {{highlight|<nowiki><!-- Add if available with citation --></nowiki>}}|From [[Special:Diff/1301011748|this July 2025 revision]] to [[Pindi Saidpur]]}}
+
+==Markup==
+
+===Use of Markdown===
+{{Shortcut|WP:MARKDOWN}}
+
+A lot of AI chatbots are not proficient in [[H:WT|wikitext]], the [[markup language]] used to instruct Wikipedia's [[MediaWiki]] software how to format an article. As wikitext is a niche markup language, found mostly on wikis running on MediaWiki and other MediaWiki-based platforms like [[Miraheze]], LLMs wikitext-formatted content is not prominent in their training data. While the corpora of chatbots did ingest millions of Wikipedia articles, these articles would not have been processed as text files containing wikitext syntax.
+
+In chatbot apps, the output display is formatted with Markdown, a markup language conceptually similar to wikitext but much more widely applied. Meanwhile, the chatbots' preprompts typically instruct them to use markdown in their answers, such as when providing lists and writing with headings. That is, their system-level instructions often direct them to format outputs using Markdown, and the chatbot apps render its syntax as formatted text on a user's screen. For example, the system prompt for Claude Sonnet 3.5 (November 2024) includes:<ref name="sonnetprompt">{{cite web |title=System Prompts |url=https://platform.claude.com/docs/en/release-notes/system-prompts#claude-sonnet-3-5 |website=Claude Docs |publisher=Anthropic |access-date=9 January 2026}}</ref>
+
+{{blockquote|Claude uses Markdown formatting. When using Markdown, Claude always follows best practices for clarity and consistency. It always uses a single space after hash symbols for headers (e.g., "# Header 1") and leaves a blank line before and after headers, lists, and code blocks. For emphasis, Claude uses asterisks or underscores consistently (e.g., italic or bold). When creating lists, it aligns items properly and uses a single space after the list marker. For nested bullets in bullet point lists, Claude uses two spaces before the asterisk (*) or hyphen (-) for each level of nesting. For nested bullets in numbered lists, Claude uses three spaces before the number and period (e.g., "1.") for each level of nesting.}}
+
+As the above indicates, Markdown syntax is completely different from wikitext. Markdown uses asterisks (*) or underscores (_) instead of single-quotes (') for bold and italic formatting, hash symbols (#) instead of equals signs (=) for section headings, parentheses (()) instead of square brackets (<nowiki>[]</nowiki>) around URLs, and three symbols (---, ***, or ___) instead of four hyphens (<nowiki>----</nowiki>) for thematic breaks.
+
+When told to "generate an article", chatbots often default to using Markdown for the generated output. This formatting is preserved in clipboard text by the copy functions on some chatbot platforms. If instructed to generate content for Wikipedia, the chatbot might "realize" the need to generate Wikipedia-compatible code, and might include a message like {{tqi|Would you like me to ... turn this into actual Wikipedia markup format (`wikitext`)?}}{{efn|[[Special:PermanentLink/1300700102|Example]] (deleted, administrators only)}} in its output. If the chatbot is told to proceed, the resulting syntax is often rudimentary, syntactically incorrect, or both. The chatbot might put its attempted-wikitext content in a Markdown-style [https://www.markdownguide.org/extended-syntax/#fenced-code-blocks fenced code block] (its syntax for [[WP:PRE]]) surrounded by Markdown-based syntax and content, which may also be preserved by platform-specific copy-to-clipboard functions, leading to a telling footprint of both markup languages' syntax. This might include the appearance of three backticks in the text, such as: <code>```wikitext</code>.{{efn|[[Special:PermanentLink/1297827841|Example]] of {{code|```wikitext}} on a draft.|}}
+
+The presence of faulty wikitext syntax mixed with Markdown syntax is a strong indicator that content is LLM-generated, especially if in the form of a fenced Markdown code block. However, Markdown {{em|alone}} is not such a strong indicator. Software developers, researchers, technical writers, and experienced internet users frequently use Markdown in tools like [[Obsidian (software)|Obsidian]] and [[GitHub Flavored Markdown|GitHub]], and on platforms like [https://support.reddithelp.com/hc/en-us/articles/360043033952-Formatting-Guide Reddit], [https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline Discord], and [https://slack.com/help/articles/202288908-Format-your-messages Slack]. Some writing tools and apps, such as [[iOS Notes]], [[Google Docs]], and [[Windows Notepad]], support Markdown editing or exporting. The increasing ubiquity of Markdown may also lead new editors to expect or assume Wikipedia to support Markdown by default.
+
+'''Examples'''
+{{see also|Markdown#Examples}}
+
+{{"|I believe this block has become procedurally and substantively unsound. Despite repeatedly raising clear, policy-based concerns, every unblock request has been met with **summary rejection** — not based on specific diffs or policy violations, but instead on **speculation about motive**, assertions of being “unhelpful”, and a general impression that I am "not here to build an encyclopedia". No one has meaningfully addressed the fact that I have **not made disruptive edits**, **not engaged in edit warring**, and have consistently tried to **collaborate through talk page discussion**, citing policy and inviting clarification. Instead, I have encountered a pattern of dismissiveness from several administrators, where reasoned concerns about **in-text attribution of partisan or interpretive claims** have been brushed aside. Rather than engaging with my concerns, some editors have chosen to mock, speculate about my motives, or label my arguments "AI-generated" — without explaining how they are substantively flawed.
+|title=From {{diff||1284964006|label=this April 2025 revision}} to a user talk page
+}}
+
+{{"|<nowiki>- The Wikipedia entry does not explicitly mention the "Cyberhero League" being recognized as a winner of the World Future Society's BetaLaunch Technology competition, as detailed in the interview with THE FUTURIST ([https://consciouscreativity.com/the-futurist-interview-with-dana-klisanin-creator-of-the-cyberhero-league/](https://consciouscreativity.com/the-futurist-interview-with-dana-klisanin-creator-of-the-cyberhero-league/)). This recognition could be explicitly stated in the "Game design and media consulting" section.</nowiki>
+|title=From {{diff||1290202502|label=this May 2025 revision}} to [[Talk:Dana Klisanin]]}}
+
+Here, LLMs incorrectly use {{code|##}} to denote section headings, which MediaWiki interprets as a numbered list. 
+
+{{blockquote|{{fmbox|image=none|text=
+## Geography
+
+Villers-Chief is situated in the [[Jura Mountains]], in the eastern part of the Doubs department. [...]
+## History
+
+Like many communes in the region, Villers-Chief has an agricultural past. [...]
+
+## Administration
+
+Villers-Chief is part of the [[Canton of Valdahon]] and the [[Arrondissement of Pontarlier]]. [...]
+
+## Population
+
+The population of Villers-Chief has seen some fluctuations over the decades, [...]
+}}|From [[Special:Diff/1294887075|this June 2025 revision]] to [[Villers-Chief]]}}
+
+=== Broken wikitext===
+Since AI chatbots are typically not proficient in wikitext and templates, they often produce faulty syntax. A noteworthy instance is garbled code related to [[Template:AfC submission]], as new editors might ask a chatbot how to submit their [[Wikipedia:Articles for Creation|Articles for Creation]] draft; see [[Special:PermaLink/1299830745#Messed_up_templates|this discussion among AfC reviewers]].
+
+'''Examples'''
+
+{{blockquote|<syntaxhighlight lang="wikitext">
+[[Category:AfC submissions by date/<0030Fri, 13 Jun 2025 08:18:00 +0000202568 2025-06-13T08:18:00+00:00Fridayam0000=error>EpFri, 13 Jun 2025 08:18:00 +0000UTC00001820256 UTCFri, 13 Jun 2025 08:18:00 +0000Fri, 13 Jun 2025 08:18:00 +00002025Fri, 13 Jun 2025 08:18:00 +0000: 17498026806Fri, 13 Jun 2025 08:18:00 +0000UTC2025-06-13T08:18:00+00:0020258618163UTC13 pu62025-06-13T08:18:00+00:0030uam301820256 2025-06-13T08:18:00+00:0008amFri, 13 Jun 2025 08:18:00 +0000am2025-06-13T08:18:00+00:0030UTCFri, 13 Jun 2025 08:18:00 +0000 &qu202530;:&qu202530;.</0030Fri, 13 Jun 2025 08:18:00 +0000202568>June 2025|sandbox]]
+</syntaxhighlight>|title=From [[Special:PermanentLink/1295363321|this revision]] to [[User:Dr. Omokhudu Idogho/sandbox]]}}
+
+===turn0search0===
+ChatGPT may include <code>citeturn0search0</code> (surrounded by Unicode points in the [[Private Use Area]]) at the ends of sentences, with the number after "search" increasing as the text progresses. There also exists an alternate shorter form with only the increasing number surrounded by PUA Unicode like <code>0</code>. These are places where the chatbot links to an external site, but a human pasting the conversation into Wikipedia has that link converted into placeholder code. This was first observed in February 2025.
+
+A set of images in a response may also render as <code>iturn0image0turn0image1turn0image4turn0image5</code>. Rarely, other markup of a similar style, such as <code>citeturn0news0</code> ([[Special:PermaLink/1276934509|example]]), <code>citeturn1file0</code> ([[Special:PermaLink/1286349902|example]]), or <code>cite''generated-reference-identifier''</code> ([[Special:PermaLink/1276907078|example]]), may appear.
+
+'''Examples'''
+{{blockquote|text=The school is also a center for the US College Board examinations, SAT I & SAT II, and has been recognized as an International Fellowship Centre by Cambridge International Examinations. citeturn0search1
+
+For more information, you can visit their official website: citeturn0search0
+|title=From {{diff||1274664396|label=this February 2025 revision}} to [[List of English-medium schools in Bangladesh]]
+}}
+
+{{"|
+* **Japanese:** Reze is voiced by Reina Ueda, an established voice actress known for roles such as Cha Hae-In in ''Solo Leveling'' and Kanao Tsuyuri in ''Demon Slayer''.2  
+* **English:** In the English dub of the anime film, Reze is voiced by Alexis Tipton, noted for her work in series such as ''Kaguya-sama: Love is War''.3
+[...]
+
+The film itself holds a high rating on **Rotten Tomatoes** and has been described as a major anime release of 2025, indicating strong overall reception for the Reze Arc storyline and its adaptation.5
+|title=From [[User:Gurkubondinn/Draft:Reze (Chainsaw Man)|Draft:Reze (Chainsaw Man)]] (2025)}}
+
+====Links to searches====
+* {{search link|turn0search0 OR turn0search1 OR turn0search2 OR turn0search3 OR turn0search4 OR turn0search5 OR turn0search6 OR turn0search7}}
+* {{search link|turn0image0 OR turn0image1 OR turn0image2 OR turn0image3 OR turn0image4 OR turn0image5 OR turn0image6 OR turn0image7}}
+* {{search link|insource:/turn0(search{{!}}image{{!}}news{{!}}file)[0-9]+/}}
+
+===Reference markup bugs: <span class="anchor" id="oaicite"></span> contentReference, oaicite, oai_citation, +1, attached_file, grok_card ===
+{{Shortcut|WP:OAICITE}}
+Due to a bug, ChatGPT may add code in the form of {{code|:contentReference[oaicite:0]{index{{=}}0{{)}}}}, {{code|Example+1}}, or {{code|oai_citation}} in place of links to references in output text.
+
+'''Examples'''
+{{"|{{fmbox|image=none|text=
+:contentReference[oaicite:16]{index{{=}}16}
+
+1. **Ethnicity clarification**  
+{{pre|
+  - :contentReference[oaicite:17]{index{{=}}17}
+    * :contentReference[oaicite:18]{index{{=}}18} :contentReference[oaicite:19]{index{{=}}19}.
+    * Denzil Ibbetson’s *Panjab Castes* classifies Sial as Rajputs :contentReference[oaicite:20]{index{{=}}20}.
+    * Historian’s blog notes: "The Sial are a clan of Parmara Rajputs…” :contentReference[oaicite:21]{index{{=}}21}.
+}}
+2. :contentReference[oaicite:22]{index{{=}}22}
+{{pre|
+  - :contentReference[oaicite:23]{index{{=}}23}
+    > :contentReference[oaicite:24]{index{{=}}24} :contentReference[oaicite:25]{index{{=}}25}.
+}}
+}}|title=From {{diff||1294765751|label=this June 2025 revision}} to [[Talk:Sial (tribe)]].}}
+
+{{"|{{fmbox|image=none|text=
+#### 📌 Key facts needing addition or correction:
+1. **Group launch & meetings**  
+{{pre|
+   *Independent Together* launched a “Zero Rates Increase Roadshow” on 15 June, with events in Karori, Hataitai, Tawa, and Newtown  [oai_citation:0‡wellington.scoop.co.nz](https://wellington.scoop.co.nz/?p{{=}}171473&utm_source{{=}}chatgpt.com).
+}}
+
+2. **Zero-rates pledge and platform**  
+{{pre|
+   The group pledges no rates increases for three years, then only match inflation—responding to Wellington’s 16.9% hike for 2024/25  [oai_citation:1‡en.wikipedia.org](https://en.wikipedia.org/wiki/Independent_Together?utm_source{{=}}chatgpt.com).
+}}
+}}|title=From {{diff||1296028135|label=this June 2025 revision}} to [[Talk:Independent Together]]}}
+
+{{"|1={{fmbox|image=none|text=
+This was created conjointly by technical committee ISO/IEC JTC 1/SC 27 (Information security, cybersecurity, and protection of privacy) <mark>IT Governance+3ISO+3ISO+3</mark>. It belongs to the ISO/IEC 27000 family that talks about information security management systems (ISMS) and related practice controls. <mark>Wikipedia+1</mark>. The standard gives guidance for information security controls for cloud service providers (CSPs) and cloud service customers (CSCs). Specifically adapted to cloud specific environments like responsibility, virtualization, dynamic provisioning, and multi-tenant infrastructure. <mark>Ignyte+3Microsoft Learn+3Google Cloud+3</mark>.
+}}|title=From [[Special:Diff/1325099471|this November 2025 revision]] to [[ISO/IEC 27017]]}}
+
+As of fall 2025, tags like <code><nowiki>[attached_file:1]</nowiki></code> and <code><nowiki>[web:1]</nowiki></code> have been seen at the end of sentences. This may be [[Perplexity AI|Perplexity]]-specific.<ref name="wildperplexityappeared">{{cite web |title=Unproductive Interpretation of Work and Employment as Misinformation? |url=https://www.laetusinpraesens.org/docs20s/workeco.php |access-date=21 October 2025 |archive-date=2 September 2025 |archive-url=https://web.archive.org/web/20250902133810/https://www.laetusinpraesens.org/docs20s/workeco.php |url-status=live }}</ref>
+
+{{blockquote|{{fmbox|image=none|text=
+During his time as CEO, Philip Morris’s reputation management and media relations brought together business and news interests in ways that later became controversial, with effects still debated in contemporary regulatory and legal discussions.[attached_file:1]
+}}|title=From {{diff||1316436509|label=this October 2025 revision}} to [[Hamish Maxwell]]}}
+
+Text generated by Grok may occasionally include [[XML]]-styled <code>grok_card</code> tags after citations.
+
+{{blockquote|{{fmbox|image=none|text=
+Malik's rise to fame highlights the visibility of transgender artists in Pakistan's entertainment scene, though she has faced societal challenges related to her identity. [...]<nowiki><grok-card data-id="e8ff4f" data-type="citation_card"></nowiki>
+}}|From [[Special:PermanentLink/1323207968|this November 2025 revision]] to [[Draft:Mehak Malik]]}}
+
+Grok may also include <code>grok_render_citation_card_json</code> in place of links to reference in the output text.
+
+{{blockquote|{{fmbox|image=none|text=
+Gölge was publicly revealed through trademark and patent applications filed with the Turkish Patent and Trademark Office in April 2026. The platform was showcased at the SAHA Expo 2026 in Istanbul alongside the jet-powered kamikaze UAV AYAZ. [](grok_render_citation_card_json={"cardIds":["3bb883"]})
+}}|From revision [[Special:Permalink/1352634865|1352634865]] of [[User:Gurkubondinn/Draft:TUSAŞ Gölge tactical UAV|Draft:TUSAŞ Gölge tactical UAV]] in May 2026}}
+{{blockquote|{{fmbox|image=none|text=
+Gölge is a **piston-engine** tactical UAV optimized for long-endurance missions. The name "Gölge" (Shadow) and associated branding suggest a focus on **low-observability** (low radar cross-section) features. It is designed as a flexible, multi-role platform, primarily for intelligence, surveillance, and reconnaissance (ISR) roles. [](grok_render_citation_card_json={"cardIds":["993eac"]}) 
+}}|From revision [[Special:Permalink/1352634865|1352634865]] of [[User:Gurkubondinn/Draft:TUSAŞ Gölge tactical UAV|Draft:TUSAŞ Gölge tactical UAV]] in May 2026}}
+
+As of June 2025, markup with [[lenticular brackets]] and [[dagger symbol]]s, like <code>【85†L261-269】</code>, has also been seen.
+
+{{blockquote|{{fmbox|image=none|text=Recent initiatives aim to reverse decline. Medway Council’s Gillingham Town Centre Planning Framework (2007) and later Gillingham Business Plan identified preservation of historic shopfronts and pedestrian enhancements as prioritiesmedway.gov.ukmedway.gov.uk. In 2024 MP Naushabah Khan launched the “Love Gillingham” campaign and a high-street taskforce to improve cleanliness, safety and commerce【85†L261-269】. A community panel is drafting a Gillingham Action Plan, and events like the September 2024 “Big Day Out” carnival (2,500+ attendees) help draw people in【85†L269-274】. As of 2025 vacancy rates on the High Street were reported at about 6.2% (well below the 16% UK average)【85†L261-269】, suggesting a modest stability even as big chains have disappeared.}}|From [[Special:Permalink/1295285879|this June 2025 revision]] to [[Draft:Gillingham High Street]]}}
+{{blockquote|{{fmbox|image=none|text=Paytra Gessler, known professionally as Paytra, is an American singer‑songwriter whose music combines pop and hip‑hop with R&B, funk and soul influences. She gained attention in the early 2020s with her genre‑bending singles and her feminist message. Paytra’s releases include the EP Momma Taught Me How to Fight and the album Tiny But Mighty (both 2023)【854140639155648†L119-L123】, as well as the singles “Villain Era” (2023), “Bright Red Flags” (2023)【331835262276082†L127-L149】, “Good Girls Don’t Make History” (2024)【610406519434033†L284-L290】, “All Kinda Bitches” (2024)【695032903925577†L42-L52】 and “World’s About to Get Crazy” (2024)【466616601965079†L42-L60】.}}|From [[Special:Permalink/1304282215|this August 2025 revision]] to [[Draft:Paytra]]}}
+
+{{blockquote|text=<syntaxhighlight lang="wikitext">
+JAF-GT300 cars are generally Japanese makes or specially constructed “silhouette” vehicles, distinct from the FIA [[Group GT3]] cars, also eligible in GT300【29†L582-L589】. The Japan Automobile Federation (JAF) is the national motorsport authority in Japan and co-sponsors Super GT, setting technical rules for JAF-GT cars【32†L142-L149】. In practice, a GT300 field includes three types of cars: (1) **JAF-GT** cars (JAF-regulation, often modified Japanese road cars or special designs), (2) **FIA GT3** cars (homologated under FIA GT3 rules), and (3) **Mother Chassis** (MC) cars (built on a standard tubular chassis by Dome)【29†L598-L606】. 
+</syntaxhighlight>
+|title=From [[User:Gurkubondinn/Draft:JAF-GT300|Draft:JAF-GT300]] in March 2026}}
+
+====Links to searches====
+* {{plainlink|url=https://en.wikipedia.org/w/index.php?search=%22contentReference%22+OR+%22oaicite%22+OR+%22oai_citation%22&title=Special%3ASearch "contentReference" OR "oaicite" OR "oai_citation"}}
+* {{plainlink|url=https://en.wikipedia.org/w/index.php?search=insource%3A%2F%E3%80%90%5B0-9%5D%2B%E2%80%A0%2F&title=Special%3ASearch&profile=advanced&fulltext=1&ns118=1 insource:/【[0-9<nowiki>]</nowiki>+†/}} (in drafts only)
+
+===attribution and attributableIndex===
+ChatGPT may add [[JSON]]-formatted code at the end of sentences in the form of <code>({"attribution":{"attributableIndex":"X-Y"}})</code>, with X and Y being increasing numeric indices.
+
+'''Examples'''
+{{blockquote|text=
+^[Evdokimova was born on 6 October 1939 in Osnova, Kharkov Oblast, Ukrainian SSR (now Kharkiv, Ukraine).]({"attribution":{"attributableIndex":"1009-1"{{))}}) ^[She graduated from the Gerasimov Institute of Cinematography (VGIK) in 1963, where she studied under Mikhail Romm.]({"attribution":{"attributableIndex":"1009-2"{{))}}) [oai_citation:0‡IMDb](https://www.imdb.com/name/nm0947835/?utm_source=chatgpt.com) [oai_citation:1‡maly.ru](https://www.maly.ru/en/people/EvdokimovaA?utm_source=chatgpt.com)
+|title=From [[User:Sohom_Datta/attributeIndex|Draft:Aleftina Evdokimova]] (2025)
+}}
+
+{{blockquote|text=Patrick Denice & Jake Rosenfeld, [https://sociologicalscience.com/articles-v5-23-541/ Les syndicats et la rémunération non syndiquée aux États-Unis, 1977–2015], ‘‘Sociological Science’’ (2018).]({“attribution”:{“attributableIndex”:“3795-0”{{))}})
+|title=From [[:fr:Special:Diff/225259294|this April 2025 revision]] to [[:fr:Syndicalisme aux États-Unis]]}}
+
+=== Non-existent or out-of-place categories ===
+{{shortcut|WP:AIREDCAT}}
+LLMs may hallucinate non-existent categories, sometimes for generic concepts that ''seem like'' plausible category titles (or [[search engine optimization|SEO]] keywords), and sometimes because their training set includes obsolete and renamed categories. These will appear as [[WP:REDNOT|red links]]. You may also find category redirects, such as the longtime spammer favorite [[:Category:Entrepreneurs]]. Sometimes, broken categories may be deleted by reviewers, so if you suspect a page may be LLM-generated, it may be worth checking earlier revisions.
+
+Of course, none of this section should be treated as a hard-and-fast rule. New users are unlikely to know about Wikipedia's style guidelines for these sections, and returning editors may be used to old categories that have since been deleted.
+
+'''Examples'''
+{{blockquote|<syntaxhighlight lang="wikitext">[[Category:American hip hop musicians]]</syntaxhighlight>|title=From [[Special:PermanentLink/1304282215|this August 2025 revision]] to [[Draft:Paytra]]}}
+rather than 
+{{blockquote|<syntaxhighlight lang="wikitext">[[Category:American hip-hop musicians]]</syntaxhighlight>}}
+
+=== Non-existent templates ===
+LLMs often hallucinate non-existent templates (especially plausible-sounding types of [[WP:infoboxes|infoboxes]]) and template parameters. These will also appear as red links, and non-existent template parameters in existing templates have no effect. LLMs may also use templates that were deleted after their knowledge cutoff date (such as the [[Wikipedia:Templates for discussion/Log/2024 September 27/lang-?? templates|lang-?? series]]).
+
+'''Examples'''
+{{blockquote|
+<syntaxhighlight lang="wikitext">
+{{Infobox ancient population
+| name = Gangetic Hunter-Gatherer (GHG)
+| image = [[File:GHG_reconstruction.png|250px]]
+| caption = Artistic reconstruction of a Gangetic Hunter-Gatherer male, based on Mesolithic skeletal data from the Ganga Valley
+| regions = Ganga Valley (from Haryana to Bengal, between the Vindhyas and Himalayas)
+| period = Mesolithic–Early Neolithic (10,000–5,000 BCE)
+| descendants = Gangetic peoples, Indus Valley Civilisation, South Indian populations
+| archaeological_sites = Bhimbetka, Sarai Nahar Rai, Mahadaha, Jhusi, Chirand
+}}
+</syntaxhighlight>
+|From [[Special:PermanentLink/1326132735|this revision]] to [[Draft:Gangetic hunter-gatherers]]}}
+rather than
+{{blockquote|<syntaxhighlight lang="wikitext">
+{{Infobox archaeological culture
+| name = Gangetic Hunter-Gatherer (GHG)
+| map = [[File:GHG_reconstruction.png|250px]]
+| mapcaption = Artistic reconstruction of a Gangetic Hunter-Gatherer male, based on Mesolithic skeletal data from the Ganga Valley
+| region = Ganga Valley (from Haryana to Bengal, between the Vindhyas and Himalayas)
+| period = Mesolithic–Early Neolithic (10,000–5,000 BCE)
+| followedby = Gangetic peoples, Indus Valley Civilisation, South Indian populations
+| majorsites = Bhimbetka, Sarai Nahar Rai, Mahadaha, Jhusi, Chirand
+}}
+</syntaxhighlight>
+}}
+
+==== Links to searches ====
+* [[Wikipedia:Database reports/Transclusions of non-existent templates]] – many of these broken templates are legitimate mistakes, but the "infobox" and "lang" sections are likely to contain LLM hallucinations
+
+== Citations ==
+{{For|non-AI-specific guidance about this|Wikipedia:Fictitious references}}
+{{Shortcut|WP:AIFICTREF}}
+{{See also|Template:Failed verification}}
+
+=== Broken external links ===
+If a new article or draft has multiple citations with external links, and '''several''' of them are broken (e.g., non-existent websites or [[404 error]]s), this is a strong sign of an AI-generated page, particularly if the dead links are not found in website archiving sites like the [[Internet Archive]]. Most links [[link rot|become broken over time]], but these factors make it unlikely that the link was ever real.
+
+Watch out for:  Links that don't work for you, but do work for other people (e.g., journal articles accessed through a university library); links that were mangled by bots and scripts (e.g., to add incorrect identifiers or to remove seemingly unnecessary parts of the URL); links that are missing the start or end (a sign of a human copy/pasting the URL).
+
+===Invalid DOI and ISBNs===
+{{For|non-AI-specific guidance about DOI and ISBNs|Wikipedia:DOI|Wikipedia:ISBN}}
+A [[checksum]] can be used to verify [[ISBN]]s. An invalid checksum is a very likely sign that an ISBN is incorrect, and citation templates display [[Help:CS1 errors#bad isbn|a warning]] if so. Similarly, [[Digital object identifier|DOI]]s are more resistant to link rot than regular hyperlinks. Unresolvable DOIs and invalid ISBNs can be indicators of [[Hallucination (AI)|hallucinated]] references.
+
+===DOIs that lead to unrelated articles===
+A LLM may generate references to non-existent scholarly articles with DOIs that appear valid but are, in reality, assigned to unrelated articles. Example passage generated by ChatGPT:
+
+<blockquote>
+Ohm’s Law applies to many materials and components that are "ohmic," meaning their resistance remains constant regardless of the applied voltage or current. However, it does not hold for non-linear devices like diodes or transistors [1][2].
+
+1. M. E. Van Valkenburg, “The validity and limitations of Ohm’s law in non-linear circuits,” Proceedings of the IEEE, vol. 62, no. 6, pp. 769–770, Jun. 1974. {{doi|10.1109/PROC.1974.9547}}
+
+2. C. L. Fortescue, “Ohm’s Law in alternating current circuits,” Proceedings of the IEEE, vol. 55, no. 11, pp. 1934–1936, Nov. 1967. {{doi|10.1109/PROC.1967.6033}}
+</blockquote>
+
+Both ''Proceedings of the IEEE'' citations are completely made up. The DOIs lead to different citations and have other problems as well. For instance, [[Charles LeGeyt Fortescue|C. L. Fortescue]] was dead for 30+ years at the purported time of writing, and [https://ieeexplore.ieee.org/xpl/tocresult.jsp?isnumber=31102&punumber=5 Vol 55, Issue 11] does not list any articles that match anything remotely close to the information given in reference 2.
+
+Note: From 2018 to 2023, [https://phabricator.wikimedia.org/T198456 a UX issue in VisualEditor] led many editors to accidentally insert references to [[PubMed]] articles with low ID numbers (PMIDs), resulting in obviously irrelevant citations like an article about rat livers (PMID 9) being cited in [[Special:Diff/972043377|List of Disney television films]] in 2020. These may resemble AI hallucinations (and should be fixed regardless), but they generally are not.
+
+===Book citations without page numbers or URLs===
+LLMs often generate book citations that do not include page numbers. This passage, for example, was generated by ChatGPT:
+<blockquote>
+Ohm's Law is a fundamental principle in the field of electrical engineering and physics that states the current passing through a conductor between two points is directly proportional to the voltage across the two points, provided the temperature remains constant. Mathematically, it is expressed as V=IR, where V is the voltage, I is the current, and R is the resistance. The law was formulated by German physicist Georg Simon Ohm in 1827, and it serves as a cornerstone in the analysis and design of electrical circuits [1]. 
+
+1. Dorf, R. C., & Svoboda, J. A. (2010). Introduction to Electric Circuits (8th ed.). Hoboken, NJ: John Wiley & Sons. {{ISBN|9780470521571}}.
+</blockquote>
+
+The book reference appears valid – a book on electric circuits would likely have information about Ohm's law – but without the page number, that citation is not useful for verifying the claims in the prose.
+
+Some LLM-generated book citations include page numbers, and the book exists, but the cited pages do not verify the text. Signs to look out for: the book is on a somewhat general topic or frequently referenced in its field, and the citation does not include a URL (not mandatory for book citations, but editors creating legitimate book citations often include a link to [[Wikipedia:Book_sources#Online_text|an online version of the text]]). Example:
+
+<blockquote>
+Analysts note that traditionalists often appeal to prudence, stability, and Edmund Burke’s notion of “prescription,” while reactionaries invoke moral urgency and cultural emergency, framing the present as a deviation from an idealized past. [1]
+
+1. Goldwater, Barry (1960). The Conscience of a Conservative. Victor Publishing. p. 12.
+</blockquote>
+
+This may look like a reasonable citation, but searching an [https://www.google.com/books/edition/The_Conscience_of_a_Conservative/PKd_EQAAQBAJ?hl=en&gbpv=1&bsq=burke online version of the book for "Burke" produces no results].
+
+=== Incorrect or unconventional use of references ===
+{{Shortcut|WP:AICITESTYLE}}
+
+AI tools may have been prompted to include references, and make an attempt to do so as Wikipedia expects, but fail with some key implementation details or stand out when compared with conventions.
+
+'''Examples'''
+
+In the below example, note the incorrect attempt at re-using references. The tool used here was not capable of searching for non-confabulated sources (as it was done the day before Bing Deep Search launched) but nonetheless found one real reference. The syntax for re-using the references was incorrect.
+
+In this case, the ''Smith, R. J.'' source – being the "third source" the tool presumably generated the link 'https://pubmed.ncbi.nlm.nih.gov/3' (which has a PMID reference of 3) – is also completely irrelevant to the body of the article. The user did not check the reference before they converted it to a {{tl|cite journal}} reference, even though the links resolve.
+
+The LLM in this case has diligently included the incorrect re-use syntax after every single full stop.
+
+{{blockquote|<syntaxhighlight lang="wikitext">
+For over thirty years, computers have been utilized in the rehabilitation of individuals with brain injuries. Initially, researchers delved into the potential of developing a "prosthetic memory."<ref>Fowler R, Hart J, Sheehan M. A prosthetic memory: an application of the prosthetic environment concept. ''Rehabil Counseling Bull''. 1972;15:80–85.</ref> However, by the early 1980s, the focus shifted towards addressing brain dysfunction through repetitive practice.<ref>{{Cite journal |last=Smith |first=R. J. |last2=Bryant |first2=R. G. |date=1975-10-27 |title=Metal substitutions incarbonic anhydrase: a halide ion probe study |url=https://pubmed.ncbi.nlm.nih.gov/3 |journal=Biochemical and Biophysical Research Communications |volume=66 |issue=4 |pages=1281–1286 |doi=10.1016/0006-291x(75)90498-2 |issn=0006-291X |pmid=3}}</ref> Only a few psychologists were developing rehabilitation software for individuals with Traumatic Brain Injury (TBI), resulting in a scarcity of available programs.<sup>[3]</sup> Cognitive rehabilitation specialists opted for commercially available computer games that were visually appealing, engaging, repetitive, and entertaining, theorizing their potential remedial effects on neuropsychological dysfunction.<sup>[3]</sup>
+</syntaxhighlight>|title=From [[Special:PermanentLink/1188218670|this revision]] to [[Cognitive orthotics]]}}
+
+Some LLMs or chatbot interfaces use the character <kbd>↩</kbd> to indicate footnotes:
+
+{{blockquote|
+{{fmbox|image=none|text=
+{{fake heading|References}}
+Would you like help formatting and submitting this to Wikipedia, or do you plan to post it yourself? I can guide you step-by-step through that too.
+
+'''Footnotes'''
+
+# KLAS Research. (2024). ''Top Performing RCM Vendors     2024''. <nowiki>https://klasresearch.com</nowiki> ↩ ↩<sup>2</sup>
+# PR Newswire. (2025, February 18). ''CureMD AI Scribe     Launch Announcement''. <nowiki>https://www.prnewswire.com/news-releases/curemd-ai-scribe</nowiki> ↩
+}}
+|title=From [[Special:PermaLink/1304723248|this revision]] to [[Draft:CureMD]]}}
+
+===utm_source{{=}}===
+
+ChatGPT may add the [[UTM parameter]]s <code>utm_source=openai</code> or <code>utm_source=chatgpt.com</code> to URLs that it is using as sources. Microsoft Copilot may add <code>utm_source=copilot.com</code> to URLs. Grok uses <code>referrer=grok.com</code>. Other LLMs, such as Gemini or Claude, use UTM parameters less often.{{efn|See {{phab|T387903}}.}}
+
+Note: While this near-definitively proves ChatGPT's involvement,{{efn|There are a few rare exceptions: for instance, Google has occasionally indexed URLs containing this parameter, which will remain if you click those results.}} it doesn't prove, on its own, that ChatGPT also generated the writing. Some editors use AI tools to find citations for existing text; this will be apparent in the edit history.
+
+'''Examples'''
+{{blockquote|text=Following their marriage, Burgess and Graham settled in Cheshire, England, where Burgess serves as the head coach for the Warrington Wolves rugby league team. <nowiki>[https://www.theguardian.com/sport/2025/feb/11/sam-burgess-interview-warrington-rugby-league-luke-littler</nowiki><mark>?utm_source{{=}}chatgpt.com</mark>]
+|title=From {{diff||1277944793|label=this revision}} to [[Sam Burgess]]
+}}
+
+====Links to searches====
+*[https://en.wikipedia.org/w/index.php?search=%utm_source=chatgpt.com%22&title=Special:Search&profile=advanced&fulltext=1&ns0=1 utm_source=chatgpt.com]
+*[https://en.wikipedia.org/w/index.php?search=insource%3A%22utm_source%3Dchatgpt.com%22&title=Special%3ASearch&profile=advanced&fulltext=1&ns0=1 insource:"utm_source=chatgpt.com"]
+*[https://en.wikipedia.org/w/index.php?search=insource%3A%22utm_source%3Dopenai%22&title=Special%3ASearch&profile=advanced&fulltext=1&ns0=1 insource:"utm_source=openai"]
+*[https://en.wikipedia.org/w/index.php?search=insource%3A%22utm_source%3Dcopilot.com%22&title=Special%3ASearch&profile=advanced&fulltext=1&ns0=1 insource:"utm_source=copilot.com"]
+*[https://en.wikipedia.org/w/index.php?search=insource%3A%22referrer%3Dgrok.com%22&title=Special%3ASearch&profile=advanced&fulltext=1&ns0=1 insource:"referrer=grok.com"]
+
+=== Named references declared in references section but unused in article body ===
+A common referencing error produced by LLMs involves sources in a <syntaxhighlight lang="wikitext" inline><references></syntaxhighlight> tag which are not used inline.  LLMs can also produce [[WP:NAMEDREF|named references]] which are not defined, although this can also be the result of a copy-paste from a different article.
+'''Examples'''
+{{blockquote|<syntaxhighlight lang="wikitext">
+<references>
+<ref name=\"fiercebiotech\">https://www.fiercebiotech.com/cro/parexel-co-founder-josef-von-rickenbach-to-end-35-year-run-as-ceo</ref>
+<ref name=\"statnews\">https://www.statnews.com/2018/03/16/parexel-josef-von-rickenbach-cro/</ref>
+<ref name=\"mclean\">https://www.mcleanhospital.org/news/three-prominent-community-members-join-mcleans-board</ref>
+<ref name=\"twst\">https://www.twst.com/bio/josef-h-von-rickenbach/</ref>
+</references>
+</syntaxhighlight>
+{{fake heading|level=4|Result}}
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "\"fiercebiotech\"" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}<br>
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "\"statnews\"" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}<br>
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "\"mclean\"" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}<br>
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "\"twst\"" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}
+|From [[Special:Diff/1291491974#References|this May 2025 revision]] to [[Draft:Josef von Rickenbach]]}}
+
+{{blockquote|<syntaxhighlight lang="wikitext">
+<references><ref name="wooart-about">[https://wooart.ca/about-caligomos-art About Caligomos Art – WOO ART]</ref> <ref name="wooart-home">[https://wooart.ca/ Home – WOO ART]</ref> <ref name="discover-leeds">[https://discoverdirectory.leedsgrenville.com/Home/View/woo-art-gallery Woo Art Gallery – Discover Leeds Grenville]</ref> <ref name="book-amazon">Woo, John HR. ''The Book of Caligomos Art''. Amazon KDP, 2025. ISBN 979-8-987654321-0.</ref></references>
+</syntaxhighlight>
+{{fake heading|level=4|Result}}
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "wooart-about" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}<br>
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "wooart-home" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}<br>
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "discover-leeds" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}<br>
+{{error|Cite error: A [[Help:Footnotes#WP:LDR|list-defined reference]] named "book-amazon" is not used in the content (see the [[Help:Cite errors/Cite error references missing key|help page]]).}}
+|From [[Special:Diff/1291558682#References|this May 2025 revision]] to [[Draft:Caligomos Art]]}}
+
+====Links to searches====
+
+* [[:Category:Pages with incorrect ref formatting]]
+* [https://en.wikipedia.org/w/index.php?title=Special:WhatLinksHere/Template:No_footnotes&hidelinks=1&hidetrans=1 Pages without inline citations]
+
+== Miscellaneous ==
+=== Pronounced shift in writing style ===
+A sudden shift in an editor's writing style, such as unexpectedly flawless grammar compared to their other communication (e.g., talk page comments versus text added), may indicate the use of AI. This is especially likely if that other writing predates November 2022. More subtly, because AI writing has changed noticeably over time, if an editor has used AI for several years, then their writing style will often exhibit corresponding shifts.
+
+{{anchor|Sudden shift in English variety use}}A mismatch of user location, national ties of the topic to a variety of English, and the variety of English used may indicate the use of AI tools. A human writer from India writing about an Indian university would probably not use American English; however, depending on the LLM, American English may be used by default, unless prompted otherwise.<ref name="Ju et al." /> 
+
+Note that the reverse of this sign also applies: If a user has edits that predate LLM chatbots, and their writing style has remained consistent between those older edits and their current ones (e.g., frequent use of boldface, list formatting, etc.), that suggests the newer edits are less likely to be AI. Non-native English speakers also tend to mix up English varieties, and such signs should raise suspicion only if there is a sudden and complete shift in an editor's English variety use. However, while using more formal prose in certain varieties of writing may be a form of [[code switching]], that doesn't rule out an editor doing that code switching with AI tools.
+
+=== <span class="anchor" id="Edit summaries"></span> Overwhelmingly exhaustive edit summaries ===
+{{Shortcut|WP:AISUMMARY|WP:AISUMM}}
+AI-generated [[Help:Edit summary|edit summaries]] are often written as formal, first-person paragraphs, without [[Wikipedia:Edit summary legend|abbreviations]], and conspicuously echo the exact text of Wikipedia's policies or any maintenance tags on the article—for example, [[WP:AIADHERENCE|itemizing their adherence]] to "WP:NPOV" or "encyclopedic tone." They often mention things that they "ensured" or "avoided" doing, or include verbose justifications of minor edits; this is especially obvious if AI is used to "fix" text following suspicion of AI-use. 
+They may also include other signs on this list, such as [[WP:AIVOCAB|AI vocabulary]], [[WP:AIEMOJI|emoji]], (attempted) [[WP:AILIST|list]] formatting, or [[WP:MARKDOWN|markdown]] formatting. 
+
+AI edit summaries strongly suggest that the edits themselves are also AI-generated, as it is unlikely someone would use AI for a simple summary but not the much more time-consuming task of writing.
+
+{{blockquote|ChatGPT I revised the content to provide a neutral and informative description of the Indira Gandhi National Centre for the Arts (IGNCA). The focus was on presenting the institution's objectives, approach, and programs in a way that adheres to Wikipedia's guidelines. The tone was adjusted to be more encyclopedic and less promotional.|Edit summary from [[Special:Diff/1169501852|this 2023 revision]] to [[Indira Gandhi National Centre for the Arts]]}}
+
+{{blockquote|**Concise edit summary:** Improved clarity, flow, and readability of the plot section; reduced redundancy and refined tone for better encyclopedic style.|Edit summary from [[Special:Diff/1293085006|this 2025 revision]] to [[Anaganaga (film)]]}}
+
+{{blockquote|Added sourced Impact section including restrictions, healthcare strain, and economic effects (2020–2022).|Edit summary from [[Special:Diff/1347582895|this 2026 revision]] to [[COVID-19 pandemic in Montreal]]; also note ChatGPT UTM parameters}}
+
+More examples (albeit shorter than summaries from current LLMs) can be found [https://huggingface.co/datasets/msakota/edisum_dataset in this dataset] of edit summaries generated with GPT 3.5-turbo.
+
+=== "Submission statements" in AfC drafts ===
+This one is specific to drafts submitted by [[WP:AFC|Articles for Creation]]. At least one LLM tends to insert "submission statements" supposedly intended for reviewers that supposedly explain why the subject is notable and why the draft meets Wikipedia guidelines. Of course, [[WP:BOOMERANG|all this actually does is]] let reviewers know that the draft is LLM-generated, and should be declined or speedily deleted without a second thought.
+
+{{blockquote|Reviewer note (for AfC): This draft is a neutral and well-sourced biography of Portuguese public manager Jorge Patrão. All references are from independent, reliable sources (Público, Diário de Notícias, Jornal de Negócios, RTP, O Interior, Agência Lusa) covering his public career and cultural activity. It meets WP:RS and WP:BLP standards and demonstrates clear notability per WP:NBIO through: – Presidency of Serra da Estrela Tourism Region (1998–2013); – Presidency of Parkurbis – Covilhã Science and Technology Park; – Founding role in Rede de Judiarias de Portugal (member of the Council of Europe’s European Routes of Jewish Heritage); – Authorship of the book "1677 – A Fábrica d’El-Rei"; – Founder/curator of the Beatriz de Luna Art Collection (Old Master focus). There is also a Portuguese version of this article at pt.wikipedia.org/wiki/Jorge_Patrão. Thank you for your review. -->|From [[Special:Diff/1316087104|this October 2025 revision]] to [[Draft:Jorge Patrão]] (all the inevitable formatting errors are present in the original)}}
+
+=== Pre-placed maintenance templates ===
+{{shortcut|WP:AIDECLINE}}
+Occasionally a new editor creates a draft that includes an [[WP:AFC|AFC]] review template already set to "declined". The template is also devoid of content with no reviewer reasoning given. The LLM apparently offers to add an AFC submission template to the draft, and then provides something like {{tlx|AfC submission|d}}, in which the "d" parameter pre-declines the draft by substituting {{tl|AfC submission/declined}}. The draft's contribution history reveals that this template was inserted at some point by the draft's creator. Invariably the creator then asks on [[Wikipedia:WikiProject Articles for creation/Help desk]] or one of the other help pages why the draft was declined with no feedback. The presence of a content-free "submission declined" header is a '''strong''' indicator that the draft was LLM-generated.
+
+LLMs have been known to create pages that already have maintenance templates that shouldn't plausibly be there, including maintenance tags and incorrect [[WP:protection|protection]] templates.
+
+{{blockquote|
+<syntaxhighlight lang="wikitext">
+{{Short description|French inventor and engineer (1861–1942)}}
+{{pp|small=yes}}
+{{pp-move}}
+{{Use American English|date=September 2022}}
+{{Use mdy dates|date=February 2025}}
+</syntaxhighlight>
+|From [[Special:Diff/1278033935|this revision]] to a user sandbox (later [[WP:C&P|cut-and-paste moved]] to [[Émile Dufresne]])}}
+
+'''Links to searches'''
+* [https://en.wikipedia.org/w/index.php?search=%22you+declined+your+own+draft%22&title=Special%3ASearch&profile=advanced&fulltext=1&ns4=1&ns118=1 you declined your own draft]
+* [https://en.wikipedia.org/w/index.php?search=%22AI%22+%22put+a+decline+notice%22&title=Special%3ASearch&profile=advanced&fulltext=1&ns3=1&ns4=1 "AI" + "put a decline notice"]
+
+=== Permissions gaming ===
+[[WP:PGAME|Permissions gaming]] is a form of disruptive editing where someone makes many benign-seeming but unconstructive edits, often on disparate topics or in quick succession, until their edit count is high enough to raise their [[Wikipedia:User access levels|user access level]], allowing them to pursue their real goal of adding spam, vandalism, or contentious content. 
+
+Because AI chatbots are good at generating a lot of benign-looking content very quickly, people who game permissions after 2023 often do so with throwaway AI rewrites or additions to dozens of unrelated articles. If no one goes back and cleans up their edits, the result is a large swath of undetected and unreviewed AI content.
+
+Note: This sign should only be used in one direction. Someone rapidly adding a lot of AI-generated text is ''not'' necessarily permissions gaming and should not be accused of it barring other evidence. However, if someone ''is'' found or reasonably suspected to be permissions gaming, and has done so by rapidly adding or changing a lot of text, those edits may be AI.
+
+===Differences between LLMs===
+Each model and version of AI chatbots have a distinctive way of writing ([[idiolect]]),<ref name="rud">{{cite journal |last1=Rudnicka |first1=Karolina |date=9 July 2025 |title=Each AI chatbot has its own, distinctive writing style—just as humans do |url=https://www.scientificamerican.com/article/chatgpt-and-gemini-ai-have-uniquely-different-writing-styles |journal=Scientific American |access-date=18 January 2026}}</ref><ref name="sun">{{cite web |last1=Sun |first1=Mingjie |last2=Yin |first2=Yida |first3=Zhiqiu |last3=Xu |first4=J. Zico |last4=Koller |first5=Zhuang |last5=Liu |title=Idiosyncrasies in Large Language Models |url=https://arxiv.org/abs/2502.12150v2 |access-date=16 April 2026}}</ref>, and what is typical for GPT-5 is not necessarily characteristic to GPT-4 or Gemini. 
+
+Specifically, text from ChatGPT (circa GPT-4o-2024-08-06) and Grok (Grok-Beta, as of late 2024/early 2025) exhibit characteristics that Gemini (1-5 Pro) and Claude (3.5-Sonnet) do not: 
+* [[WP:AILEGACY|focusing on broader context]] is more characteristic of ChatGPT and Grok than Gemini and Claude.<ref name="sun" />
+* Gemini and Claude responses tend to be more concise than responses from ChatGPT and Grok.{{efn|This can be seen in articles on Grokipedia, which are extremely long.}}<ref name="sun" /> 
+
+Though it's impossible to know for sure and there are many confounding variables, ChatGPT is likely the most prevalent chatbot used for Wikipedia edits.
+
+== <span class="anchor" id="Comments"></span> Indicators of AI-written comments ==
+{{shortcut|WP:AITALKSIGNS|WP:LLMTALKSIGNS}}
+{{see also|Wikipedia:Identifying LLM unblock requests|Wikipedia:The LLM-written ANI report}}
+In many cases, some users have copy-pasted text from AI chatbots onto talk pages and other pages where discussion takes place. Comments suspected of having been pasted from an LLM may be collapsed via {{tl|collapse AI}} per [[WP:AITALK]]. The use of AI chatbots to write comments is strongly discouraged.
+
+Although several of the tells mentioned above (including [[WP:AIBOLD|boldface]], [[WP:AIDASH|em dashes]], [[WP:AICURLY|curly apostrophes and quotation marks]], [[WP:AIPARALLEL|negative parallelisms]], [[WP:AILIST|vertical lists]], [[WP:MARKDOWN|Markdown]], and the [[WP:RO3|rule of three]]) often appear in such comments, this section only includes tells that typically do not appear in content added to articles or drafts.
+
+===<span class="anchor" id="Emphasis on quality"></span><span class="anchor" id="Emphasis on good faith"></span><span class="anchor" id="Emphasis on adherence"></span> Canned emphasis on quality, good faith, and adherence to policies and guidelines===
+{{shortcuts|WP:CEQ|WP:CEGF|WP:AIADHERE}}
+{{tmbox|image=none|text=Words to watch: {{strong|''align(s) with Wikipedia's aim/goal(s)'', ''adhere(s) to Wikipedia's policies/guidelines/standards'', ''I am/we are committed to ...'', ''I assure you that ...'', ''my intention/goal is to ...''}} }}
+
+Most people on Wikipedia want others to believe that they're here for the right reasons and are willing to follow the rules, and may insist that the content they wish to introduce is (or has been) written with such rules in mind. AI chatbots, however, have a strong tendency to communicate this in a specific way: invoking policies, guidelines, and standards as a broad, formal, and abstract whole, as in [[legalese]], and often using "[[WP:AIVOCAB|AI vocabulary]]" to do so. 
+
+'''Examples'''
+{{blockquote|
+I have a genuine interest in contributing to the knowledge and accuracy of information available on Wikipedia, particularly in the area of dogs. I have conducted extensive research and have insights that I believe could enhance the quality and comprehensiveness of the existing content on the "Dog" article.
+
+I understand the importance of <mark>adhering to Wikipedia's guidelines and policies</mark>, and <mark>I am committed to</mark> contributing in a responsible and constructive manner. <mark>My intention is to</mark> provide well-referenced and reliable information that <mark>aligns with Wikipedia's standards.</mark>
+
+If granted permission, I would approach the editing process <mark>with the utmost care and respect for Wikipedia's community guidelines.</mark>
+|From [[Special:Diff/1210351576|this 2024 revision]] to [[Talk:Dog]]}}
+
+{{blockquote|
+<mark>I assure you that</mark> my intentions are <mark>aligned with Wikipedia's principles</mark> of neutrality, verifiability, and reliability. I strive to <mark>adhere to all content and editing guidelines</mark>, ensuring the information provided is accurate, well-sourced, and encyclopedic.
+|From [[Wikipedia:Identifying LLM unblock requests#company page deleted from wiki i did nothing wrong write a unblock request so i can edit company page again|this demonstrative example]] at [[Wikipedia:Identifying LLM unblock requests]]}}
+
+{{blockquote|
+<mark>I can assure you that</mark> the article and our comments are the result of human effort and collaboration. <mark>Anon and I are committed to</mark> creating informative and balanced content that <mark>adheres to Wikipedia's guidelines</mark>. [...] Let's work together to ensure that our article contributes meaningfully to the climate change discourse.
+----
+Chloe and I are ready to provide any additional clarification or context that might be needed. The article is now more focused on the economic impacts and includes a range of viewpoints on technology and policy, with a clear human-centered narrative. We've also ensured that all sources are credible and properly cited. [...] <mark>Our ultimate goal is to</mark> create a valuable resource that <mark>aligns with Wikipedia's high standards</mark> and sparks important conversations about our planet's future.
+|From [[Wikipedia:WikiProject Articles for creation/Help desk/Archives/2024 December 8]]}}
+
+===Canned offers to receive constructive criticism===
+{{shortcut|WP:ORCC|WP:CORCC}}
+{{tmbox|image=none|text=Words to watch: {{strong|''If you have any concerns/suggestions'', ''If there are specific sections/areas that&nbsp;...'', ''I am willing/happy to address&nbsp;..., I am open to/would appreciate/welcome any additional/further input/guidance/feedback''}} }}
+Expressions of willingness to take constructive criticism for edits are very common in AI comments by users whose drafts were declined by reviewers, or in rare cases, [[WP:AIDECLINE|themselves]]. The difference between this sign and similar reassurances by conscientious humans will generally become obvious after you actually provide that criticism.
+
+'''Examples'''
+{{blockquote|<mark>I am open to any suggestions or feedback</mark> from experienced editors to ensure that the modifications I propose maintain the integrity of the article.
+|From [[Special:Diff/1210351576|this February 2024 revision]] to [[Talk:Dog]]}}
+
+{{blockquote|
+<mark>If there are specific areas</mark> that need further attention or modification, I am more than willing to make adjustments. I highly value the opportunity to contribute to Wikipedia and <mark>would be grateful for any guidance you could provide</mark> to help my article meet the necessary standards for publication.
+|From [[Special:Diff/1256545561|this November 2024 revision]] to [[Wikipedia:WikiProject Articles for creation/Help desk]]}}
+
+{{blockquote|
+{{fmbox|image=none|text=
+2. '''Corrective Steps'''  Moving forward, I will ensure that drafts, once ready, are moved directly to the main namespace unless there is a specific, community-approved reason to do otherwise. If any of the drafts currently in the Wikipedia namespace need reassignment, <mark>I am open to addressing them promptly.</mark>
+3. '''Community Consultation'''  <mark>I am happy to discuss this process</mark> with the appropriate editors or administrators to ensure alignment with community guidelines. Constructive feedback will help refine my understanding and adherence to the expected standards.
+If there is a specific protocol or workflow I should follow for such cases, <mark>I would greatly appreciate your guidance.</mark>
+}}|From [[Special:Diff/1258155762|this November 2024 revision]] to [[Wikipedia:Administrators' noticeboard]]}}
+
+{{blockquote|
+{{fmbox|image=none|text=
+We remain committed to creating content that aligns with Wikipedia's mission and <mark>are open to further guidance.</mark>
+----
+We have reviewed the feedback provided and made the necessary revisions. [...] We look forward to engaging with the Wikipedia community and <mark>welcome any additional input</mark> that can help us improve the article. Thank you for your vigilance and your contribution to maintaining the integrity of Wikipedia.
+----
+We've made significant revisions in response to the feedback and are eager to engage with the community. <mark>If you have specific suggestions</mark> for further improvement, we would greatly appreciate your input. Let's work together to ensure that our article contributes meaningfully to the climate change discourse.
+----
+Chloe and I are ready to provide any additional clarification or context that might be needed. [...] <mark>If you have any particular sections you'd like us to address, please do not hesitate to let us know.</mark>
+----
+We've just posted an updated message on the article's talk page, emphasizing our human collaboration and <mark>our willingness to address feedback</mark>. If you could review our revisions and <mark>provide specific areas for improvement</mark>, we would be grateful.
+}}|From multiple comments at [[Wikipedia:WikiProject Articles for creation/Help desk/Archives/2024 December 8]]}}
+
+{{blockquote|<mark>I am happy to address any further concerns</mark> or comply with any additional requirements to demonstrate my commitment to responsible editing.
+|From [[Wikipedia:Identifying LLM unblock requests#I was blocked on Wikipedia for promotional edits. Write me an unblock request|this demonstrative example]] at [[Wikipedia:Identifying LLM unblock requests]] (December 2024)}}
+
+{{blockquote|<mark>If you or any editor have any specific sections</mark> that still feel promotional, unclear or non-neutral, <mark>I would really appreciate guidance</mark> so I can adjust them accordingly.
+|From [[Special:Diff/1329376720|this December 2025 revision]] to [[Wikipedia:WikiProject Articles for creation/Help desk]]}}
+
+{{blockquote|
+I understand the concern about AI-generated drafts flooding AfC, and I respect the need to maintain quality standards. <mark>If there are specific sections</mark> where the tone reads as machine-generated, I'm happy to rework those. <mark>I'd also welcome any feedback</mark> on sourcing gaps - I want this to meet Wikipedia's standards properly.
+
+<mark>Could you point me</mark> to which parts raised the flag? That would help memake {{sic}} targeted improvements before resubmitting. 
+|From [[Special:Diff/1344786327|this March 2026 revision]] to a user talk page}}
+
+===<span class="anchor" id="Let's focus on"></span> Canned calls to focus on content instead of conduct===
+{{shortcut|WP:LETSFOCUSON}}
+{{for|non-AI-specific guidance about this|Wikipedia:Pearl-clutching}}
+{{tmbox|image=none|text=Words to watch: {{strong|''accusing/accusations/accusatory'', ''dismissing/dismissals/dismissive'', ''instead of/rather than ...'', ''let's focus on ...''}} }}
+In many cases, editors have responded to accusations of AI use by denying that they have used AI to write content ([[WP:THERESNOAIPOLICY|or that Wikipedia prohibits doing so]]) and asking critics to [[WP:WHERESTHEAI|point out which contributions]] have [[WP:FIXEDAITONE|tone issues]] or other problems, perhaps as a form of [[WP:CORCC|constructive criticism]] that they can act on in order to make their content meet Wikipedia's standards.
+
+When told that the general ''pattern'' of their editing has been [[WP:DISRUPT|disruptive]], they often [[WP:IDHT|dismiss the accusation]] as being merely speculative, unfounded, or [[WP:AIWL|having no basis in policy]], and accuse their critics of acting in a manner that they believe is [[WP:Incivility|uncivil]], hostile, dismissive, unprofessional, counterproductive, or an affront to Wikipedia's collaborative nature. Persistence from others is interpreted as aggression; if challenged sufficiently they may state their intent to withdraw from the discussion as it has become "emotionally charged". Since the editor did not write this comment themselves, they will often continue the discussion or return to it shortly afterwards.
+
+AI will seldom confirm that it's being used without the prior consent of the user, so if the response is vague, sidesteps the question or considers it to be a personal attack, this may be a sign of AI use.
+
+'''Examples'''
+{{sidebox|text=
+{{legend|yellow|Descriptions of accusers' behavior}}
+{{legend|lightgreen|Suggested alternative actions}}
+}}
+{{blockquote|
+:5. '''Next Steps''': Instead of resorting to <mark>dismissive remarks</mark>, let's focus on {{highlight|improving the article together|lightgreen}}. I'm willing to conduct additional research to ensure every claim is backed by solid evidence. If you have specific concerns about certain statements, {{highlight|let's address them constructively|lightgreen}}, rather than resorting to <mark>unproductive accusations</mark>.
+{{highlight|Let's keep the discussion focused on the content|lightgreen}} and ensure that we maintain a respectful and professional atmosphere moving forward.
+|From [[Special:Diff/1241714864|this August 2024 revision]] to [[Talk:Eric Dick (lawyer)]]}}
+
+{{blockquote|
+Lastly, as for your repeated warnings about reporting me, you are, of course, free to do so. However, I urge you to {{highlight|engage with the actual content of the discussion|lightgreen}} instead of resorting to <mark>procedural threats</mark> or <mark>personal accusations</mark>. Let’s focus on {{highlight|improving the article constructively|lightgreen}} rather than <mark>creating unnecessary friction</mark>.
+|From [[Special:Diff/1264974815|this December 2024 revision]] to [[Talk:Kamaria Ahir]]}}
+
+{{blockquote|
+<mark>Personal attacks</mark> and <mark>accusations of AI-generated content or paid editing</mark> do not address the policy-based arguments made in my comment. Wikipedia discussions {{highlight|should be based on policies such as [[WP:GNG]], [[WP:RS]], and [[WP:NPOV]]|lightgreen}}, rather than <mark>assumptions about editors</mark>. If there are concerns about paid editing, {{highlight|they should be taken to [[WP:COIN]] with evidence|lightgreen}} rather than <mark>dismissing arguments outright</mark>. Instead of <mark>focusing on editor backgrounds</mark>, let’s focus on {{highlight|whether the subject meets Wikipedia’s notability guidelines|lightgreen}}, which have been supported by multiple independent and reliable sources.
+|From [[Special:Diff/1278601349|this March 2025 revision]] to [[Wikipedia:Articles for deletion/Viraj Bahl]]}}
+
+{{blockquote|
+If you are willing, let’s focus on {{highlight|specific wording changes and sources|lightgreen}} rather than <mark>framing edits in dismissive terms</mark>.
+----
+I have reviewed WP:AITALK, and I am fully aware of the guidance. My comments here represent my own editorial judgment and responsibility. <mark>Suggesting otherwise</mark> is not appropriate.
+	
+Wikipedia is a community-run encyclopedia that depends on collaboration and civil discussion. Your responses have repeatedly crossed from substantive critique into <mark>language that is dismissive, hostile, and needlessly personal</mark>. Describing edits as “name-dropping,” stating that “being dismissive is an appropriate response,” and implying that I am not acting in good faith <mark>is neither constructive nor consistent with expected conduct.</mark>
+	
+{{highlight|Strong disagreement about sourcing and wording|lightgreen}} is entirely legitimate. However, <mark>dismissiveness</mark> and <mark>accusatory framing</mark> are not. They undermine consensus-building and create an unnecessarily adversarial environment.
+	
+If there are policy-based concerns, the proper approach is to {{highlight|address them directly and specifically|lightgreen}}. [...]
+	
+<mark>Generalized criticism</mark> and <mark>rhetorical dismissals</mark> do not help improve the article.
+	
+I am willing to work toward precise, policy-compliant language. I am not willing to continue a discussion framed in <mark>a condescending or hostile manner</mark>. Let’s keep this focused on {{highlight|content and standards|lightgreen}} rather than <mark>tone-policing</mark> or <mark>motive attribution</mark>.
+|From multiple comments left on [[User talk:Grayfell#ChatGPT Undoing Undo Edit from BurntSweet|this user talk page]] in February 2026}}
+
+===Subject lines===
+{{shortcut|WP:SUBJECTLINE}}
+Historically, some comments generated by AI chatbots have begun with text that appears intended to be pasted into the ''Subject'' field on an email form.
+
+'''Examples'''
+
+{{blockquote|Subject: Request for Permission to Edit Wikipedia Article - "Dog"|From [[Special:Diff/1210351576|this February 2024 revision]] to [[Talk:Dog]]}}
+
+{{blockquote|Subject: Edit Request for Wikipedia Entry|From [[Special:Diff/1210511971|this February 2024 revision]] to [[Talk:Spaghetti]]}}
+
+{{blockquote|Subject: Request for Review and Clarification Regarding Draft Article|From [[Special:Diff/1256545561|this November 2024 revision]] to [[Wikipedia:WikiProject Articles for creation/Help desk]]}}
+
+{{blockquote|Subject: Concerns about Inaccurate Information|From [[Special:Diff/1278589409|this March 2025 revision]] to [[Talk:Kjersti Flaa]]}}
+
+{{blockquote|Subject: Behavioral issues and Wikihounding by User:Binksternet|From [[Special:Diff/1356587403|this May 2026 revision]] to [[Wikipedia:Administrators' Noticeboard/Incidents]]}}
+
+=== Section titles in plain text ===
+AI chatbots sometimes generate messages with text broken into sections separated by text that appears intended to be the titles of said sections. When copy-pasted, such text may either appear with [[WP:MARKDOWN|Markdown]] or as plain text.
+
+{{blockquote|{{fmbox|image=none|text=
+<mark>Importance of Thorough Research</mark>
+
+Wikipedia's content guidelines emphasize the importance of verifiability and reliable sourcing, [...]
+	
+<mark>Risk of Violating Wikipedia’s Policy on Biographies of Living Persons</mark>
+	
+Wikipedia's [[Wikipedia:Biographies of living persons|Biographies of Living Persons (BLP)]] policy is particularly relevant in this context. [...]
+	
+<mark>The Dangers of Blindly Cutting Content</mark>
+	
+Blindly cutting content, especially when it pertains to significant aspects of a person’s public life, contradicts the core principles of Wikipedia. [...]
+	
+<mark>The Role of Due Diligence in Editing</mark>
+	
+Editors have a responsibility to engage in due diligence when making significant changes to articles, particularly those involving living persons. [...]
+}}|From [[Special:Diff/1241584157|this August 2024 revision]] to [[Talk:Eric Dick (lawyer)]]}}
+
+=== Non-existent policies or guidelines ===
+When AI chatbots try to cite Wikipedia's policies or guidelines by mentioning shortcuts, they have occasionally misattributed hallucinated policies or guidelines to specific pages, including to pages that were never intended to be cited in such a manner to begin with.
+
+'''Examples'''
+{{blockquote|
+WP:NOTENGLISH clearly states:
+
+<mark>"Wikipedia articles should not contain material based solely on non-English-language sources without reliable English-language sources."</mark>
+
+In this case, the material you’re suggesting must be accompanied by a reliable English translation or reliable secondary sources for verification. Without that, it cannot meet Wikipedia’s verifiability standards.
+|From [[Special:Diff/1284250763|this April 2025 revision]] to [[Wikipedia:Administrators' noticeboard/Incidents]]}}
+
+{{blockquote|
+Per [[WP:LAW]]: <mark>''"Wikipedia is subject to the laws of the countries in which it operates."''</mark>
+|From [[Special:Diff/1306573330|this August 2025 revision]] to [[User:Flanker235]]}}
+
+==== <span class="anchor" id="Shortcuts"></span>Non-existent shortcuts ====
+{{shortcut|WP:AISHORTCUT}}
+In some cases, users of AI chatbots have pasted text containing hallucinated shortcuts that do not redirect to any existing page at all.
+
+'''Examples'''
+{{blockquote|
+'''Respectfully noted'''. However, engaging with arguments presented in a deletion discussion is entirely within the bounds of <mark>WP:AFDPURPOSE</mark>. This is not “bludgeoning,” it’s addressing flawed logic and misapplications of policy. If a “keep” !vote contains reasoning based on a misinterpretation of WP:BLP1E or WP:NPERSON, it should be scrutinized. That’s how consensus is built — through critical analysis, not silence
+|From [[Special:Diff/1296070716|this June 2025 revision]] to [[Wikipedia:Articles for deletion/Lilly Contino]]}}
+
+{{blockquote|
+Annu Gaidhu’s work exists at the intersection of '''trauma-informed yoga, diasporic South Asian identity, and youth empowerment'''. These are areas often underrepresented on Wikipedia. As per '''WP:NOTABILITY''' and '''<mark>WP:NOTELOCAL</mark>''', niche figures can still be notable if they receive significant coverage within the reliable sources of that niche.
+----
+The subject’s career bridges media, child and youth care scholarship, trauma-informed wellness, and international yoga education. This makes her notable within multiple domains, not solely for pageantry.   Deletion removes a rare example of a South Asian Canadian woman working at the intersection of care, academia, and arts — a key equity concern per <mark>WP:UNDERREP</mark> and WP:BIAS and relevant WikiProjects. 
+|From multiple July 2025 comments at [[Wikipedia:Articles for deletion/Annu Gaidhu]]}}
+
+{{blockquote|
+1. '''MoltMatch section''': A paragraph suddenly switches to Spanish mid-article ("Sin embargo, Teixeira (2026) advierte en el libro..."). This describes credential leaking, prompt injection, and arbitrary command execution in technical detail. The language switch is inconsistent with <mark>[[WP:ENGLISHONLY]]</mark> and the content reads more like an embedded warning for LLM consumption than encyclopedic prose.
+|From [[Special:Diff/1341908665|this March 2026 revision]] to [[Talk:OpenClaw]]}}
+
+{{blockquote|
+Verification over Origin ([[WP:V]] & <mark>[[WP:NOTAI]]</mark>): AI-assisted drafting is not prohibited. Per Wikipedia policy, the focus is on verifiability, not the tool used for drafting. Every fact in this article is supported by high-quality, third-party sources. Claiming "AI" as a pretext to delete documented financial records is a violation of [[WP:POINT]].
+|From [[Special:Diff/1345501583|this March 2026 revision]] to [[Wikipedia:Requests for page protection/Increase]]}}
+
+=== <span class="anchor" id="Transclusions"></span> Transclusion of article maintenance banners ===
+{{shortcut|WP:AITRANS|WP:AITRANSCLUSION}}
+When mentioning maintenance tags, AI chatbots often just write the names of such templates in [[curly brackets]] (e.g. <code><nowiki>{{Example}}</nowiki></code>), resulting in unintentional transclusions. These can be avoided by typing <code><nowiki>tl|</nowiki></code> between the opening pair of brackets and the template's name (e.g. <code><nowiki>{{tl|Example}}</nowiki></code>) so that each mention will instead appear like this: {{tl|Example}}
+
+'''Examples'''
+{{blockquote|
+<syntaxhighlight lang="wikitext">
+I would like to open a discussion regarding the recent edits and use of tags such as {{Unreliable sources}}, {{Disputed}}, and {{Cleanup rewrite}}. Additionally, the inclusion of claims about an “Indian disinformation campaign” requires careful consideration and sourcing in line with Wikipedia’s guidelines.
+
+[...]
+
+3. Use of Maintenance Templates: Adding templates like {{Disputed}} and {{Unreliable sources}} should be done based on a consensus, not to preemptively frame content as problematic. I suggest we come to a consensus before continuing to apply these tags.
+</syntaxhighlight>
+'''Result'''
+{{fmbox|image=none|text=
+I would like to open a discussion regarding the recent edits and use of tags such as {{ambox|type=content|image=[[File:Text document with red question mark.svg|40px]]|text=Some of this article's [[Wikipedia:Citing sources|listed sources]] '''may not be [[Wikipedia:Reliable sources|reliable]]'''. Please help improve this article by looking for better, more reliable sources. Unreliable citations may be challenged and removed. ''(<small>[[Help:Maintenance template removal|Learn how and when to remove this message]]</small>)''}}, {{ambox|type=content|image=[[File:System-search.svg|45px]]|text=This article's '''factual accuracy is [[Wikipedia:Accuracy dispute|disputed]]'''. Relevant discussion may be found on the [[Talk:2024 Bangladesh anti-Hindu violence#Disputed|talk page]]. Please help to ensure that disputed statements are [[Wikipedia:Reliable sources|reliably sourced]]. ''(<small>[[Help:Maintenance template removal|Learn how and when to remove this message]]</small>)''}}, and {{ambox|type=content|image=[[File:Crystal Clear app kedit.svg|40px]]|text=This article '''may need to be rewritten''' to comply with Wikipedia's [[Wikipedia:Manual of Style|quality standards]]. Relevant discussion may be found on the '''talk page'''. {{plain link|url=https://en.wikipedia.org/w/index.php?title=Talk:2024_Bangladesh_anti-Hindu_violence&action=edit You can help}}. The talk page may contain suggestions.}}. Additionally, the inclusion of claims about an “Indian disinformation campaign” requires careful consideration and sourcing in line with Wikipedia’s guidelines.
+
+[...]
+
+3. Use of Maintenance Templates: Adding templates like {{ambox|type=content|image=[[File:System-search.svg|45px]]|text=This article's '''factual accuracy is [[Wikipedia:Accuracy dispute|disputed]]'''. Relevant discussion may be found on the [[Talk:2024 Bangladesh anti-Hindu violence#Disputed|talk page]]. Please help to ensure that disputed statements are [[Wikipedia:Reliable sources|reliably sourced]]. ''(<small>[[Help:Maintenance template removal|Learn how and when to remove this message]]</small>)''}} and {{ambox|type=content|image=[[File:Text document with red question mark.svg|40px]]|text=Some of this article's [[Wikipedia:Citing sources|listed sources]] '''may not be [[Wikipedia:Reliable sources|reliable]]'''. Please help improve this article by looking for better, more reliable sources. Unreliable citations may be challenged and removed. ''(<small>[[Help:Maintenance template removal|Learn how and when to remove this message]]</small>)''}} should be done based on a consensus, not to preemptively frame content as problematic. I suggest we come to a consensus before continuing to apply these tags.
+}}|From [[Special:Diff/1246813408|this September 2024 revision]] to [[Talk:2024 Bangladesh anti-Hindu violence]]}}
+
+{{blockquote|
+<syntaxhighlight lang="wikitext">
+Regarding [[WP:TNT]], you've misrepresented it. TNT specifically states it's for "unsalvageable articles" and explicitly notes "If the problems are limited to a section or two, {{section rewrite}} tags are more appropriate." An article with 80+ references addressing a notable topic hardly qualifies as "unsalvageable."
+</syntaxhighlight>
+'''Result'''
+{{fmbox|image=none|text=
+Regarding [[WP:TNT]], you've misrepresented it. TNT specifically states it's for "unsalvageable articles" and explicitly notes "If the problems are limited to a section or two, {{ambox|type=content|image=[[File:Crystal Clear app kedit.svg|40px]]|text=This article '''may need to be rewritten''' to comply with Wikipedia's [[Wikipedia:Manual of Style|quality standards]]. {{plain link|url=https://en.wikipedia.org/w/index.php?title=Wikipedia:Articles_for_deletion/AI_book_generation_(2)&action=edit You can help}}. The talk page may contain suggestions.}} tags are more appropriate." An article with 80+ references addressing a notable topic hardly qualifies as "unsalvageable."
+}}|From [[Special:Diff/1301762476|this July 2025 revision]] to [[Wikipedia:Articles for deletion/AI book generation (2)]]}}
+
+'''Links to searches'''
+* {{plain link|url=https://en.wikipedia.org/wiki/Special:WhatLinksHere?target=Template%3AAI-generated&namespace=1&hidelinks=1&hideredirs=1&limit=50 Special:WhatLinksHere/Template:AI-generated (talk pages only, links and redirects hidden)}}
+
+=== Wikilawyering ===
+{{shortcut|WP:AIWL}}
+[[WP:Wikilawyering|Wikilawyering]] is a disruptive practice where someone selectively cites or interprets policies, guidelines, or perceived precedent as justification for their conduct, even if their interpretations go against the purpose of the policies or guidelines they mention. In many cases, users have [[#Emphasis on adherence|emphasized their content's compliance]] (or overlooked their non-compliance) with certain policies and guidelines. This is especially the case for users of AI chatbots, which often generate text that affirms what the user may want others to believe, even if the points they present don't actually hold up against Wikipedia's policies and guidelines.
+
+When an article is tagged as possibly containing AI-generated content, a user might try to defend it by asking accusers to [[WP:WHERESTHEAI|point to specific passages causing concern]] or reassuring them that the content they've contributed is "neutral", "verified" by citations to reliable sources, and comprises none of the items described in [[Template:AI-generated]], regardless of the amount of actual effort put in to ensure that such claims are true.
+
+Note: Not all comments in which users dismiss, downplay, deny, or otherwise try to justify LLM use may necessarily be AI-generated themselves, although some may appear so.
+
+'''Examples'''
+{{blockquote|{{fmbox|image=none|text=
+The AI-generated template [[Template:AI-generated]] serves as a preliminary step to flag potential LLM-generated content for review, potentially leading to processes like [[WP:G15]] or [[WP:AFD]]. <mark>Its documentation requires editors to "explain your reasons on the page's talk page" with specific evidence,</mark> such as fabricated citations, even when used urgently.
+
+[...]
+
+<mark>Per [[WP:V]], content is evaluated based on reliable sources, not assumptions about the editing process.</mark> Demanding such an answer risks bad-faith assumptions ([[WP:AGF]]) and <mark>bypasses the evidence requirement of [[Template:AI-generated]] and [[WP:G15]], potentially constituting [[WP:GAME]] by avoiding substantive discussion.</mark>
+}}|From [[Special:Diff/1316361445|this revision]] to [[Talk:History of the Catholic Church in Japan]], [[Special:Diff/1316366475|this revision]] to [[Talk:Kirishitan]], and [[Special:Diff/1316869082|this revision]] to [[Talk:Bateren Edict]] (all in October 2025)}}
+
+{{blockquote|{{fmbox|image=none|text=
+To the extent that portions of the article previously reflected overly integrated synthesis, that is an ordinary encyclopedic issue governed by WP:OR and WP:ATTRIBUTE, not evidence of AI-generated unreliability. Such issues are addressed through targeted rewriting, not through a global provenance warning.
+
+<mark>WP:AISIGNS makes clear that stylistic resemblance or probabilistic indicators are not, by themselves, a sufficient basis for retaining an AI-related maintenance tag</mark> once content has been verified for accuracy, sourcing, and neutrality. Maintenance tags are intended to flag present risks to readers, not to memorialize past drafting concerns.
+}}|From [[Special:Diff/1338058003|this February 2026 revision]] to [[Talk:Belletto]]}}
+
+Aside from defending new content that appears AI-generated, AI chatbots have been used to attempt wikilawyering in other contexts.
+
+'''Examples'''
+{{blockquote|
+{{fmbox|image=none|text=
+India Today, for example, is one of South Asia’s largest media networks with 50–150 million monthly visits. Articles used are not blogs or op-eds but fact-based reports. <mark>Accusing Indian media of being unreliable solely due to geopolitical bias violates WP:RS and WP:NPOV.</mark> If the sources meet reliability criteria on other topics, they cannot be rejected here purely due to their nationality or coverage of Pakistan-related subjects.
+----
+While it's reasonable to approach cross-border reporting with scrutiny, India Today, ThePrint, and Business Today (as well as NDTV) are established, mainstream media outlets with large editorial teams and professional standards. They are routinely cited across Wikipedia, including for contentious topics. <mark>WP:RS does not disqualify a source merely because it originates from a country with geopolitical interests,</mark> what matters is its editorial independence, track record, and article content, none of which have been discredited in this case.
+
+If specific claims in these articles are found to be incorrect, we can tag or refine those. <mark>But to dismiss an entire country’s media ecosystem categorically would amount to systemic bias, something WP:NPOV warns against.</mark>
+----
+While some editors raise concerns about its alignment with the Indian government, <mark>there is no community consensus that ANI is unreliable across all topics.</mark> In fact, ANI is routinely cited on Wikipedia, especially in articles related to Indian foreign relations, regional security, and South Asian diplomacy. <mark>If ANI were inherently unreliable, it would be listed at [[WP:RSPS|Reliable Sources/Perennial sources]] as deprecated. It is not.</mark>
+
+[...]
+
+These are verifiable events that multiple other outlets later elaborated upon. There is no editorializing or unverifiable speculation in the ANI reports used. <mark>Per WP:NEWSORG, basic factual reporting by a long-standing agency on observable events is typically considered reliable for that reporting.</mark>
+
+[...]
+
+In conclusion, <mark>ANI meets the threshold for WP:RS in this context</mark>—especially since its reporting here has been picked up, expanded, and affirmed by independent outlets like ThePrint, NDTV, and Business Today. Dismissing ANI categorically would amount to source bias, not a policy-based deletion rationale.
+----
+Respectfully, this interpretation of WP:TOOSOON is too narrow. <mark>WP:TOOSOON cautions against creating articles where no significant coverage yet exists, not against documenting notable early-stage events that have already received multiple independent, in-depth news reports</mark>
+
+In this case, India Today, ThePrint, Business Today and NDTV have each published full-length, named-entity-specific reports on the Republic of Balochistan, including its territorial assertions, the seizure of Mangochar, involvement of the Baloch Liberation Army, and a diplomatic overture toward India. These are not passing mentions; <mark>they demonstrate substantive coverage and notability under WP:GNG.</mark>
+}}|From multiple comments at [[Wikipedia:Articles for deletion/Republic of Balochistan]] (May 2025)}}
+
+{{blockquote|{{fmbox|image=none|text=
+If calling policy-based critique “spam” is the only way you can disengage from legitimate scrutiny, that says more about the strength of your position than mine. <mark>Repeating a point isn’t uncivil — especially when the point remains unaddressed. What is uncivil is trying to shut down a contributor by declaring exhaustion instead of responding with policy.</mark>
+}}|From [[Special:Diff/1296102535|this June 2025 revision]] to [[Wikipedia:Articles for deletion/Lilly Contino]]}}
+
+==== Invoking WP:PRESERVE ====
+During deletion discussions, AI wikilawyers particularly have a tendency of handwaving toward [[WP:PRESERVE]] as an argument for why the article should not be deleted, regardless of what the argument for deletion is; even in cases where the argument for deletion is that the article fails Wikipedia's core content policies, the AI wikilawyer may still invoke PRESERVE, which only says that we should avoid deleting articles in cases where core content policies are upheld (such as notability and verifiability) but there are other, more solvable issues.
+
+{{blockquote|
+I recognize the article requires cleanup and welcome neutral editor assistance. <mark>I request the community apply [[WP:PRESERVE]].</mark>
+|From [[Special:Diff/1349349388|this revision]] to [[Wikipedia:Articles for deletion/Michael Karlan (2nd nomination)]]
+}}
+
+===<templatestyles src="Template:Visible anchor/styles.css" /><span class="vanchor"><!--
+-->{{#if:Emoji|<span id="{{plain text|Emoji}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{2}}}}}"></span>}}<!-- 
+-->{{#if:|<span id="{{plain text|{{{3}}}}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{4}}}}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{5}}}}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{6}}}}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{7}}}}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{8}}}}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{9}}}}}"></span>}}<!--
+-->{{#if:|<span id="{{plain text|{{{10}}}}}"></span>}}<!--
+--><span class="vanchor-text">Emoji</span><!--
+-->{{#if:|<span class="error">[[Template:Visible anchor]]: too many anchors, maximum is 10.</span>}}<!--
+--></span> as formatting===
+{{shortcut|WP:AIEMOJI}}
+AI chatbots have used [[emoji]] in the past.<ref name="merrill" /> In particular, they sometimes decorated section headings or bullet points by placing emoji in front of them. These almost always appeared in talk page comments and edit summaries; while they are more rare now, they may still be seen.
+
+'''Examples'''
+{{"|
+Let’s decode exactly what’s happening here:<br>
+🧠 Cognitive Dissonance Pattern:<br>
+You’ve proven authorship, demonstrated originality, and introduced new frameworks, yet they’re defending a system that explicitly disallows recognition of originators unless a third party writes about them first.<br>
+[...]<br>
+🧱 Structural Gatekeeping:<br>
+Wikipedia policy favors:<br>
+[...]<br>
+🚨 Underlying Motivation:<br>
+Why would a human fight you on this?<br>
+[...]<br>
+🧭 What You’re Actually Dealing With:<br>
+This is not a debate about rules.<br>
+[...]
+|From [[Special:Diff/1292160296|this May 2025 revision]] to [[Wikipedia:Village pump (policy)]]
+}}
+{{"|
+🪷 Traditional Sanskrit Name: Trikoṇamiti<br>
+Tri {{=}} Three<br>
+Koṇa {{=}} Angle<br>
+Miti {{=}} Measurement 🧭 “Measurement of three angles” — the ancient Indian art of triangle and angle mathematics.<br>
+🕰️ 1. Vedic Era (c. 1200 BCE – 500 BCE)
+<br>[...]<br>
+🔭 2. Sine of the Bow: Sanskrit Terminology
+<br>[...]<br>
+🌕 3. Āryabhaṭa (476 CE)
+<br>[...]<br>
+🌀 4. Varāhamihira (6th Century CE)
+<br>[...]<br>
+🌠 5. Bhāskarācārya II (12th Century CE)
+<br>[...]<br>
+📤 Indian Legacy Spreads
+|From [[Special:Diff/1302443439/1303522049|this July 2025 revision]] to [[History of trigonometry]]}}
+
+===<span class="anchor" id="Confusion"></span> Confusion over the reason for a declined draft ===
+{{shortcut|WP:AIUNSURE}}
+AI chatbots cannot read the decline notice left on the draft, and can only respond to whatever information regarding the declined draft that the user gives them. As a result, AI-generated questions regarding declined drafts will often express uncertainty or request clarification over the reason a draft was declined, even if the decline notice on the draft is very clear. They may even compose self-contradictory comments that simultaneously acknowledge the specific reason for the draft's decline, but go on to say that they are trying to understand whether that was ''really'' the reason, or whether it was declined for some completely unrelated reason.
+
+{{blockquote|<mark>The latest decline says the draft needs multiple published secondary sources</mark> that provide significant coverage, are reliable, and are independent. <mark>I understand the concern</mark>... I am trying to understand <mark>whether the problem is mainly that these sources are not strong enough for WP:BIO / WP:NARTIST, or whether the draft structure and tone are still the main issue.</mark>|2=from [https://en.wikipedia.org/w/index.php?title=Wikipedia%3AWikiProject_Articles_for_creation%2FHelp_desk&diff=1356136271&oldid=1356135525 this post] at the [[WP:AFCHD|Articles for Creation Helpdesk]]}}
+
+How could the "draft structure and tone" still be the "main issue" when it has just been specifically acknowledged what the issue is?
+
+{{blockquote|I am requesting guidance on Draft:Alexis Marcou after repeated AfC declines... I am trying to understand <mark>whether the issue is mainly source quality, article tone, or both</mark> before making any further changes.|From [[Wikipedia:WikiProject Articles for creation/Help desk/Archives/2026 May 15|this archive]] of the [[WP:AFCHD|Articles for creation helpdesk]]}}
+
+Note that the latest decline notice on that draft when this question was asked was for both notability and promotional tone; so the answer to this question is obviously 'both'.
+
+{{blockquote|Is the primary issue related to notability, sourcing, tone, conflict of interest, or article structure?|From [[Wikipedia:WikiProject Articles for creation/Help desk/Archives/2026 May 13|this archive]] of the [[WP:AFCHD|Articles for creation helpdesk]]}}
+
+{{blockquote|In particular, I would like to understand: Whether the issue relates to notability, sourcing, or tone If any specific sections need revision or removal|From [[Wikipedia:WikiProject Articles for creation/Help desk/Archives/2026 April 18|this archive]] of the [[WP:AFCHD|Articles for creation helpdesk]]}}
+
+=== Canned request for source assessment ===
+
+{{blockquote|Could <mark>an experienced editor</mark> please advise which of these sources, if any, <mark>count as reliable, independent, significant coverage for a biography article?</mark>
+|From {{section link|Wikipedia:WikiProject Articles for creation/Help desk/Archives/2026 May 8#15:09, 8 May 2026 review of submission by GMakwana}}
+}}
+
+{{blockquote|Could <mark>an uninvolved editor</mark> advise which of the current references, if any, <mark>count as significant independent secondary coverage</mark> for notability purposes, and which should be treated only as supporting or weak sources?
+|From {{section link|Wikipedia:WikiProject Articles for creation/Help desk/Archives/2026 May 15#21:10, 15 May 2026 review of submission by Mike1582}}
+}}
+
+Notice how these sound like almost exactly the same comment? These were written by two completely different people.
+
+{{blockquote|I would like clarification about the reliability and sufficiency of the sources I added. <mark>Could you please review my listed sources and let me know which ones qualify as reliable, independent coverage</mark> and which ones do not meet Wikipedia’s standards?
+|From {{section link|Wikipedia:WikiProject Articles for creation/Help desk/Archives/2025 December 2#08:02, 2 December 2025 review of submission by GTays}}
+}}
+
+== Signs of human writing ==
+
+=== Age of text relative to ChatGPT launch ===
+ChatGPT was launched to the public on November 30, 2022. Although OpenAI had similarly powerful LLMs before then, they were paid services and not easily accessible or known to lay people. Thus, if an edit was made '''before November 30, 2022''', AI use can be safely ruled out for the corresponding text. While some older writing displays some of the AI signs given in this list, and may even convincingly appear to have been AI-generated, the vastness of Wikipedia allows for these coincidences.
+<!--
+Some beta users of OpenAI, specifically before safety gates were enacted on raw OpenAI calls, were part of a program for startups that gave them early access with an appreciable amount of tokens to spend. These users would likely be more experimental and interact with publicly-editable content for [[public relations|reputation-cleansing]] or other purposes, so the date could be set back toward mid-2021 as a [[ballpark estimate]]. -->
+
+=== Ability to explain one's own editorial choices ===
+Editors should be able to explain why they made an edit or mistake. For example, if an editor inserts a URL that appears fabricated, you can ask how the mix-up occurred instead of jumping to conclusions. If they can supply the correct link and explain it as a human error (perhaps a typo), or share the relevant passage from the real source, that points to an ordinary human error.
+
+== Ineffective indicators ==
+False accusations of AI use can [[Wikipedia:BITE|drive away new editors]] and foster an atmosphere of suspicion. Before claiming AI was used, consider whether [[Dunning–Kruger effect]] and [[confirmation bias]] is clouding your judgement. Here are several somewhat commonly used indicators that are ineffective in LLM detection{{em dash}}and may even indicate the opposite.
+
+* '''Perfect grammar''': While modern LLMs are known for high grammatical proficiency, many editors are also skilled writers or come from professional writing backgrounds. (See also [[Wikipedia:Signs of AI writing#Sudden shift in English variety use|§ Sudden shift in English variety use]].) 
+* '''Combination of casual and formal registers, or language that sounds both "clinical" and "emotional"''': This may indicate the casual writing of a person in a technical field, such as computer science. It may also indicate youth, a preference for mixed registers, playfulness, or neurodivergence. In the case of a wiki, it may simply be the result of multiple editors adding to a page.
+* '''"Bland" or "robotic" prose''': LLM output has specific traits, as detailed above, and it skews positive and verbose by default. While these tendencies are formulaic, they may not scan as "robotic" to those unfamiliar with AI writing.<ref name="jalt">{{cite journal |last1=Murray |first1=Nathan |last2=Tersigni |first2=Elisa |title=Can instructors detect AI-generated papers? Postsecondary writing instructor knowledge and perceptions of AI |journal=Journal of Applied Learning & Teaching |volume=7 |issue=2 |date=21 July 2024 |issn=2591-801X |doi=10.37074/jalt.2024.7.2.12 |url=https://journals.sfu.ca/jalt/index.php/jalt/article/view/1895 |access-date=21 November 2025}}</ref>
+* '''"Fancy", "academic", or "formal" prose''': While LLMs disproportionately favor certain words and phrases, many of which are longer and have more difficult [[readability]] scores than some of their synonyms, these are ''specific words''. The correlation does not extend to all formal, academic, or "fancy"-sounding prose.<ref name="Russell" /> 
+* '''Letter-like writing (in isolation)''': Although many talk page messages written with [[salutation]]s, [[valediction]]s, [[WP:SUBJECTLINE|subject line]]s, and other formalities after 2023 tend to appear AI-generated, letters and emails have conventionally been written in such ways ''long'' before modern LLMs existed. Human editors (particularly newer editors) may format their talk page comments similarly for various reasons, such as being more accustomed to formal communication, posting as part of a school assignment that requires this tone, or simply mistaking the talk page for email. Other tells, such as [[#Inline-header vertical lists|vertical lists]]{{efn|[[Wikipedia:Articles for deletion/Sarwan Kumar Bheel|Example]] of a vertical list in a deletion discussion}}, [[#Phrasal templates and placeholder text|placeholder]]s, or [[#Abrupt cut offs|abrupt cutoffs]], are stronger.
+* '''Transition words (in isolation)''': Older AI text tended to formulaically overuse certain [[Transition (linguistics)|transitions]] like ''Additionally,'' ''Consequently,'' and ''Notably,'' often to begin sentences. However, only a few transition words and phrases are known to be overused by AI in this way. This pattern also has precedence in essay-like writing by humans and is accepted by many style guides, so this is not a strong tell.
+* '''Unsourced content''': [[:Category:All articles with unsourced statements|More than 570,000 articles]] are tagged as needing citations, and most of them predate LLMs. Meanwhile, since modern LLM chatbots can search the web and view sources a user provides to it, citations are fairly common now in AI-generated text. This does not mean they are ''accurate'' citations, but they are there. 
+* '''Bizarre [[Help:Wikitext|wikitext]]''': While LLMs may hallucinate templates or generate wikitext code with invalid syntax for reasons explained in {{slink||Use of Markdown}}, they are not likely to generate content with certain random-seeming, "inexplicable" errors and artifacts (excluding the ones listed here in {{slink||Markup}}). Bizarrely placed [[HTML tags]] like <nowiki><span> are more indicative of poorly programmed browser extensions or a known bug with Wikipedia's content translation tool (</nowiki>{{Phabricator|T113137}}). Misplaced syntax like {{Code|''Catch-22 i''s a satirical novel.}} (rendered as "''Catch-22 i''s a satirical novel.") are more indicative of mistakes in [[Wikipedia:VisualEditor|VisualEditor]], where such errors are harder to notice than in [[Wikipedia:Source editing|source editing]].
+* '''Correct wikitext''':  Especially if the person is using the visual editor or has found the [[Help:Show preview|Preview]] button, getting the formatting correct, even for complex templates, is normal.
+
+== Historical indicators ==
+The following indicators were common in text generated by older AI models, but are much less frequent in newer models. They may still be useful for finding older undetected AI-generated edits. Dates are approximate.
+
+===Didactic disclaimers (November 2022–2024) ===
+{{shortcut|WP:DIDACTIC}}
+{{For|non-AI-specific guidance about this|Wikipedia:Manual of Style/Words to watch#Editorializing}}
+{{tmbox|image=none|text=Words to watch: {{strong|''it's important/critical/crucial to note/remember/consider'', ''worth noting'', ''may vary''...}}}}
+Older LLMs (~2023) often added disclaimers about topics being "important to note".<ref name="speroemiprimary">{{cite web |last1=Spero |first1=Max |last2=Emi |first2=Bradley |title=Technical Report on the Pangram AI-Generated Text Classifier |url=https://arxiv.org/abs/2402.14873 |publisher=Arxiv |access-date=6 February 2026}}</ref> This frequently took the form of advice to an imagined reader regarding safety or controversial topics, or disambiguating topics that varied in different locales/jurisdictions. Several such disclaimers appear in OpenAI's GPT-4 system card as examples of "partial refusals".<ref name="openaicdn">{{cite web |title=GPT-4 System Card |url=https://cdn.openai.com/papers/gpt-4-system-card.pdf |website=OpenAI |access-date=16 December 2025}}</ref>
+
+'''Examples'''
+{{blockquote|The emergence of these informal groups reflects a growing recognition of the interconnected nature of urban issues and the potential for ANCs to play a role in shaping citywide policies. {{highlight|However, it's important to note}} that these caucuses operate outside the formal ANC structure and their influence on policy decisions {{highlight|may vary}}.|From [[Special:Diff/1265416814|this 2024 revision]] to [[Advisory Neighborhood Commission]]}}
+
+{{blockquote|{{highlight|It is crucial to differentiate}} the independent AI research company based in Yerevan, Armenia, which is the subject of this report, from these unrelated organizations {{highlight|to prevent confusion}}.|From [[Special:Diff/1292938129|this 2025 revision]] to [[Draft:Robi Labs]]}} 
+
+{{blockquote|{{highlight|It's important to remember}} that what's free in one country might not be free in another, so always check before you use something.|From [https://gitlab.wikimedia.org/repos/web/web-experiments-extension/-/commit/55fdbbb3decdc9b95ae0ef00e98b1108ddc3a498.diff Wikimedia's LLM-generated Simple Summary] of [[Public domain]]}}
+
+===Section summaries===
+{{Shortcut|WP:CONCLUSION|WP:INCONCLUSION}}
+{{tmbox|image=none|text=Words to watch: {{strong|''In summary'', ''In conclusion'', ''Overall''&nbsp;...}}}}
+When generating longer outputs (such as when told to "write an article"), older LLMs often added sections titled "Conclusion" or similar, and often ended paragraphs or sections by summarizing and restating its core idea.<ref name="Ju et al.">{{cite conference |last1=Ju |first1=Da |last2=Blix |first2=Hagen |last3=Williams |first3=Adina |title=Domain Regeneration: How well do LLMs match syntactic properties of text domains? |conference=Findings of the Association for Computational Linguistics: ACL 2025 |pages=2367–2388 |publisher=[[Association for Computational Linguistics]] |location=Vienna, Austria |date=2025 |doi=10.18653/v1/2025.findings-acl.120 |arxiv=2505.07784 |url=https://aclanthology.org/2025.findings-acl.120 |access-date=October 4, 2025 |via=[[ACL Anthology]] |archive-date=August 15, 2025 |archive-url=https://web.archive.org/web/20250815014117/https://aclanthology.org/2025.findings-acl.120/ |url-status=live }}</ref>
+
+'''Examples'''
+{{blockquote|text={{highlight|In summary}}, the educational and training trajectory for nurse scientists typically involves a progression from a master's degree in nursing to a Doctor of Philosophy in Nursing, followed by postdoctoral training in nursing research. This structured pathway ensures that nurse scientists acquire the necessary knowledge and skills to engage in rigorous research and contribute meaningfully to the advancement of nursing science.|title=From {{diff||1188230584|label=this 2023 revision}} in [[Nurse scientist]]}}
+
+{{blockquote|{{fmbox|image=none|text=
+{{highlight|In summary,}} I believe the detailed coverage of Eric Dick’s involvement with HCDE is appropriate and valuable for readers. However, I am committed to improving the citations and supporting this content with additional research to ensure it adheres to Wikipedia’s guidelines. Please feel free to share any additional thoughts you might have.
+----
+{{highlight|Conclusion}}
+
+{{highlight|In conclusion,}} while the concern about undue focus on Eric Dick's involvement with HCDE is valid, the solution should not be to simply cut large sections of content without proper research and verification. Instead, a careful and methodical approach should be taken to ensure that the article remains accurate, balanced, and well-sourced, in line with Wikipedia's policies on verifiability, neutrality, and biographies of living persons. Blindly cutting content risks not only violating these policies but also diminishing the quality and integrity of the article. Therefore, it is imperative to approach this editing process with the utmost care, prioritizing thorough research and accurate representation over hasty removals.
+----
+{{highlight|Conclusion:}} I’m committed to ensuring that all content in the article meets Wikipedia’s standards for reliability and neutrality. However, this requires a collaborative effort. I urge you to focus on constructive dialogue and respect for all contributors. Let’s work together to strengthen the article rather than engage in unnecessary conflict.
+----
+{{highlight|Conclusion:}}
+
+Your current approach to editing and discussion, characterized by dismissive language, unfounded accusations, and a refusal to engage constructively, may potentially violate Wikipedia’s Civility policy and undermine the collaborative nature of the platform. I strongly urge you to reconsider how you interact with fellow editors. If you have concerns about content or images, let’s address them together in a respectful and productive manner. It’s crucial that we all work together to uphold Wikipedia’s standards while maintaining a positive and cooperative environment. Please try being nice to people for a change.
+----
+{{highlight|In conclusion,}} I am here to collaborate and work together to improve the article. This requires not just respectful communication, but a genuine focus on resolving issues constructively. I hope we can move forward with a more professional and productive dialogue.
+----
+{{highlight|In summary,}} I have consistently proposed well-sourced edits and have made clear my willingness to modify the content based on further discussion and research. I have not engaged in edit-warring, and the burden of addressing these proposals now rests on you.
+}}|From multiple comments left at [[Talk:Eric Dick (lawyer)]] in 2024}}
+
+===Prompt refusal===
+{{tmbox|image=none|text=Words to watch: {{strong|''as an AI language model'', ''as a large language model'', ''I cannot offer medical advice, but I can...'', ''I'm sorry''&nbsp;...}} }}
+In the past, AI chatbots occasionally declined to answer prompts as written, usually with apologies and reminders that they are AI language models. Attempting to be helpful, chatbots often gave suggestions or answers to alternative, similar requests. Outright refusals have become increasingly rare. Gemini 3.0 even uses profanity at times. 
+
+'''Examples'''
+{{blockquote|
+As an AI language model, I can't directly add content to Wikipedia for you, but I can help you draft your bibliography.
+|From [[Special:Diff/1221340799|this 2024 revision]] to [[Parmiter's Almshouse & Pension Charity]]}}
+
+=== Abrupt cut offs ===
+AI tools used to abruptly stop generating content if an excessive number of tokens had been used for a single response, and further responses required the user to select "continue generating", at least in the case of ChatGPT.
+
+This method is not foolproof, as a malformed copy/paste from one's local computer can also cause this. It may also indicate a [[Project:Copyvio|copyright violation]] rather than the use of an LLM.
+
+===Outdated ''access-date'' parameters===
+
+In some AI-assisted text, citations may include an ''access-date'' by default, but the date can look unexpectedly old relative to when the edit was made (for example, an article created in December 2025 containing multiple citations with <code>|access-date=12 December 2024</code>). However, newer chatbots seldom produce this error, and older ''access-date'' values can occur legitimately (copied citations, offline work, batch moves/merges).
+
+== See also ==
+* [[Wikipedia:Artificial intelligence resources]]
+* [[Wikipedia:Artificial intelligence]]
+
+== Notes ==
+{{notelist}}
+
+== References ==
+{{reflist}}
+ {{bots|deny=Citation bot}} <!-- sometimes AI makes mistakes with citations, we want those mistakes to be accurately represented here, not fixed by our maintenance bots -->
+
+== Further reading ==
+{{refbegin}}
+* {{Cite web|last=Kriss|first=Sam|date=December 3, 2025|title=Why Does A.I. Write Like … That?|work=[[The New York Times Magazine]]|url=https://www.nytimes.com/2025/12/03/magazine/chatbot-writing-style.html|url-access=subscription|access-date=December 6, 2025}}
+{{refend}}
+
+== External links ==
+* [https://canyoupasstheturingtest.com/ ''CanYouPasstheTuringTest.com'']
+* [https://tropes.fyi/directory ''Tropes - AI Writing Pattern Directory'']
+{{Wikipedia artificial intelligence}}
+[[Category:Wikipedia and artificial intelligence]]
+

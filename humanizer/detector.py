@@ -244,7 +244,7 @@ _DETECTOR_MODEL = None
 _DETECTOR_LOCK = threading.Lock()
 
 _models_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models'))
-LOCAL_MODEL_DIR = os.path.join(_models_dir, 'desklib-ai-text-detector-v1.01')
+LOCAL_MODEL_DIR = os.path.join(_models_dir, 'zeal-humanizer-detector-v1.0')
 
 def load_detector():
     """Load the DeBERTa detector model into memory (singleton)."""
