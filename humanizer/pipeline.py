@@ -919,45 +919,58 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
     This is the PRIMARY rewrite engine -- produces human-quality output.
     """
     if register == 'professional':
-        prompt = (
-            "Rewrite this paragraph to sound like a real person wrote it for a professional document. "
-            "Keep the exact same facts and meaning. Use clear, direct language. "
-            "Do NOT use AI words like 'delve', 'leverage', 'robust', 'crucial', 'furthermore'. "
-            "Do NOT use em dashes. Mix sentence lengths naturally. "
-            "Output ONLY the rewritten paragraph.\n\n"
-            + para
+        system_content = (
+            "You are a professional editor. Rewrite text to sound like a real person wrote it. "
+            "No AI vocabulary. No em dashes. No 'furthermore', 'crucial', 'leverage', 'robust'. "
+            "Use simple is/are/has instead of serves-as/stands-as. Output only the rewritten text."
         )
-        system_content = "You rewrite text to sound naturally human. Output only the rewritten text, nothing else."
+        prompt = (
+            "Rewrite this paragraph in a professional but human tone. Keep the exact same facts. "
+            "Mix sentence lengths -- some short (under 8 words), some longer. "
+            "No AI vocabulary. No em dashes. No bold text.\n\n" + para
+        )
     else:
-        prompt = (
-            "Rewrite this paragraph to defeat AI detectors like ZeroGPT and GPTZero. "
-            "Keep ALL the same events and meaning. Do not add or remove any story details.\n\n"
-            "Use these specific tactics:\n"
-            "1. MIX SENTENCE LENGTHS DRASTICALLY: Write 2-3 very short sentences (3-6 words). Write 1 long run-on. Don't make them all medium length.\n"
-            "2. USE ULTRA-CASUAL WORDS: 'ended up', 'kinda', 'turns out', 'for whatever reason', 'not like I minded', 'honestly', 'at some point', 'stay put', 'bug me'\n"
-            "3. REORDER INFO: Don't present facts in the same order. Start some sentences mid-action or with 'And', 'But', 'So'.\n"
-            "4. ADD ONE BRIEF PERSONAL ASIDE: One short thought like 'not that it mattered' or 'which was fine by me' tucked inside a sentence.\n"
-            "5. SPLIT LONG SENTENCES: If the original has a long sentence, split it into two short ones.\n"
-            "6. AVOID SMOOTH AI TRANSITIONS: Don't use 'however', 'therefore', 'furthermore' etc. Let ideas jump naturally.\n\n"
-            "Output ONLY the rewritten paragraph, nothing else.\n\n"
-            + para
+        # Based on Wikipedia's "Signs of AI writing" guide:
+        # Human writing has: specific unusual details, mixed feelings, genuine asides,
+        # rhythm variety (short/long mix), dated era-bound references, self-corrections.
+        # AI writing has: most statistically likely token sequences, even sentence rhythm,
+        # smooth transitions, elegant variation (synonym cycling), AI vocabulary.
+        system_content = (
+            "You rewrite text to sound authentically human -- not polished, not AI-generated. "
+            "Real humans: use very short sentences sometimes. start sentences with And or But. "
+            "Real humans: use casual vocabulary like 'kinda', 'honestly', 'turns out', 'ended up'. "
+            "Real humans: add brief genuine asides ('not that I minded', 'which was fine by me'). "
+            "Real humans: let sentences be uneven -- some 4 words, some 30 words. "
+            "Real humans: use repetition instead of synonyms (say 'bread' again, not 'baked goods'). "
+            "NEVER explain or introduce what you are doing. Output only the rewritten text."
         )
-        system_content = "You rewrite text to sound like a real person typed it quickly. Use casual everyday English. Never explain or introduce your output."
+        prompt = (
+            "Rewrite this paragraph so it sounds like a real person casually wrote it -- "
+            "the kind of writing that PASSES AI detectors because it has human statistical patterns.\n\n"
+            "REQUIRED human patterns to include:\n"
+            "1. At least one sentence under 6 words (a punchy fragment).\n"
+            "2. At least one sentence over 20 words (a longer flowing one).\n"
+            "3. ONE genuine personal aside tucked inside a sentence, like 'not that I cared' or 'which was weird'.\n"
+            "4. Use casual contractions and everyday words. Avoid formal synonyms.\n"
+            "5. Repeat the main noun (don't cycle synonyms -- say 'bread' not 'the baked goods').\n"
+            "6. Keep ALL story details. Don't add new events. Don't remove any details.\n"
+            "7. Don't use em dashes. Don't use 'furthermore', 'however', 'additionally'.\n\n"
+            "Output ONLY the rewritten paragraph.\n\n" + para
+        )
 
     messages = [
         {"role": "system", "content": system_content},
         {"role": "user", "content": prompt}
     ]
 
-    # Cap output length
-    max_tokens = min(420, int(len(para.split()) * 2.2) + 50)
+    max_tokens = min(450, int(len(para.split()) * 2.3) + 60)
 
     try:
         response = client.chat_completion(
             messages=messages,
             max_tokens=max_tokens,
-            temperature=0.95,   # higher = more unpredictable tokens = harder to detect
-            top_p=0.92,
+            temperature=0.97,   # High temp = high perplexity = harder to detect
+            top_p=0.93,
         )
     except Exception as e:
         print("[API] Inference API error: {}".format(e))
@@ -966,7 +979,7 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
     generated = response.choices[0].message.content.strip()
 
     generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
-    generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result|Sure)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
+    generated = re.sub(r"^(Rewritten|Output|Here is|Here's|Result|Sure)[:\s]+", '', generated, flags=re.IGNORECASE).strip()
     if len(generated) > 2 and generated[0] == '"' and generated[-1] == '"':
         generated = generated[1:-1].strip()
     generated = generated.replace('\u2018', "'").replace('\u2019', "'").replace('\u201c', '"').replace('\u201d', '"')
