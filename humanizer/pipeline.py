@@ -1309,44 +1309,25 @@ def humanize_text(text: str, progress_callback=None, register: str = 'casual') -
         progress_callback(74, 100, "Breaking statistical patterns...")
 
     # ── STAGE 3: Structural perturbation (defeats neural classifiers) ────────
-    # These passes change the token-level patterns that GPTZero/DeBERTa detect.
-    # They run for ALL model types — the neural rewrite alone is NOT enough.
-
-    # Burstiness: split long sentences, merge short ones → rhythm variation
-    text, n = pass3_burstiness(text);        stats['pass3_burstiness'] = n
-
-    # Perplexity-guided perturbation: use GPT-2 to find sentences that are
-    # "too predictable" (low perplexity = AI-like) and aggressively swap words
-    # in those sentences using student-level WordNet synonyms.
-    # This is the KEY pass — it directly attacks what GPTZero measures.
-    text, n = pass15_perplexity_guided_perturbation(text)
-    stats['pass15_synonym_rotation'] = n
-
-    # Passive → active voice: structural transformation
-    text, n = pass6_passive_to_active(text); stats['pass6_passive_voice'] = n
-
-    # Punctuation humanization: em-dashes, semicolons disrupt token boundaries
-    text, n = pass13_punctuation(text, register=register);      stats['pass13_punctuation'] = n
-
-    # Syntactic fronting: move clauses around to break SVO patterns
-    text, n = pass14_syntactic_fronting(text); stats['pass14_syntactic_fronting'] = n
+    # DISABLED: The 72B model (with the new prompt) already produces highly 
+    # human text. These heuristic passes (like synonym rotation) actually 
+    # DESTROY the natural flow and cause GPTZero to flag it as "Polished with AI".
+    
+    # text, n = pass3_burstiness(text);        stats['pass3_burstiness'] = n
+    # text, n = pass15_perplexity_guided_perturbation(text); stats['pass15_synonym_rotation'] = n
+    # text, n = pass6_passive_to_active(text); stats['pass6_passive_voice'] = n
+    # text, n = pass13_punctuation(text, register=register); stats['pass13_punctuation'] = n
+    # text, n = pass14_syntactic_fronting(text); stats['pass14_syntactic_fronting'] = n
 
     if progress_callback:
-        progress_callback(85, 100, "Adding human signals...")
+        progress_callback(85, 100, "Finalizing output...")
 
-    # Imperfect discourse: conjunction openers (And, But, Yet) — human-only
-    text, n = pass16_imperfect_discourse(text); stats['pass16_imperfect_discourse'] = n
-
-    # Opener diversity: prevent same paragraph opener repeating
-    text, n = pass7_opener_diversity(text);  stats['pass7_opener_diversity'] = n
-
-    # Perplexity tension: inject organic idioms to shatter predictability
-    text, n = pass18_perplexity_tension(text, register=register); stats['pass18_perplexity_tension'] = n
-
-    # Ghost character cleanup
+    # text, n = pass16_imperfect_discourse(text); stats['pass16_imperfect_discourse'] = n
+    # text, n = pass7_opener_diversity(text);  stats['pass7_opener_diversity'] = n
+    # text, n = pass18_perplexity_tension(text, register=register); stats['pass18_perplexity_tension'] = n
+    
+    # Keep ghost character cleanup as it fixes unicode bugs
     text, n = pass17_ghost_characters(text); stats['pass17_ghost_characters'] = n
-
-    # Final cleanup: revert any em-dashes introduced during Stage 3 or neural rewrite
     text, n = pass20_em_dash_reversal(text); stats['pass20_em_dash_reversal'] = n
 
     if progress_callback:
