@@ -931,35 +931,20 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
             "Output ONLY the rewritten paragraph.\n\n" + para
         )
     else:
-        # Two-pass approach based on Wikipedia "Signs of AI writing" guide:
-        # Pass 1: Rewrite casually.
-        # Pass 2: Self-check — "what still sounds AI?" then fix it.
-        # Human signals to inject (from Wikipedia's "Signs of human writing"):
-        # - Specific unusual detail (a real age, color, weird observation)
-        # - One genuine aside or self-correction in parentheses
-        # - Mixed/unresolved feelings ("I don't know why, but...")
-        # - Deliberate sentence variety (fragments + long runs)
-        # - Repeat nouns instead of cycling synonyms (humans don't avoid repetition)
         system_content = (
-            "You are a human writer, not an AI assistant. "
-            "You write casually, imperfectly, and specifically -- the way real people do. "
-            "You never explain what you are doing. You just write."
+            "You are a professional editor specializing in converting rigid AI-generated text into natural, casual human writing. "
+            "Your goal is to completely retell the story using a conversational, expressive voice. "
+            "Never explain your changes. Output only the rewritten text."
         )
         prompt = (
-            "Rewrite this paragraph so it reads like a real person's casual writing.\n\n"
-            "STEP 1 -- Write a draft rewrite. Use these human patterns:\n"
-            "- Include ONE very specific physical detail not stated in the original "
-            "(an approximate age, a color, an exact feeling: 'some grey-haired guy', 'the cheap plastic chairs', 'maybe 40 minutes')\n"
-            "- Include ONE parenthetical aside or self-correction: "
-            "('not sure why', 'or maybe that's just me', 'I think', 'I don't know')\n"
-            "- Include ONE moment of genuine uncertainty or mixed feeling\n"
-            "- Mix sentence lengths drastically: at least one under 5 words, at least one over 20 words\n"
-            "- Repeat the main noun (say 'bread' again -- don't say 'baked goods' or 'the item')\n"
-            "- Keep ALL the original story details, events, and meaning\n\n"
-            "STEP 2 -- Before outputting, silently ask yourself: "
-            "'What still sounds AI about this? Is the rhythm too even? "
-            "Are the transitions too smooth? Did I use elegant synonyms instead of repeating words?' Fix those issues.\n\n"
-            "Output ONLY the final rewritten paragraph. No labels, no explanation.\n\n" + para
+            "Completely rewrite the following paragraph in a highly casual, personal tone. "
+            "Do NOT keep the sentence structures or transitions of the original. Paraphrase it from scratch.\n\n"
+            "Rules for human flow:\n"
+            "1. Use natural, conversational vocabulary. Replace dry phrases with casual speech.\n"
+            "2. Inject a couple of specific sensory details (like a texture, a sound, or a feeling) and a brief personal aside in parentheses, but do not copy examples from this prompt.\n"
+            "3. Vary sentence lengths drastically: use short, punchy statements alongside long, natural thoughts.\n"
+            "4. Do not try to write perfectly. Real people write with slight irregularities and directness.\n\n"
+            "Original paragraph:\n" + para
         )
 
     messages = [
