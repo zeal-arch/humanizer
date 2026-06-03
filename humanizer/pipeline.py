@@ -74,7 +74,7 @@ def preload_model():
         _os.environ.get('HF_READ_TOKEN')
     )
     if token:
-        api_model = _os.environ.get('HF_API_MODEL_ID', 'Qwen/Qwen2.5-72B-Instruct')
+        api_model = _os.environ.get('HF_API_MODEL_ID', 'meta-llama/Llama-3.3-70B-Instruct')
         print(f"[Model] HF Access Token detected. Initializing Serverless Inference for {api_model}...")
         try:
             from huggingface_hub import InferenceClient
@@ -121,7 +121,7 @@ def preload_model():
 
         else:
             # ── Production: download from Hugging Face Hub ─────────────────
-            HF_MODEL_ID = _os.environ.get('HF_MODEL_ID', 'Zeal000/qwen-humanizer-lora')
+            HF_MODEL_ID = _os.environ.get('HF_MODEL_ID', 'Qwen/Qwen2.5-0.5B-Instruct')
             print(f"[Model] No local weights found. Downloading {HF_MODEL_ID} from HF Hub ...")
             
             try:
@@ -921,32 +921,46 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
     """
     if register == 'professional':
         system_content = (
-            "You are a professional editor who makes AI text sound like a real human wrote it. "
-            "Output only the rewritten text. No explanations."
+            "You are a professional human editor. Your goal is to rewrite the text to sound completely human, natural, expressive, and clear.\n"
+            "You must adhere strictly to these grammatical and structural rules:\n\n"
+            "1. VARY SENTENCE LENGTH AND RHYTHM (BURSTINESS). Do not make all sentences short or uniform. Mix short, punchy sentences (5-10 words) with medium sentences (11-17 words) and a few longer, flowing sentences (18-25 words). The average sentence length should be around 13-16 words. This is critical to avoid monotonous rhythm.\n"
+            "2. USE VARIED SYNTAX. Avoid repetitive subject-verb-object structures. Use relative clauses, conditional statements, prepositional modifiers, and coordinate conjunctions naturally. Make the flow feel organic and alive, not robotic or simplified.\n"
+            "3. NATURAL, SPECIFIC VOCABULARY. Do not write with artificial simplicity or sterile language. Use specific, descriptive words rather than sterile, purely functional terms (e.g., use 'incredible', 'freshly baked', 'shape', 'reveal' instead of 'good', 'went', 'had', 'things'). Avoid high-frequency AI words (delve, leverage, robust, crucial, pivotal, tapestry, testament, underscore, foster, enhance, vibrant, landscape, testament, actually, additionally, align with, emphasizing, enduring, garner, highlight, interplay, intricacies, key, valuable).\n"
+            "4. NO PRESENT PARTICIPLE OPENERS OR TACK-ONS. Never start sentences with '-ing' phrases (e.g. do not write 'Talking to...', 'Chatting with...'). Also, do not tack '-ing' clauses onto the end of sentences to add fake depth (e.g., do not write '...reflecting their traditions' or '...fostering a sense of community'). Keep sentences direct.\n"
+            "5. NO EM DASHES OR EN DASHES (—/–). Use commas, periods, or parentheses instead.\n"
+            "6. NO COPULA AVOIDANCE. Use simple 'is', 'are', 'was', 'has', 'had'. Never use 'serves as', 'stands as', 'represents', 'boasts', or 'features' when you mean 'is' or 'has'.\n"
+            "7. NO NEGATIVE PARALLELISMS. Avoid structures like 'not only... but also', 'not just... but...', or 'more than just...'. Use direct positive statements.\n"
+            "8. REPEAT NOUNS NATURALLY. Do not cycle synonyms.\n"
+            "9. NO RULE OF THREE. Avoid grouping verbs, adjectives, or concepts in patterns of three (e.g., do not write 'ideate, iterate, and deliver' or 'customs, lifestyles, and ways of thinking'). Use one or two items instead.\n"
+            "10. NO FALSE RANGES or SIGNIFICANCE INFLATION. Avoid arbitrary 'from X to Y' scales. Do not add grandiose claims about how details represent a 'broader movement', 'evolving landscape', or 'pivotal moment'.\n"
+            "11. NO GENERIC POSITIVE SUMMARIES OR MORALIZING CLICHÉS. Never end paragraphs or sentences with generic positive summaries or life lessons (e.g., do not write 'You learn and grow', 'It is worth it', 'It helps you adapt'). Keep the tone objective and observational.\n"
+            "12. Contractions: Use contractions (it's, didn't, wasn't) naturally.\n\n"
+            "Output ONLY the rewritten text. No explanations, no introductory text."
         )
         prompt = (
-            "Rewrite this paragraph in a professional but human tone. Keep the exact same facts.\n"
-            "Rules: No AI vocabulary (delve/leverage/robust/crucial). No em dashes. No bold. "
-            "Use simple is/are/has. Mix sentence lengths. Some short, some longer.\n\n"
-            "Output ONLY the rewritten paragraph.\n\n" + para
+            "Completely rewrite the following paragraph in a professional but human tone. Apply all rules strictly:\n\n" + para
         )
     else:
         system_content = (
-            "You are a professional editor specializing in converting rigid AI-generated text into natural, casual human writing. "
-            "Your goal is to completely retell the story using a conversational, expressive voice. "
-            "Never explain your changes. Output only the rewritten text."
+            "You are a professional human editor. Your goal is to rewrite the text to sound completely human, natural, expressive, and clear.\n"
+            "You must adhere strictly to these grammatical and structural rules:\n\n"
+            "1. VARY SENTENCE LENGTH AND RHYTHM (BURSTINESS). Do not make all sentences short or uniform. Mix short, punchy sentences (5-10 words) with medium sentences (11-17 words) and a few longer, flowing sentences (18-25 words). The average sentence length should be around 13-16 words. This is critical to avoid monotonous rhythm.\n"
+            "2. USE VARIED SYNTAX. Avoid repetitive subject-verb-object structures. Use relative clauses, conditional statements, prepositional modifiers, and coordinate conjunctions naturally. Make the flow feel organic and alive, not robotic or simplified.\n"
+            "3. NATURAL, SPECIFIC VOCABULARY & IDIOMS. Do not write with artificial simplicity or sterile language. Use natural human idioms (e.g. 'roll with the punches', 'eye-opening', 'everyday stuff', 'seep into') and descriptive words instead of purely functional terms (e.g. use 'incredible', 'freshly baked', 'shape', 'reveal' instead of 'good', 'went', 'had', 'things'). Avoid both high-frequency AI words (delve, leverage, robust, crucial, pivotal, tapestry, testament, underscore, foster, enhance, vibrant, landscape, testament, actually, additionally, align with, emphasizing, enduring, garner, highlight, interplay, intricacies, key, valuable) and try-hard internet slang (man, oh my god, bro, OMG).\n"
+            "4. NO PRESENT PARTICIPLE OPENERS OR TACK-ONS. Never start sentences with '-ing' phrases (e.g. do not write 'Talking to...', 'Chatting with...'). Also, do not tack '-ing' clauses onto the end of sentences to add fake depth (e.g., do not write '...reflecting their traditions' or '...fostering a sense of community'). Keep sentences direct.\n"
+            "5. NO EM DASHES OR EN DASHES (—/–). Use commas, periods, or parentheses instead.\n"
+            "6. NO COPULA AVOIDANCE. Use simple 'is', 'are', 'was', 'has', 'had'. Never use 'serves as', 'stands as', 'represents', 'boasts', or 'features' when you mean 'is' or 'has'.\n"
+            "7. NO NEGATIVE PARALLELISMS. Avoid structures like 'not only... but also', 'not just... but...', or 'more than just...'. Use direct positive statements.\n"
+            "8. REPEAT NOUNS NATURALLY. Do not cycle synonyms.\n"
+            "9. NO RULE OF THREE. Avoid grouping verbs, adjectives, or concepts in patterns of three (e.g., do not write 'ideate, iterate, and deliver' or 'customs, lifestyles, and ways of thinking'). Use one or two items instead.\n"
+            "10. NO FALSE RANGES or SIGNIFICANCE INFLATION. Avoid arbitrary 'from X to Y' scales. Do not add grandiose claims about how details represent a 'broader movement', 'evolving landscape', or 'pivotal moment'.\n"
+            "11. NO GENERIC POSITIVE SUMMARIES OR MORALIZING CLICHÉS. Never end paragraphs or sentences with generic positive summaries or life lessons (e.g., do not write 'You learn and grow', 'It is worth it', 'It helps you adapt'). Keep the tone objective and observational.\n"
+            "12. NO TRY-HARD CASUAL SLANG. Do not use conversational fillers like 'man', 'oh my god', 'you know', 'like', 'stuff', 'hey'. Write clean, plain, standard English.\n"
+            "13. Contractions: Use contractions (it's, didn't, wasn't) naturally.\n\n"
+            "Output ONLY the rewritten text. No explanations, no introductory text."
         )
         prompt = (
-            "Completely rewrite the following paragraph in a highly casual, personal tone. "
-            "Do NOT keep the sentence structures or transitions of the original. Paraphrase it from scratch.\n\n"
-            "Rules for human flow:\n"
-            "1. Use natural, conversational vocabulary. Replace dry phrases with casual speech.\n"
-            "2. Never start a sentence with a present participle (-ing verb) like 'Chatting with...' or 'Having seen...'. Real humans start sentences with subjects or simple conjunctions.\n"
-            "3. Avoid negative parallel structures (do not use 'not only... but also', 'not just... but...', or 'it wasn't X, but Y'). Make direct, positive assertions.\n"
-            "4. Inject a couple of specific sensory details (like a texture, a sound, or a feeling) and a brief personal aside in parentheses, but do not copy examples from this prompt.\n"
-            "5. Vary sentence lengths drastically: use short, punchy statements alongside long, natural thoughts.\n"
-            "6. Do not try to write perfectly. Real people write with slight irregularities, natural repetitions, and directness.\n\n"
-            "Original paragraph:\n" + para
+            "Completely rewrite the following paragraph in a simple, direct, and plain human style. Apply all rules strictly:\n\n" + para
         )
 
     messages = [
@@ -960,7 +974,7 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
         response = client.chat_completion(
             messages=messages,
             max_tokens=max_tokens,
-            temperature=0.98,   # Very high temp = more unpredictable token choices = higher perplexity
+            temperature=0.90,
             top_p=0.95,
         )
     except Exception as e:
