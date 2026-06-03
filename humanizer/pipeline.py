@@ -941,9 +941,11 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
             "Do NOT keep the sentence structures or transitions of the original. Paraphrase it from scratch.\n\n"
             "Rules for human flow:\n"
             "1. Use natural, conversational vocabulary. Replace dry phrases with casual speech.\n"
-            "2. Inject a couple of specific sensory details (like a texture, a sound, or a feeling) and a brief personal aside in parentheses, but do not copy examples from this prompt.\n"
-            "3. Vary sentence lengths drastically: use short, punchy statements alongside long, natural thoughts.\n"
-            "4. Do not try to write perfectly. Real people write with slight irregularities and directness.\n\n"
+            "2. Never start a sentence with a present participle (-ing verb) like 'Chatting with...' or 'Having seen...'. Real humans start sentences with subjects or simple conjunctions.\n"
+            "3. Avoid negative parallel structures (do not use 'not only... but also', 'not just... but...', or 'it wasn't X, but Y'). Make direct, positive assertions.\n"
+            "4. Inject a couple of specific sensory details (like a texture, a sound, or a feeling) and a brief personal aside in parentheses, but do not copy examples from this prompt.\n"
+            "5. Vary sentence lengths drastically: use short, punchy statements alongside long, natural thoughts.\n"
+            "6. Do not try to write perfectly. Real people write with slight irregularities, natural repetitions, and directness.\n\n"
             "Original paragraph:\n" + para
         )
 
@@ -1228,7 +1230,21 @@ def pass20_em_dash_reversal(text: str) -> tuple[str, int]:
     most em-dashes get introduced. It replaces 'X — Y' patterns with
     simpler commas, which is what human writers naturally use.
     """
-    return _replace_dict(text, EM_DASH_REVERSAL, case_sensitive=True)
+    # 1. First run the standard dictionary substitutions
+    text, n = _replace_dict(text, EM_DASH_REVERSAL, case_sensitive=True)
+    
+    # 2. Catch and replace any remaining em-dashes (—), en-dashes (–), or double hyphens (--)
+    # We replace them with a comma and space, then clean up formatting.
+    dashes_pattern = re.compile(r'\s*[\u2013\u2014]|--+\s*')
+    matches = dashes_pattern.findall(text)
+    count = len(matches)
+    if count > 0:
+        text = dashes_pattern.sub(', ', text)
+        # Clean up any potential double punctuation like ", ," or ", ."
+        text = re.sub(r',\s*,', ', ', text)
+        text = re.sub(r'\s+', ' ', text).strip()
+        
+    return text, n + count
 
 def pass18_perplexity_tension(text: str, register: str = 'casual') -> tuple[str, int]:
     """
