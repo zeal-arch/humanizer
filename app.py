@@ -104,11 +104,6 @@ else:
                 load_detector()
             except Exception as e:
                 print(f"[Model] Preloading detector model failed: {e}")
-            try:
-                from humanizer.perplexity import load_perplexity_model
-                load_perplexity_model()
-            except Exception as e:
-                print(f"[Model] Preloading GPT-2 perplexity model failed: {e}")
 
         t = threading.Thread(target=_preload_all, daemon=True)
         t.start()
