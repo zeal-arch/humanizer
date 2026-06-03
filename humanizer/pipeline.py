@@ -57,31 +57,33 @@ def preload_model():
     """
     Load the best available model into the global singleton.
     Called once at startup by app.py — pipeline.py reuses the same object.
-    Priority: Qwen3-0.6B local (dev) > HF Serverless Inference API > HF Hub download (prod) > T5 local (fallback).
+    Priority: HF Serverless Inference API (72B) > Qwen3-0.6B local (dev) > HF Hub download (prod) > T5 local (fallback).
     """
     global _MODEL_TOKENIZER, _MODEL_OBJ, _MODEL_TYPE
     if _MODEL_OBJ is not None or _MODEL_TYPE == 'api':
         return  # already loaded
 
-    # ── 1. Check if Hugging Face token is present for Serverless Inference API ──
+    # ── 1. HF Serverless Inference API (best quality — 72B model, free tier) ──
+    # This is the PRIMARY model. The 0.6B local model hallucinates badly,
+    # so we always prefer the API when a token is available.
     token = (
-        _os.environ.get('HF_API_TOKEN') or 
-        _os.environ.get('HF_TOKEN') or 
-        _os.environ.get('humanizeread') or 
-        _os.environ.get('zeal000') or 
+        _os.environ.get('HF_API_TOKEN') or
+        _os.environ.get('HF_TOKEN') or
+        _os.environ.get('humanizeread') or
+        _os.environ.get('zeal000') or
         _os.environ.get('HF_READ_TOKEN')
     )
     if token:
         api_model = _os.environ.get('HF_API_MODEL_ID', 'Qwen/Qwen2.5-72B-Instruct')
-        print(f"[Model] Hugging Face Access Token detected. Initializing Serverless Inference client for {api_model}...")
+        print(f"[Model] HF Access Token detected. Initializing Serverless Inference for {api_model}...")
         try:
             from huggingface_hub import InferenceClient
             _MODEL_OBJ = InferenceClient(model=api_model, token=token)
             _MODEL_TYPE = 'api'
-            print(f"[Model] Hugging Face Serverless Inference client for {api_model} ready.")
+            print(f"[Model] HF Serverless Inference client for {api_model} ready.")
             return
         except Exception as e:
-            print(f"[Model] Failed to load Hugging Face InferenceClient: {e}. Falling back to local/hub load.")
+            print(f"[Model] Failed to init InferenceClient: {e}. Falling back to local model.")
 
 
     # ── 2. Standard Transformers loading ──
@@ -119,10 +121,25 @@ def preload_model():
 
         else:
             # ── Production: download from Hugging Face Hub ─────────────────
-            HF_MODEL_ID = _os.environ.get('HF_MODEL_ID', 'Qwen/Qwen2.5-3B-Instruct')
+            HF_MODEL_ID = _os.environ.get('HF_MODEL_ID', 'Zeal000/qwen-humanizer-lora')
             print(f"[Model] No local weights found. Downloading {HF_MODEL_ID} from HF Hub ...")
-            _MODEL_TOKENIZER = AutoTokenizer.from_pretrained(HF_MODEL_ID)
-            _MODEL_OBJ = AutoModelForCausalLM.from_pretrained(HF_MODEL_ID, **device_kwargs)
+            
+            try:
+                from peft import PeftConfig, PeftModel
+                config = PeftConfig.from_pretrained(HF_MODEL_ID)
+                base_model_id = config.base_model_name_or_path
+                print(f"[Model] Detected PEFT adapter. Loading base model: {base_model_id}...")
+                # Load tokenizer from the BASE model (not the LoRA repo) to avoid
+                # a corrupted tokenizer_config.json in the adapter repository.
+                _MODEL_TOKENIZER = AutoTokenizer.from_pretrained(base_model_id)
+                base_model = AutoModelForCausalLM.from_pretrained(base_model_id, **device_kwargs)
+                _MODEL_OBJ = PeftModel.from_pretrained(base_model, HF_MODEL_ID)
+                print("[Model] PEFT weights applied successfully.")
+            except Exception as peft_e:
+                print(f"[Model] Loading as standard model: {peft_e}")
+                _MODEL_TOKENIZER = AutoTokenizer.from_pretrained(HF_MODEL_ID)
+                _MODEL_OBJ = AutoModelForCausalLM.from_pretrained(HF_MODEL_ID, **device_kwargs)
+                
             _MODEL_OBJ.eval()
             _MODEL_TYPE = 'qwen3'
             print(f"[Model] {HF_MODEL_ID} ready on {'GPU' if torch.cuda.is_available() else 'CPU'} (HF Hub).")
@@ -899,107 +916,126 @@ def pass16_imperfect_discourse(text: str) -> tuple[str, int]:
 def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> str:
     """
     Use Hugging Face Serverless Inference API (InferenceClient) with a 72B model.
+    This is the PRIMARY rewrite engine — produces human-quality output.
     """
     if register == 'professional':
         prompt = (
-            f"You are a professional technical editor. Rewrite the following paragraph from a software project documentation to look completely human-written while maintaining a professional, objective, and academic tone.\n"
-            f"Follow these strict writing rules:\n"
-            f"1. DECONSTRUCT & REBUILD: Extract the raw facts and rebuild the paragraph in a clear, direct, and professional style. Avoid the linear AI logical scaffolding.\n"
-            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use first-person ('I', 'we', 'our' unless absolutely natural for team actions) and NEVER use conversational filler or emotional hooks (such as 'to be honest', 'let's be real', 'honestly', 'which reminds me', 'anyway'). Keep the tone formal, objective, and neutral.\n"
-            f"3. AVOID AI BUZZWORDS: Do NOT use AI vocabulary or promotional words (e.g., 'delve', 'leverage', 'utilize', 'harness', 'foster', 'empower', 'seamless', 'robust', 'tapestry', 'realm', 'testament', 'pivotal', 'crucial', 'evolving landscape', 'underscores'). Use plain, clear verbs (e.g., 'use', 'help', 'improve', 'support', 'show').\n"
-            f"4. COPULA DIRECTNESS: Use simple 'is', 'are', 'has', or 'have' instead of copula-avoidance phrases like 'serves as', 'stands as', 'represents', or 'boasts'.\n"
-            f"5. NO NEGATIVE PARALLELISM: Do NOT use 'not only X, but Y' or 'it is not just about X, it is about Y' structures.\n"
-            f"6. NO EM DASHES OR BOLDING: Do not use em dashes (—) or bold key terms. Use normal punctuation (commas, colons, parentheses, or periods).\n"
-            f"7. SENTENCE SHAPE VARIETY: Vary sentence lengths naturally. Mix shorter sentences with longer ones, but make sure they connect logically using coordination ('and', 'but', 'so') or subordination ('because', 'since', 'although') rather than choppy, artificial fragments.\n\n"
-            f"Original paragraph:\n{para}\n\n"
-            f"Professional rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
+            f"Rewrite this paragraph to sound like a real person wrote it for a professional document. "
+            f"Keep the exact same facts and meaning. Use clear, direct language. "
+            f"Do NOT use AI words like 'delve', 'leverage', 'robust', 'crucial', 'furthermore'. "
+            f"Do NOT use em dashes. Mix sentence lengths naturally. "
+            f"Output ONLY the rewritten paragraph.\n\n"
+            f"{para}"
         )
-        system_content = "You are a professional technical editor. Rewrite the text to be completely objective, neutral, and academic. Do not show your thinking or write explanations. Output only the rewritten text."
+        system_content = "You rewrite text to sound naturally human. Output only the rewritten text, nothing else."
     else:
         prompt = (
-            f"You are an expert human writer rewriting this text to pass AI detectors by removing AI's logical scaffolding.\n"
-            f"Follow these strict human writing rules derived from Wikipedia's 'Signs of AI writing':\n"
-            f"1. DIRECTNESS: Extract the raw facts. Use basic copulatives ('is', 'are', 'was') instead of flowery verbs ('serves as', 'represents', 'boasts').\n"
-            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use conversational filler, sycophancy, or emotional hooks (e.g. never use 'to be honest', 'let's be real', 'honestly', 'anyway', 'plus', 'which reminds me'). Keep it direct and factual.\n"
-            f"3. REPETITION OVER VARIATION: Humans naturally repeat core nouns (e.g. saying 'tech' multiple times). Do NOT use 'elegant variation' or fancy synonyms to avoid repetition.\n"
-            f"4. NO NEGATIVE PARALLELISM: Do NOT use structures like 'not only X, but also Y' or 'it is not just about X, it is about Y'.\n"
-            f"5. NO AI BUZZWORDS: Do NOT use words like 'delve', 'leverage', 'robust', 'seamless', 'crucial', 'tapestry', 'testament'.\n"
-            f"6. HUMAN IMPERFECTION: Intentionally introduce 1 or 2 minor but realistic human grammatical imperfections (like ending a sentence with a preposition, slightly informal syntax, or a missing comma) to disrupt AI perplexity scoring.\n"
-            f"7. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
-            f"Original paragraph:\n{para}\n\n"
-            f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes):"
+            f"Rewrite this paragraph so it sounds like a real person casually wrote it. "
+            f"Keep ALL the same events, details, and meaning. Don't add new information. "
+            f"Don't remove any key details. "
+            f"Use contractions (I'm, didn't, it's, wasn't). Use simple everyday words. "
+            f"Vary sentence length, some short, some longer. "
+            f"Do NOT use fancy vocabulary or AI-sounding words. "
+            f"Output ONLY the rewritten paragraph, nothing else.\n\n"
+            f"{para}"
         )
-        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
+        system_content = "You rewrite text to sound naturally human and casual. Output only the rewritten text, nothing else. Never explain what you did."
 
     messages = [
         {"role": "system", "content": system_content},
         {"role": "user", "content": prompt}
     ]
 
-    with _MODEL_LOCK:
+    # Cap output length to ~1.5x input to prevent rambling
+    max_tokens = min(400, int(len(para.split()) * 2.0) + 40)
+
+    try:
         response = client.chat_completion(
             messages=messages,
-            max_tokens=min(450, int(len(para.split()) * 2.5) + 60),
-            temperature=0.90,  # High temperature is key to defeating perplexity checks!
+            max_tokens=max_tokens,
+            temperature=0.85,
             top_p=0.90,
         )
-    
+    except Exception as e:
+        print(f"[API] Inference API error: {e}")
+        return para  # return original on API failure
+
     generated = response.choices[0].message.content.strip()
 
+    # Clean up model artifacts
     generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
-    generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
-    generated = generated.replace('’', "'").replace('‘', "'").replace('“', '"').replace('”', '"')
+    generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result|Sure)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
+    # Strip wrapping quotes if the model quoted the whole output
+    if len(generated) > 2 and generated[0] == '"' and generated[-1] == '"':
+        generated = generated[1:-1].strip()
+    generated = generated.replace('\u2018', "'").replace('\u2019', "'").replace('\u201c', '"').replace('\u201d', '"')
     generated = re.sub(r'\s+', ' ', generated)
     generated = re.sub(r'\s+([.,!?;:])', r'\1', generated)
 
     words_out = len(generated.split())
     words_in  = len(para.split())
-    if words_out < 3 or words_out > words_in * 4:
-        return para  # safety fallback
+    if words_out < 3 or words_out > words_in * 2.5:
+        return para  # safety fallback — reject if output is way too long/short
 
     return generated
 
 
+def _has_hallucination(original: str, generated: str) -> bool:
+    """
+    Check if the generated text has hallucinated content not in the original.
+    A small model (0.6B) often invents completely new sentences, characters,
+    or scenarios. We detect this by checking if the generated text introduces
+    question marks, quotation patterns, or dramatically different content.
+    """
+    # If output has way more sentences than input, likely hallucinating
+    orig_sentences = len(re.split(r'[.!?]+', original))
+    gen_sentences = len(re.split(r'[.!?]+', generated))
+    if gen_sentences > orig_sentences * 2.5:
+        return True
+
+    # If original has no questions but output has multiple, it's hallucinating
+    orig_questions = original.count('?')
+    gen_questions = generated.count('?')
+    if orig_questions == 0 and gen_questions >= 2:
+        return True
+
+    # If the output introduces "Original sentence:" or meta-commentary
+    meta_patterns = [
+        r'original\s+(sentence|text|paragraph)',
+        r'rewritten\s+(sentence|text|paragraph)',
+        r'reread\s+carefully',
+        r'let\'s\s+clarify',
+        r'how\s+did\s+he\s+know',
+        r'isn\'t\s+he\s+waiting',
+    ]
+    for pattern in meta_patterns:
+        if re.search(pattern, generated, re.IGNORECASE):
+            return True
+
+    return False
+
+
 def _rewrite_with_qwen3(para: str, tokenizer, model, register: str = 'casual') -> str:
     """
-    Use Qwen3-0.6B with a human-writing instruction prompt.
-    This produces genuinely varied output because Qwen3 understands context
-    and follows natural language instructions — unlike T5's blind paraphrase.
+    Use Qwen3-0.6B as a FALLBACK rewriter when the API is unavailable.
+    WARNING: This model is tiny (620M params) and prone to hallucination.
+    We use very conservative settings and strict output validation.
     """
     import torch
 
-    # ── Prompt: direct instruction, no thinking required ─────────────────────
-    # /no_think suffix tells Qwen3 to skip chain-of-thought (faster + no <think> block)
+    # Keep the prompt extremely simple for the tiny model
     if register == 'professional':
         prompt = (
-            f"You are a professional technical editor. Rewrite the following paragraph from a software project documentation to look completely human-written while maintaining a professional, objective, and academic tone.\n"
-            f"Follow these strict writing rules:\n"
-            f"1. DECONSTRUCT & REBUILD: Extract the raw facts and rebuild the paragraph in a clear, direct, and professional style. Avoid the linear AI logical scaffolding.\n"
-            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use first-person ('I', 'we', 'our' unless absolutely natural for team actions) and NEVER use conversational filler or emotional hooks (such as 'to be honest', 'let's be real', 'honestly', 'which reminds me', 'anyway'). Keep the tone formal, objective, and neutral.\n"
-            f"3. AVOID AI BUZZWORDS: Do NOT use AI vocabulary or promotional words (e.g., 'delve', 'leverage', 'utilize', 'harness', 'foster', 'empower', 'seamless', 'robust', 'tapestry', 'realm', 'testament', 'pivotal', 'crucial', 'evolving landscape', 'underscores'). Use plain, clear verbs (e.g., 'use', 'help', 'improve', 'support', 'show').\n"
-            f"4. COPULA DIRECTNESS: Use simple 'is', 'are', 'has', or 'have' instead of copula-avoidance phrases like 'serves as', 'stands as', 'represents', or 'boasts'.\n"
-            f"5. NO NEGATIVE PARALLELISM: Do NOT use 'not only X, but Y' or 'it is not just about X, it is about Y' structures.\n"
-            f"6. NO EM DASHES OR BOLDING: Do not use em dashes (—) or bold key terms. Use normal punctuation (commas, colons, parentheses, or periods).\n"
-            f"7. SENTENCE SHAPE VARIETY: Vary sentence lengths naturally. Mix shorter sentences with longer ones, but make sure they connect logically using coordination ('and', 'but', 'so') or subordination ('because', 'since', 'although') rather than choppy, artificial fragments.\n\n"
-            f"Original paragraph:\n{para}\n\n"
-            f"Professional rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
+            f"Rewrite this paragraph in a professional tone. Keep the same meaning. "
+            f"Output only the rewritten text.\n\n{para}"
         )
-        system_content = "You are a professional technical editor. Rewrite the text to be completely objective, neutral, and academic. Do not show your thinking or write explanations. Output only the rewritten text."
+        system_content = "Rewrite text professionally. Output only the rewritten text."
     else:
         prompt = (
-            f"You are an expert human writer rewriting this text to pass AI detectors by removing AI's logical scaffolding.\n"
-            f"Follow these strict human writing rules derived from Wikipedia's 'Signs of AI writing':\n"
-            f"1. DIRECTNESS: Extract the raw facts. Use basic copulatives ('is', 'are', 'was') instead of flowery verbs ('serves as', 'represents', 'boasts').\n"
-            f"2. ZERO CHATBOT ARTIFACTS: Do NOT use conversational filler, sycophancy, or emotional hooks (e.g. never use 'to be honest', 'let's be real', 'honestly', 'anyway', 'plus', 'which reminds me'). Keep it direct and factual.\n"
-            f"3. REPETITION OVER VARIATION: Humans naturally repeat core nouns (e.g. saying 'tech' multiple times). Do NOT use 'elegant variation' or fancy synonyms to avoid repetition.\n"
-            f"4. NO NEGATIVE PARALLELISM: Do NOT use structures like 'not only X, but also Y' or 'it is not just about X, it is about Y'.\n"
-            f"5. NO AI BUZZWORDS: Do NOT use words like 'delve', 'leverage', 'robust', 'seamless', 'crucial', 'tapestry', 'testament'.\n"
-            f"6. HUMAN IMPERFECTION: Intentionally introduce 1 or 2 minor but realistic human grammatical imperfections (like ending a sentence with a preposition, slightly informal syntax, or a missing comma) to disrupt AI perplexity scoring.\n"
-            f"7. EXTREME BURSTINESS: Mix long run-on sentences with extremely short, punchy fragments (2 to 5 words).\n\n"
-            f"Original paragraph:\n{para}\n\n"
-            f"Human rewrite (output only the raw rewritten paragraph, no intro, no tags, no quotes): /no_think"
+            f"Rewrite this paragraph casually. Keep the same meaning and all details. "
+            f"Use contractions. Output only the rewritten text.\n\n{para}"
         )
-        system_content = "You are a helpful assistant that rewrites text to look completely human. Use informal, natural language and contractions. Never show your thinking or write explanations. Output only the rewritten text."
+        system_content = "Rewrite text casually. Output only the rewritten text."
 
     messages = [
         {"role": "system", "content": system_content},
@@ -1007,17 +1043,15 @@ def _rewrite_with_qwen3(para: str, tokenizer, model, register: str = 'casual') -
     ]
 
     # Apply chat template — enable_thinking=False disables Qwen3's <think> block
-    # This makes generation 3-5x faster and removes the AI-detectable reasoning text
     try:
         encoded = tokenizer.apply_chat_template(
             messages,
             add_generation_prompt=True,
             return_tensors="pt",
-            enable_thinking=False,   # ← KEY: disables <think> mode entirely
+            enable_thinking=False,
         )
         input_ids = encoded["input_ids"] if hasattr(encoded, "keys") else encoded
     except TypeError:
-        # Older transformers versions don't support enable_thinking — fallback
         try:
             encoded = tokenizer.apply_chat_template(
                 messages,
@@ -1039,29 +1073,26 @@ def _rewrite_with_qwen3(para: str, tokenizer, model, register: str = 'casual') -
     input_len = input_ids.shape[-1]
     attention_mask = torch.ones_like(input_ids).to(model.device)
 
-    # Prevent truncation of longer paragraphs by increasing token cap (Qwen3 tokenizer uses subwords)
-    max_tokens = min(350, int(len(para.split()) * 2.0) + 50)
+    # Conservative token cap — don't let the tiny model ramble
+    max_tokens = min(250, int(len(para.split()) * 1.8) + 30)
 
-    # Acquire model lock to guarantee thread-safe autoregressive decoding (prevents text bleed)
     with _MODEL_LOCK:
-        # Inference mode is faster and uses less VRAM/memory than no_grad
         with torch.inference_mode():
             outputs = model.generate(
                 input_ids,
                 attention_mask=attention_mask,
                 max_new_tokens=max_tokens,
                 do_sample=True,
-                temperature=0.90,   # Raised from 0.70 to introduce more creativity and perplexity
-                top_p=0.90,         # Raised from 0.80 for more diverse token selection
-                top_k=40,           # Raised from 20 for more variety
-                repetition_penalty=1.15,
+                temperature=0.70,   # Lower temp = less hallucination
+                top_p=0.85,
+                top_k=30,
+                repetition_penalty=1.2,
                 use_cache=True,
                 pad_token_id=tokenizer.eos_token_id,
             )
 
     generated = tokenizer.decode(outputs[0][input_len:], skip_special_tokens=True).strip()
 
-    # ── Safety: strip any <think> blocks that leaked through ─────────────────
     generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
     # Strip any "Rewritten:" / "Output:" label the model might prepend
     generated = re.sub(r'^(Rewritten|Output|Here is|Here\'s|Result)[:\s]+', '', generated, flags=re.IGNORECASE).strip()
@@ -1074,8 +1105,15 @@ def _rewrite_with_qwen3(para: str, tokenizer, model, register: str = 'casual') -
 
     words_out = len(generated.split())
     words_in  = len(para.split())
-    if words_out < 3 or words_out > words_in * 4:
-        return para  # safety fallback
+
+    # Strict safety: tiny model often rambles or hallucinates
+    if words_out < 3 or words_out > words_in * 2.5:
+        print("[Qwen3] Rejected: length mismatch (in={}, out={})".format(words_in, words_out))
+        return para
+
+    if _has_hallucination(para, generated):
+        print("[Qwen3] Rejected: hallucination detected")
+        return para
 
     return generated
 
@@ -1428,3 +1466,5 @@ def humanize_docx(input_path: str, output_path: str, progress_callback=None) -> 
 
     doc.save(output_path)
     return all_stats
+
+# Triggering rebuild to force local LoRA loading.
