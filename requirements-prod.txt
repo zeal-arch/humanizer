@@ -1,10 +1,13 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # Production requirements — Hugging Face Spaces (Linux CPU)
 # CPU-only PyTorch: ~700 MB instead of ~2.6 GB, fits in HF free tier
+# IMPORTANT: transformers>=5.0.0 requires torch>=2.7 (float8_e8m0fnu).
+# Keep transformers<5.0.0 while we use torch==2.6.0.
 # ─────────────────────────────────────────────────────────────────────────────
 flask>=3.0.0
 gunicorn>=21.2.0
-transformers>=4.51.0
+requests>=2.31.0
+transformers>=4.51.0,<5.0.0
 # CPU-only PyTorch — smaller, faster to install on Linux
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.6.0
@@ -12,3 +15,6 @@ accelerate>=0.27.0
 python-docx>=1.1.0
 nltk>=3.8.0
 huggingface_hub>=0.21.0
+peft
+sentencepiece
+protobuf

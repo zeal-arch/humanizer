@@ -273,7 +273,9 @@ def load_detector():
             print(f"[Detector] Local model not found. Downloading {model_path} from HF Hub...")
 
         try:
-            _DETECTOR_TOKENIZER = AutoTokenizer.from_pretrained(model_path)
+            # The tokenizer_config.json in our repo was corrupted by an accidental
+            # Colab push. Load tokenizer from the base model instead.
+            _DETECTOR_TOKENIZER = AutoTokenizer.from_pretrained("microsoft/deberta-v3-large")
             _DETECTOR_MODEL = DesklibAIDetectionModel.from_pretrained(model_path)
             _DETECTOR_MODEL.eval()
             print("[Detector] desklib model loaded successfully.")
