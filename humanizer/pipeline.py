@@ -916,46 +916,50 @@ def pass16_imperfect_discourse(text: str) -> tuple[str, int]:
 def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> str:
     """
     Use Hugging Face Serverless Inference API (InferenceClient) with a 72B model.
-    This is the PRIMARY rewrite engine -- produces human-quality output.
+    PRIMARY rewrite engine. Uses a two-pass self-check approach from Wikipedia's
+    "Signs of AI writing" guide to produce genuinely human-sounding output.
     """
     if register == 'professional':
         system_content = (
-            "You are a professional editor. Rewrite text to sound like a real person wrote it. "
-            "No AI vocabulary. No em dashes. No 'furthermore', 'crucial', 'leverage', 'robust'. "
-            "Use simple is/are/has instead of serves-as/stands-as. Output only the rewritten text."
+            "You are a professional editor who makes AI text sound like a real human wrote it. "
+            "Output only the rewritten text. No explanations."
         )
         prompt = (
-            "Rewrite this paragraph in a professional but human tone. Keep the exact same facts. "
-            "Mix sentence lengths -- some short (under 8 words), some longer. "
-            "No AI vocabulary. No em dashes. No bold text.\n\n" + para
+            "Rewrite this paragraph in a professional but human tone. Keep the exact same facts.\n"
+            "Rules: No AI vocabulary (delve/leverage/robust/crucial). No em dashes. No bold. "
+            "Use simple is/are/has. Mix sentence lengths. Some short, some longer.\n\n"
+            "Output ONLY the rewritten paragraph.\n\n" + para
         )
     else:
-        # Based on Wikipedia's "Signs of AI writing" guide:
-        # Human writing has: specific unusual details, mixed feelings, genuine asides,
-        # rhythm variety (short/long mix), dated era-bound references, self-corrections.
-        # AI writing has: most statistically likely token sequences, even sentence rhythm,
-        # smooth transitions, elegant variation (synonym cycling), AI vocabulary.
+        # Two-pass approach based on Wikipedia "Signs of AI writing" guide:
+        # Pass 1: Rewrite casually.
+        # Pass 2: Self-check — "what still sounds AI?" then fix it.
+        # Human signals to inject (from Wikipedia's "Signs of human writing"):
+        # - Specific unusual detail (a real age, color, weird observation)
+        # - One genuine aside or self-correction in parentheses
+        # - Mixed/unresolved feelings ("I don't know why, but...")
+        # - Deliberate sentence variety (fragments + long runs)
+        # - Repeat nouns instead of cycling synonyms (humans don't avoid repetition)
         system_content = (
-            "You rewrite text to sound authentically human -- not polished, not AI-generated. "
-            "Real humans: use very short sentences sometimes. start sentences with And or But. "
-            "Real humans: use casual vocabulary like 'kinda', 'honestly', 'turns out', 'ended up'. "
-            "Real humans: add brief genuine asides ('not that I minded', 'which was fine by me'). "
-            "Real humans: let sentences be uneven -- some 4 words, some 30 words. "
-            "Real humans: use repetition instead of synonyms (say 'bread' again, not 'baked goods'). "
-            "NEVER explain or introduce what you are doing. Output only the rewritten text."
+            "You are a human writer, not an AI assistant. "
+            "You write casually, imperfectly, and specifically -- the way real people do. "
+            "You never explain what you are doing. You just write."
         )
         prompt = (
-            "Rewrite this paragraph so it sounds like a real person casually wrote it -- "
-            "the kind of writing that PASSES AI detectors because it has human statistical patterns.\n\n"
-            "REQUIRED human patterns to include:\n"
-            "1. At least one sentence under 6 words (a punchy fragment).\n"
-            "2. At least one sentence over 20 words (a longer flowing one).\n"
-            "3. ONE genuine personal aside tucked inside a sentence, like 'not that I cared' or 'which was weird'.\n"
-            "4. Use casual contractions and everyday words. Avoid formal synonyms.\n"
-            "5. Repeat the main noun (don't cycle synonyms -- say 'bread' not 'the baked goods').\n"
-            "6. Keep ALL story details. Don't add new events. Don't remove any details.\n"
-            "7. Don't use em dashes. Don't use 'furthermore', 'however', 'additionally'.\n\n"
-            "Output ONLY the rewritten paragraph.\n\n" + para
+            "Rewrite this paragraph so it reads like a real person's casual writing.\n\n"
+            "STEP 1 -- Write a draft rewrite. Use these human patterns:\n"
+            "- Include ONE very specific physical detail not stated in the original "
+            "(an approximate age, a color, an exact feeling: 'some grey-haired guy', 'the cheap plastic chairs', 'maybe 40 minutes')\n"
+            "- Include ONE parenthetical aside or self-correction: "
+            "('not sure why', 'or maybe that's just me', 'I think', 'I don't know')\n"
+            "- Include ONE moment of genuine uncertainty or mixed feeling\n"
+            "- Mix sentence lengths drastically: at least one under 5 words, at least one over 20 words\n"
+            "- Repeat the main noun (say 'bread' again -- don't say 'baked goods' or 'the item')\n"
+            "- Keep ALL the original story details, events, and meaning\n\n"
+            "STEP 2 -- Before outputting, silently ask yourself: "
+            "'What still sounds AI about this? Is the rhythm too even? "
+            "Are the transitions too smooth? Did I use elegant synonyms instead of repeating words?' Fix those issues.\n\n"
+            "Output ONLY the final rewritten paragraph. No labels, no explanation.\n\n" + para
         )
 
     messages = [
@@ -963,14 +967,14 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
         {"role": "user", "content": prompt}
     ]
 
-    max_tokens = min(450, int(len(para.split()) * 2.3) + 60)
+    max_tokens = min(480, int(len(para.split()) * 2.5) + 80)
 
     try:
         response = client.chat_completion(
             messages=messages,
             max_tokens=max_tokens,
-            temperature=0.97,   # High temp = high perplexity = harder to detect
-            top_p=0.93,
+            temperature=0.98,   # Very high temp = more unpredictable token choices = higher perplexity
+            top_p=0.95,
         )
     except Exception as e:
         print("[API] Inference API error: {}".format(e))
@@ -978,17 +982,21 @@ def _rewrite_with_inference_api(para: str, client, register: str = 'casual') -> 
 
     generated = response.choices[0].message.content.strip()
 
+    # Strip any think blocks or preamble the model might add
     generated = re.sub(r'<think>.*?</think>', '', generated, flags=re.DOTALL).strip()
-    generated = re.sub(r"^(Rewritten|Output|Here is|Here's|Result|Sure)[:\s]+", '', generated, flags=re.IGNORECASE).strip()
+    # Strip "Step 1:", "Draft:", "Final:" labels if model outputs them
+    generated = re.sub(r'^(Step \d[:\s]|Draft[:\s]|Final[:\s]|Rewritten[:\s]|Output[:\s]|Here is[:\s]|Sure[:\s])', '', generated, flags=re.IGNORECASE).strip()
+    # Some models wrap output in quotes
     if len(generated) > 2 and generated[0] == '"' and generated[-1] == '"':
         generated = generated[1:-1].strip()
+    # Normalize unicode quotes
     generated = generated.replace('\u2018', "'").replace('\u2019', "'").replace('\u201c', '"').replace('\u201d', '"')
     generated = re.sub(r'\s+', ' ', generated)
     generated = re.sub(r'\s+([.,!?;:])', r'\1', generated)
 
     words_out = len(generated.split())
     words_in  = len(para.split())
-    if words_out < 3 or words_out > words_in * 2.5:
+    if words_out < 3 or words_out > words_in * 2.8:
         return para
 
     return generated
