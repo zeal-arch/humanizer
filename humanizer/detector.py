@@ -269,7 +269,7 @@ def load_detector():
             model_path = LOCAL_MODEL_DIR
             print(f"[Detector] Loading desklib model from local folder ({LOCAL_MODEL_DIR})...")
         else:
-            model_path = "desklib/ai-text-detector-v1.01"
+            model_path = "Zeal000/zeal-humanizer-detector-v1.0"
             print(f"[Detector] Local model not found. Downloading {model_path} from HF Hub...")
 
         try:
